@@ -1,8 +1,38 @@
+import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
+import helmet from 'helmet';
 import { AppModule } from './app.module';
+import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(process.env.PORT ?? 3000);
+  const configService = app.get(ConfigService);
+
+  app.use(helmet());
+  app.enableCors({
+    origin: configService.getOrThrow<string>('FRONTEND_URL'),
+    credentials: true,
+  });
+  app.setGlobalPrefix('api/v1');
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      forbidNonWhitelisted: false,
+    }),
+  );
+  app.useGlobalFilters(new GlobalExceptionFilter());
+  app.useGlobalInterceptors(
+    new LoggingInterceptor(),
+    new TransformInterceptor(),
+  );
+
+  const port = configService.get<number>('port') ?? 3001;
+  await app.listen(port);
 }
+
 bootstrap();
