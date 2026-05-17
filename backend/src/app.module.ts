@@ -3,7 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
 import configuration from './config/configuration';
-import { DatabaseModule } from './database/database.module';
+import { DbModule } from './db/db.module';
 
 @Module({
   imports: [
@@ -21,7 +21,7 @@ import { DatabaseModule } from './database/database.module';
         PORT: Joi.number().optional(),
       }),
     }),
-    DatabaseModule,
+    DbModule,
   ],
 })
 export class AppModule implements NestModule {
