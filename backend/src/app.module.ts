@@ -4,6 +4,7 @@ import * as Joi from 'joi';
 import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
 import configuration from './config/configuration';
 import { DbModule } from './db/db.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { DbModule } from './db/db.module';
       }),
     }),
     DbModule,
+    AuthModule,
   ],
 })
 export class AppModule implements NestModule {
