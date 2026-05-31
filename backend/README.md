@@ -1,98 +1,250 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Finance App — Backend API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+NestJS REST API for the personal finance application. It handles authentication, user data, and (as modules are added) transactions, categories, and budgets. The API is versioned under `/api/v1` and uses PostgreSQL with [Drizzle ORM](https://orm.drizzle.team/).
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Tech stack
 
-## Description
+| Layer | Choice |
+| --- | --- |
+| Runtime | Node.js |
+| Framework | [NestJS](https://nestjs.com/) 11 |
+| Language | TypeScript |
+| Database | PostgreSQL 16 |
+| ORM | Drizzle ORM |
+| Validation | `class-validator` + `class-transformer` |
+| Config | `@nestjs/config` with Joi validation |
+| Security | Helmet, CORS, bcrypt (password hashing) |
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Optional infrastructure (configured but not required yet): Redis, Google OAuth.
 
-## Project setup
+## Prerequisites
 
-```bash
-$ npm install
-```
+- **Node.js** 20+ (LTS recommended)
+- **npm** 10+
+- **PostgreSQL** — use [Docker Compose](../docker-compose.yml) at the repo root, or your own instance
 
-## Compile and run the project
+## Quick start
+
+### 1. Start PostgreSQL (and Redis)
+
+From the **repository root**:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+docker compose up -d postgres
 ```
 
-## Run tests
+Redis is optional today; start it when session or cache features need it:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+docker compose up -d redis
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### 2. Configure environment
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+cd backend
+cp .env.example .env
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Edit `.env` if your database URL or secrets differ from the defaults.
 
-## Resources
+### 3. Install dependencies and run migrations
 
-Check out a few resources that may come in handy when working with NestJS:
+```bash
+npm install
+npm run db:migrate
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+`db:migrate` applies SQL files in `drizzle/migrations/` via Drizzle Kit. Ensure `DATABASE_URL` in `.env` points at the database you started (default: `financeapp_dev` on `localhost:5432`).
 
-## Support
+### 4. Start the API
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+npm run start:dev
+```
 
-## Stay in touch
+The server listens on the port from `PORT` (default **3001**). Base URL: `http://localhost:3001/api/v1`.
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## Environment variables
+
+| Variable | Required | Description |
+| --- | --- | --- |
+| `DATABASE_URL` | Yes | PostgreSQL connection string |
+| `JWT_SECRET` | Yes | Secret for signing access tokens (login flow) |
+| `REFRESH_TOKEN_SECRET` | Yes | Secret for refresh tokens |
+| `FRONTEND_URL` | Yes | Allowed CORS origin (e.g. `http://localhost:5173`) |
+| `PORT` | No | HTTP port (default `3001`) |
+| `GOOGLE_CLIENT_ID` | No | Google OAuth client ID |
+| `GOOGLE_CLIENT_SECRET` | No | Google OAuth client secret |
+| `REDIS_URL` | No | Redis URL for future session/cache use |
+
+See [.env.example](./.env.example) for a full template. **Do not commit `.env`** — it contains secrets.
+
+## API conventions
+
+### Base path
+
+All routes are prefixed with `/api/v1`.
+
+### Successful responses
+
+Successful JSON responses are wrapped by a global interceptor:
+
+```json
+{
+  "data": { },
+  "meta": {
+    "timestamp": "2026-05-31T12:00:00.000Z"
+  }
+}
+```
+
+### Error responses
+
+Errors return a consistent shape (no `data` wrapper):
+
+```json
+{
+  "statusCode": 400,
+  "message": "Validation failed",
+  "requestId": "uuid-or-client-provided-id",
+  "timestamp": "2026-05-31T12:00:00.000Z"
+}
+```
+
+You may send `X-Request-Id` on requests; otherwise the server generates one and echoes it on the response.
+
+### Validation
+
+Request bodies are validated with `ValidationPipe` (whitelist + transform). Unknown properties on DTOs are stripped when whitelisting applies.
+
+## Endpoints
+
+| Method | Path | Description |
+| --- | --- | --- |
+| `POST` | `/api/v1/auth/register` | Create a new user account |
+
+#### `POST /api/v1/auth/register`
+
+**Body:**
+
+```json
+{
+  "name": "Jane Doe",
+  "email": "jane@example.com",
+  "password": "securepassword"
+}
+```
+
+| Field | Rules |
+| --- | --- |
+| `name` | 2–100 characters |
+| `email` | Valid email |
+| `password` | 8–72 characters |
+
+**Success:** `201 Created` — `data` contains `id`, `name`, `email`, `createdAt` (password hash is never returned).
+
+**Errors:** `409 Conflict` if the email is already registered.
+
+## Database
+
+### Schema
+
+Drizzle schema lives in [`src/db/schema/index.ts`](./src/db/schema/index.ts). Core tables:
+
+- **users** — accounts (email/password, optional Google ID, 2FA fields)
+- **categories** — income/expense categories per user
+- **transactions** — amounts in cents, linked to categories
+- **budgets** — monthly limits per user/category
+- **refresh_tokens** — hashed refresh tokens for auth sessions
+
+### Scripts
+
+| Command | Description |
+| --- | --- |
+| `npm run db:generate` | Generate a new migration from schema changes |
+| `npm run db:migrate` | Apply pending migrations |
+| `npm run db:push` | Push schema directly to the DB (dev only; skips migration files) |
+| `npm run db:studio` | Open Drizzle Studio in the browser |
+
+After changing `src/db/schema`, run `db:generate`, review the SQL under `drizzle/migrations/`, then `db:migrate`.
+
+A standalone migrator is also available at [`src/db/migrate.ts`](./src/db/migrate.ts) (run via `ts-node` or compiled `dist`) if you need to apply migrations outside Drizzle Kit.
+
+## Project structure
+
+```
+backend/
+├── drizzle/
+│   └── migrations/       # Generated SQL migrations
+├── src/
+│   ├── common/           # Filters, interceptors, middleware, decorators
+│   ├── config/           # Typed configuration factory
+│   ├── db/               # Drizzle module, schema, migrator
+│   ├── modules/
+│   │   └── auth/         # Registration (login/OAuth TBD)
+│   ├── app.module.ts
+│   └── main.ts           # Bootstrap: helmet, CORS, pipes, interceptors
+├── test/                 # E2E tests
+├── .env.example
+└── drizzle.config.ts
+```
+
+### Cross-cutting behavior
+
+- **RequestIdMiddleware** — assigns or forwards `X-Request-Id` on every request
+- **LoggingInterceptor** — logs method, URL, and response time
+- **TransformInterceptor** — wraps successful payloads in `{ data, meta }`
+- **GlobalExceptionFilter** — normalizes HTTP and unexpected errors
+
+Inject the database with the `DB_TOKEN` provider from `DbModule` (global).
+
+## npm scripts
+
+| Script | Description |
+| --- | --- |
+| `npm run start` | Start once (no watch) |
+| `npm run start:dev` | Start with file watch |
+| `npm run start:debug` | Start with debugger and watch |
+| `npm run start:prod` | Run compiled `dist/main.js` |
+| `npm run build` | Compile TypeScript to `dist/` |
+| `npm run lint` | ESLint with auto-fix |
+| `npm run format` | Prettier on `src/` and `test/` |
+| `npm run test` | Unit tests (Jest) |
+| `npm run test:e2e` | End-to-end tests |
+| `npm run test:cov` | Coverage report |
+
+## Testing
+
+```bash
+# unit
+npm run test
+
+# e2e (requires DB/env as appropriate for your test setup)
+npm run test:e2e
+```
+
+## Production notes
+
+1. Set strong, unique values for `JWT_SECRET` and `REFRESH_TOKEN_SECRET`.
+2. Point `DATABASE_URL` at your production PostgreSQL instance.
+3. Set `FRONTEND_URL` to your deployed frontend origin (CORS).
+4. Build and run:
+
+   ```bash
+   npm run build
+   npm run start:prod
+   ```
+
+5. Run migrations as part of deploy: `npm run db:migrate`.
+
+Helmet is enabled globally. CORS allows credentials from `FRONTEND_URL` only.
+
+## Related
+
+- **Frontend** — sibling app at [`../frontend`](../frontend) (default dev URL `http://localhost:5173`)
+- **Docker** — [`../docker-compose.yml`](../docker-compose.yml) for local Postgres and Redis
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Private — UNLICENSED (see [package.json](./package.json)).
