@@ -5,9 +5,10 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Req,
   Res,
 } from '@nestjs/common';
-import type { Response } from 'express';
+import type { Request, Response } from 'express';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { Public } from '../../common/decorators/public.decorator';
 import type { AuthenticatedUser } from '../../common/types/authenticated-user.interface';
@@ -41,13 +42,23 @@ export class AuthController {
 
     const { accessToken, refreshToken } = result;
 
-    res.cookie('refresh_token', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      path: '/',
-    });
+    this.setRefreshTokenCookie(res, refreshToken);
+
+    return { accessToken };
+  }
+
+  @Public()
+  @Post('refresh')
+  @HttpCode(HttpStatus.OK)
+  async refresh(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { accessToken, refreshToken } = await this.authService.refreshToken(
+      req.cookies?.refresh_token,
+    );
+
+    this.setRefreshTokenCookie(res, refreshToken);
 
     return { accessToken };
   }
@@ -55,5 +66,15 @@ export class AuthController {
   @Get('me')
   getMe(@CurrentUser() user: AuthenticatedUser) {
     return user;
+  }
+
+  private setRefreshTokenCookie(res: Response, refreshToken: string): void {
+    res.cookie('refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: '/',
+    });
   }
 }

@@ -7,6 +7,7 @@ import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
 import configuration from './config/configuration';
 import { DbModule } from './db/db.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { TransactionsModule } from './modules/transactions/transactions.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { AuthModule } from './modules/auth/auth.module';
     }),
     DbModule,
     AuthModule,
+    TransactionsModule,
   ],
   providers: [
     {
