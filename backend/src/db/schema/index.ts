@@ -7,6 +7,7 @@ import {
   pgTable,
   text,
   timestamp,
+  unique,
   uniqueIndex,
   uuid,
   varchar,
@@ -126,12 +127,9 @@ export const budgets = pgTable(
   },
   (table) => [
     index('budgets_user_id_idx').on(table.userId),
-    uniqueIndex('budgets_user_year_month_category_idx').on(
-      table.userId,
-      table.year,
-      table.month,
-      table.categoryId,
-    ),
+    unique('budgets_user_year_month_category_idx')
+      .on(table.userId, table.year, table.month, table.categoryId)
+      .nullsNotDistinct(),
   ],
 );
 

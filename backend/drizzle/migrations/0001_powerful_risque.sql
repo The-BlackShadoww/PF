@@ -54,7 +54,7 @@ ALTER TABLE "refresh_tokens" ADD CONSTRAINT "refresh_tokens_user_id_users_id_fk"
 ALTER TABLE "transactions" ADD CONSTRAINT "transactions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "transactions" ADD CONSTRAINT "transactions_category_id_categories_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."categories"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX "budgets_user_id_idx" ON "budgets" USING btree ("user_id");--> statement-breakpoint
-CREATE UNIQUE INDEX "budgets_user_year_month_category_idx" ON "budgets" USING btree ("user_id","year","month","category_id");--> statement-breakpoint
+CREATE UNIQUE INDEX "budgets_user_year_month_category_idx" ON "budgets" USING btree ("user_id","year","month","category_id") NULLS NOT DISTINCT;--> statement-breakpoint
 CREATE INDEX "categories_user_id_idx" ON "categories" USING btree ("user_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "categories_user_id_name_type_idx" ON "categories" USING btree ("user_id","name","type");--> statement-breakpoint
 CREATE INDEX "refresh_tokens_user_id_idx" ON "refresh_tokens" USING btree ("user_id");--> statement-breakpoint
