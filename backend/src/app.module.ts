@@ -9,6 +9,7 @@ import { DbModule } from './db/db.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { BudgetsModule } from './modules/budgets/budgets.module';
 import { CalculationsModule } from './modules/calculations/calculations.module';
+import { ReportsModule } from './modules/reports/reports.module';
 import { TransactionsModule } from './modules/transactions/transactions.module';
 
 @Module({
@@ -32,6 +33,7 @@ import { TransactionsModule } from './modules/transactions/transactions.module';
     CalculationsModule,
     BudgetsModule,
     TransactionsModule,
+    ReportsModule,
   ],
   providers: [
     {

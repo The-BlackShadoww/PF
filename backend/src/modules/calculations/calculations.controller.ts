@@ -22,11 +22,7 @@ export class CalculationsController {
     @Query('year', ParseIntPipe) year: number,
     @Query('quarter', ParseIntPipe) quarter: number,
   ) {
-    return this.calculationsService.getQuarterlySummary(
-      user.id,
-      year,
-      quarter,
-    );
+    return this.calculationsService.getQuarterlySummary(user.id, year, quarter);
   }
 
   @Get('yearly')
@@ -43,10 +39,6 @@ export class CalculationsController {
     @Query('year', ParseIntPipe) year: number,
     @Query('month', ParseIntPipe) month: number,
   ) {
-    return this.calculationsService.getCategoryBreakdown(
-      user.id,
-      year,
-      month,
-    );
+    return this.calculationsService.getCategoryBreakdown(user.id, year, month);
   }
 }
