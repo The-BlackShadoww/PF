@@ -1,9 +1,12 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import Redis from 'ioredis';
 import * as Joi from 'joi';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
+import { ThrottlerStorageRedisService } from './common/throttler/throttler-storage-redis.service';
 import configuration from './config/configuration';
 import { DbModule } from './db/db.module';
 import { AuthModule } from './modules/auth/auth.module';
@@ -28,6 +31,25 @@ import { TransactionsModule } from './modules/transactions/transactions.module';
         PORT: Joi.number().optional(),
       }),
     }),
+    ThrottlerModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const redisClient = new Redis(
+          configService.get<string>('redis.url') ?? 'redis://localhost:6379',
+          {
+            lazyConnect: true,
+            maxRetriesPerRequest: 1,
+          },
+        );
+
+        return {
+          throttlers: [{ name: 'default', limit: 100, ttl: 60000 }],
+          storage: new ThrottlerStorageRedisService(redisClient),
+          getTracker: (request: Record<string, any>) =>
+            request.user?.id ?? request.ip,
+        };
+      },
+    }),
     DbModule,
     AuthModule,
     CalculationsModule,
@@ -39,6 +61,10 @@ import { TransactionsModule } from './modules/transactions/transactions.module';
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
     },
   ],
 })

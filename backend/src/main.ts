@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
+import { ThrottlerExceptionFilter } from './common/filters/throttler-exception.filter';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 
@@ -12,7 +13,20 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
 
-  app.use(helmet());
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          connectSrc: [
+            "'self'",
+            configService.getOrThrow<string>('FRONTEND_URL'),
+          ],
+        },
+      },
+      crossOriginEmbedderPolicy: false,
+    }),
+  );
   app.use(cookieParser());
   app.enableCors({
     origin: configService.getOrThrow<string>('FRONTEND_URL'),
@@ -27,7 +41,10 @@ async function bootstrap() {
       forbidNonWhitelisted: false,
     }),
   );
-  app.useGlobalFilters(new GlobalExceptionFilter());
+  app.useGlobalFilters(
+    new ThrottlerExceptionFilter(),
+    new GlobalExceptionFilter(),
+  );
   app.useGlobalInterceptors(
     new LoggingInterceptor(),
     new TransformInterceptor(),
