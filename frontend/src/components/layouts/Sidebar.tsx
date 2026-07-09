@@ -1,32 +1,44 @@
+"use client";
+
 import {
-  BarChart3,
+  ArrowRightLeft,
+  FileText,
+  Grid3X3,
   LayoutDashboard,
-  ReceiptText,
+  LogOut,
+  Menu,
+  PiggyBank,
   Settings,
-  WalletCards,
+  X,
 } from "lucide-react";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
+
+import { authApi } from "@/lib/api/auth";
+import { clearAccessToken } from "@/lib/api/client";
+import { cn } from "@/lib/utils/cn";
 
 const navigationItems = [
   {
     href: "/dashboard",
     label: "Dashboard",
-    icon: LayoutDashboard,
+    icon: Grid3X3,
   },
   {
     href: "/transactions",
     label: "Transactions",
-    icon: ReceiptText,
+    icon: ArrowRightLeft,
   },
   {
     href: "/budgets",
     label: "Budgets",
-    icon: WalletCards,
+    icon: PiggyBank,
   },
   {
     href: "/reports",
     label: "Reports",
-    icon: BarChart3,
+    icon: FileText,
   },
   {
     href: "/settings",
@@ -36,33 +48,104 @@ const navigationItems = [
 ];
 
 export function Sidebar() {
+  const pathname = usePathname();
+  const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  async function handleLogout() {
+    setIsLoggingOut(true);
+
+    try {
+      await authApi.logout();
+    } finally {
+      clearAccessToken();
+      router.push("/login");
+      router.refresh();
+    }
+  }
+
   return (
-    <aside className="border-b border-slate-200 bg-white md:fixed md:inset-y-0 md:left-0 md:w-64 md:border-b-0 md:border-r">
-      <div className="flex h-full flex-col px-4 py-5">
-        <Link
-          href="/dashboard"
-          className="text-lg font-semibold text-slate-950"
-        >
-          Personal Finance
-        </Link>
+    <>
+      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 px-4 py-3 backdrop-blur md:hidden">
+        <div className="flex items-center justify-between">
+          <Link href="/dashboard" className="font-semibold text-slate-950">
+            Personal Finance
+          </Link>
+          <button
+            type="button"
+            aria-label={isOpen ? "Close navigation" : "Open navigation"}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 text-slate-700"
+            onClick={() => setIsOpen((current) => !current)}
+          >
+            {isOpen ? (
+              <X aria-hidden="true" className="h-5 w-5" />
+            ) : (
+              <Menu aria-hidden="true" className="h-5 w-5" />
+            )}
+          </button>
+        </div>
+      </header>
 
-        <nav className="mt-6 flex gap-2 overflow-x-auto md:flex-col md:overflow-visible">
-          {navigationItems.map((item) => {
-            const Icon = item.icon;
+      {isOpen ? (
+        <button
+          type="button"
+          aria-label="Close navigation"
+          className="fixed inset-0 z-40 bg-slate-950/20 md:hidden"
+          onClick={() => setIsOpen(false)}
+        />
+      ) : null}
 
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="inline-flex min-h-10 items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-950"
-              >
-                <Icon aria-hidden="true" className="h-4 w-4 shrink-0" />
-                <span>{item.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
-      </div>
-    </aside>
+      <aside
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 flex w-64 -translate-x-full flex-col border-r border-slate-200 bg-white transition-transform md:translate-x-0",
+          isOpen && "translate-x-0",
+        )}
+      >
+        <div className="flex h-full flex-col px-4 py-5">
+          <Link
+            href="/dashboard"
+            className="flex items-center gap-2 text-lg font-semibold text-slate-950"
+            onClick={() => setIsOpen(false)}
+          >
+            <LayoutDashboard aria-hidden="true" className="h-5 w-5" />
+            Personal Finance
+          </Link>
+
+          <nav className="mt-6 flex flex-col gap-1">
+            {navigationItems.map((item) => {
+              const Icon = item.icon;
+              const active = pathname === item.href;
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "inline-flex min-h-10 items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-950",
+                    active &&
+                      "bg-slate-950 text-white hover:bg-slate-900 hover:text-white",
+                  )}
+                  onClick={() => setIsOpen(false)}
+                >
+                  <Icon aria-hidden="true" className="h-4 w-4 shrink-0" />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
+          </nav>
+
+          <button
+            type="button"
+            disabled={isLoggingOut}
+            className="mt-auto inline-flex min-h-10 items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-950 disabled:cursor-not-allowed disabled:opacity-70"
+            onClick={handleLogout}
+          >
+            <LogOut aria-hidden="true" className="h-4 w-4 shrink-0" />
+            <span>{isLoggingOut ? "Logging out..." : "Logout"}</span>
+          </button>
+        </div>
+      </aside>
+    </>
   );
 }

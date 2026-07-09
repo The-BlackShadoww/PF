@@ -1,5 +1,5 @@
 import type { ApiResponse } from "@/types/api";
-import { apiClient } from "./client";
+import { apiClient, clearAccessToken } from "./client";
 
 export type RegisterRequest = {
   name: string;
@@ -47,5 +47,16 @@ export const authApi = {
       },
       body: JSON.stringify(data),
     });
+  },
+
+  async logout(): Promise<void> {
+    try {
+      await apiClient<void>("/auth/logout", {
+        method: "POST",
+        retryOnUnauthorized: false,
+      });
+    } finally {
+      clearAccessToken();
+    }
   },
 };
