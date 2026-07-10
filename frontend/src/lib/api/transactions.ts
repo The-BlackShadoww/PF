@@ -38,6 +38,14 @@ export type TransactionsResponse = {
   limit: number;
 };
 
+export type TransactionPayload = {
+  type: TransactionType;
+  categoryId: string;
+  amount: number;
+  date: string;
+  note?: string;
+};
+
 export const transactionsApi = {
   async getAll(filters: TransactionFilters = {}) {
     const params = new URLSearchParams();
@@ -51,6 +59,36 @@ export const transactionsApi = {
     const queryString = params.toString();
     const response = await apiClient<ApiResponse<TransactionsResponse>>(
       `/transactions${queryString ? `?${queryString}` : ""}`,
+    );
+
+    return response.data;
+  },
+
+  async create(payload: TransactionPayload) {
+    const response = await apiClient<ApiResponse<Transaction>>(
+      "/transactions",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      },
+    );
+
+    return response.data;
+  },
+
+  async update(id: string, payload: Partial<TransactionPayload>) {
+    const response = await apiClient<ApiResponse<Transaction>>(
+      `/transactions/${id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      },
     );
 
     return response.data;

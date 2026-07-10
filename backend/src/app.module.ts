@@ -11,6 +11,7 @@ import configuration from './config/configuration';
 import { DbModule } from './db/db.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { BudgetsModule } from './modules/budgets/budgets.module';
+import { CategoriesModule } from './modules/categories/categories.module';
 import { CalculationsModule } from './modules/calculations/calculations.module';
 import { ReportsModule } from './modules/reports/reports.module';
 import { TransactionsModule } from './modules/transactions/transactions.module';
@@ -52,6 +53,7 @@ import { TransactionsModule } from './modules/transactions/transactions.module';
     }),
     DbModule,
     AuthModule,
+    CategoriesModule,
     CalculationsModule,
     BudgetsModule,
     TransactionsModule,

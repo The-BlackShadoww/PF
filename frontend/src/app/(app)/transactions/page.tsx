@@ -6,11 +6,12 @@ import {
   Pencil,
   Plus,
   Trash2,
-  X,
 } from "lucide-react";
 import { useMemo, useState } from "react";
 
+import { TransactionForm } from "@/components/forms/TransactionForm";
 import { PageHeader } from "@/components/layouts/PageHeader";
+import { Modal } from "@/components/ui/Modal";
 import {
   Table,
   TableBody,
@@ -20,6 +21,7 @@ import {
   TableRow,
 } from "@/components/ui/Table";
 import type {
+  Transaction,
   TransactionFilters,
   TransactionType,
 } from "@/lib/api/transactions";
@@ -34,7 +36,10 @@ export default function TransactionsPage() {
   const [endDate, setEndDate] = useState("");
   const [type, setType] = useState<"all" | TransactionType>("all");
   const [categoryId, setCategoryId] = useState("");
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [formTransaction, setFormTransaction] = useState<Transaction | null>(
+    null,
+  );
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
 
   const filters = useMemo<TransactionFilters>(
     () => ({
@@ -74,6 +79,21 @@ export default function TransactionsPage() {
     setter(value);
   }
 
+  function openAddModal() {
+    setFormTransaction(null);
+    setIsFormModalOpen(true);
+  }
+
+  function openEditModal(transaction: Transaction) {
+    setFormTransaction(transaction);
+    setIsFormModalOpen(true);
+  }
+
+  function closeFormModal() {
+    setIsFormModalOpen(false);
+    setFormTransaction(null);
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -84,7 +104,7 @@ export default function TransactionsPage() {
         <button
           type="button"
           className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-slate-950 px-4 text-sm font-semibold text-white transition hover:bg-slate-800"
-          onClick={() => setIsAddModalOpen(true)}
+          onClick={openAddModal}
         >
           <Plus aria-hidden="true" className="h-4 w-4" />
           Add Transaction
@@ -209,6 +229,7 @@ export default function TransactionsPage() {
                       type="button"
                       aria-label="Edit transaction"
                       className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-600 transition hover:bg-slate-100 hover:text-slate-950"
+                      onClick={() => openEditModal(transaction)}
                     >
                       <Pencil aria-hidden="true" className="h-4 w-4" />
                     </button>
@@ -253,38 +274,17 @@ export default function TransactionsPage() {
         </div>
       </div>
 
-      {isAddModalOpen ? (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/30 p-4"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="add-transaction-title"
-        >
-          <div className="w-full max-w-md rounded-md bg-white p-6 shadow-xl">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h2
-                  id="add-transaction-title"
-                  className="text-lg font-semibold text-slate-950"
-                >
-                  Add Transaction
-                </h2>
-                <p className="mt-1 text-sm text-slate-600">
-                  The transaction form will live here.
-                </p>
-              </div>
-              <button
-                type="button"
-                aria-label="Close modal"
-                className="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-500 transition hover:bg-slate-100 hover:text-slate-950"
-                onClick={() => setIsAddModalOpen(false)}
-              >
-                <X aria-hidden="true" className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
+      <Modal
+        open={isFormModalOpen}
+        title={formTransaction ? "Edit Transaction" : "Add Transaction"}
+        onClose={closeFormModal}
+      >
+        <TransactionForm
+          transaction={formTransaction}
+          onCancel={closeFormModal}
+          onSuccess={closeFormModal}
+        />
+      </Modal>
     </div>
   );
 }
