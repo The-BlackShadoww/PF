@@ -4,6 +4,7 @@ import { JwtModule, type JwtSignOptions } from '@nestjs/jwt';
 import { DbModule } from '../../db/db.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { GoogleStrategy } from './strategies/google.strategy';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { AuthService } from './auth.service';
       inject: [ConfigService],
     }),
   ],
-  providers: [AuthService],
+  providers: [AuthService, GoogleStrategy],
   controllers: [AuthController],
   exports: [JwtModule],
 })

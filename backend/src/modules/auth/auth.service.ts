@@ -43,6 +43,64 @@ export class AuthService {
     private readonly configService: ConfigService,
   ) {}
 
+  async validateGoogleUser(profile: {
+    googleId: string;
+    email: string;
+    name: string;
+    avatarUrl?: string;
+  }): Promise<RegisteredUser> {
+    const [existingUser] = await this.db
+      .select({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        createdAt: users.createdAt,
+        googleId: users.googleId,
+      })
+      .from(users)
+      .where(and(eq(users.email, profile.email), isNull(users.deletedAt)))
+      .limit(1);
+
+    if (existingUser) {
+      if (!existingUser.googleId) {
+        const [updatedUser] = await this.db
+          .update(users)
+          .set({ googleId: profile.googleId, avatarUrl: profile.avatarUrl })
+          .where(eq(users.id, existingUser.id))
+          .returning({
+            id: users.id,
+            name: users.name,
+            email: users.email,
+            createdAt: users.createdAt,
+          });
+        return updatedUser;
+      }
+      return {
+        id: existingUser.id,
+        name: existingUser.name,
+        email: existingUser.email,
+        createdAt: existingUser.createdAt,
+      };
+    }
+
+    const [newUser] = await this.db
+      .insert(users)
+      .values({
+        name: profile.name,
+        email: profile.email,
+        googleId: profile.googleId,
+        avatarUrl: profile.avatarUrl,
+      })
+      .returning({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        createdAt: users.createdAt,
+      });
+
+    return newUser;
+  }
+
   async register(dto: RegisterDto): Promise<RegisteredUser> {
     const [existing] = await this.db
       .select({ id: users.id })
