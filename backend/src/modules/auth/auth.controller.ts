@@ -18,6 +18,7 @@ import type { AuthenticatedUser } from '../../common/types/authenticated-user.in
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { Disable2FaDto, Enable2FaDto, Verify2FaDto } from './dto/two-factor.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -98,6 +99,41 @@ export class AuthController {
     
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
     return res.redirect(`${frontendUrl}/auth/callback?token=${result.accessToken}`);
+  }
+
+  @Post('2fa/setup')
+  @HttpCode(HttpStatus.OK)
+  setup2fa(@CurrentUser() user: AuthenticatedUser) {
+    return this.authService.setup2fa(user.id);
+  }
+
+  @Post('2fa/enable')
+  @HttpCode(HttpStatus.OK)
+  enable2fa(@CurrentUser() user: AuthenticatedUser, @Body() dto: Enable2FaDto) {
+    return this.authService.enable2fa(user.id, dto.code);
+  }
+
+  @Public()
+  @Post('2fa/verify')
+  @HttpCode(HttpStatus.OK)
+  async verify2fa(
+    @Body() dto: Verify2FaDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { accessToken, refreshToken } = await this.authService.verify2fa(
+      dto.tempToken,
+      dto.code,
+    );
+
+    this.setRefreshTokenCookie(res, refreshToken);
+
+    return { accessToken };
+  }
+
+  @Post('2fa/disable')
+  @HttpCode(HttpStatus.OK)
+  disable2fa(@CurrentUser() user: AuthenticatedUser, @Body() dto: Disable2FaDto) {
+    return this.authService.disable2fa(user.id, dto.code);
   }
 
   @Get('me')
