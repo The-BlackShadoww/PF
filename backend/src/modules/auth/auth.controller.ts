@@ -9,6 +9,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { Throttle } from '@nestjs/throttler';
 import type { Request, Response } from 'express';
@@ -20,10 +21,14 @@ import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { Disable2FaDto, Enable2FaDto, Verify2FaDto } from './dto/two-factor.dto';
 
+@ApiTags('Authentication')
+@ApiBearerAuth()
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @ApiOperation({ summary: 'Register a new user' })
+  @ApiResponse({ status: 201, description: 'User successfully registered.' })
   @Public()
   @Throttle({ default: { limit: 5, ttl: 900000 } })
   @Post('register')
@@ -32,6 +37,8 @@ export class AuthController {
     return this.authService.register(dto);
   }
 
+  @ApiOperation({ summary: 'Log in user' })
+  @ApiResponse({ status: 200, description: 'User successfully logged in.' })
   @Public()
   @Throttle({ default: { limit: 10, ttl: 900000 } })
   @Post('login')
@@ -53,6 +60,8 @@ export class AuthController {
     return { accessToken };
   }
 
+  @ApiOperation({ summary: 'Refresh access token' })
+  @ApiResponse({ status: 200, description: 'Access token successfully refreshed.' })
   @Public()
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
@@ -69,6 +78,8 @@ export class AuthController {
     return { accessToken };
   }
 
+  @ApiOperation({ summary: 'Log out user' })
+  @ApiResponse({ status: 204, description: 'User successfully logged out.' })
   @Public()
   @Post('logout')
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -81,11 +92,15 @@ export class AuthController {
     });
   }
 
+  @ApiOperation({ summary: 'Google OAuth login' })
+  @ApiResponse({ status: 200, description: 'Redirects to Google for authentication.' })
   @Public()
   @Get('google')
   @UseGuards(AuthGuard('google'))
   async googleAuth(@Req() req: Request) {}
 
+  @ApiOperation({ summary: 'Google OAuth callback' })
+  @ApiResponse({ status: 200, description: 'Google authentication successful.' })
   @Public()
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
@@ -101,18 +116,24 @@ export class AuthController {
     return res.redirect(`${frontendUrl}/auth/callback?token=${result.accessToken}`);
   }
 
+  @ApiOperation({ summary: 'Setup Two-Factor Authentication' })
+  @ApiResponse({ status: 200, description: '2FA setup initiated successfully.' })
   @Post('2fa/setup')
   @HttpCode(HttpStatus.OK)
   setup2fa(@CurrentUser() user: AuthenticatedUser) {
     return this.authService.setup2fa(user.id);
   }
 
+  @ApiOperation({ summary: 'Enable Two-Factor Authentication' })
+  @ApiResponse({ status: 200, description: '2FA enabled successfully.' })
   @Post('2fa/enable')
   @HttpCode(HttpStatus.OK)
   enable2fa(@CurrentUser() user: AuthenticatedUser, @Body() dto: Enable2FaDto) {
     return this.authService.enable2fa(user.id, dto.code);
   }
 
+  @ApiOperation({ summary: 'Verify Two-Factor Authentication code' })
+  @ApiResponse({ status: 200, description: '2FA verified successfully.' })
   @Public()
   @Post('2fa/verify')
   @HttpCode(HttpStatus.OK)
@@ -130,12 +151,16 @@ export class AuthController {
     return { accessToken };
   }
 
+  @ApiOperation({ summary: 'Disable Two-Factor Authentication' })
+  @ApiResponse({ status: 200, description: '2FA disabled successfully.' })
   @Post('2fa/disable')
   @HttpCode(HttpStatus.OK)
   disable2fa(@CurrentUser() user: AuthenticatedUser, @Body() dto: Disable2FaDto) {
     return this.authService.disable2fa(user.id, dto.code);
   }
 
+  @ApiOperation({ summary: 'Get current user profile' })
+  @ApiResponse({ status: 200, description: 'Current user retrieved successfully.' })
   @Get('me')
   getMe(@CurrentUser() user: AuthenticatedUser) {
     return user;

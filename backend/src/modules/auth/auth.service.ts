@@ -12,7 +12,7 @@ import { and, desc, eq, gt, isNull } from 'drizzle-orm';
 import * as OTPAuth from 'otpauth';
 import * as qrcode from 'qrcode';
 import { DB_TOKEN, type DrizzleDB } from '../../db/db.constants';
-import { refreshTokens, users } from '../../db/schema';
+import { categories, refreshTokens, users } from '../../db/schema';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 
@@ -100,6 +100,8 @@ export class AuthService {
         createdAt: users.createdAt,
       });
 
+    await this.seedDefaultCategories(newUser.id);
+
     return newUser;
   }
 
@@ -129,6 +131,8 @@ export class AuthService {
         email: users.email,
         createdAt: users.createdAt,
       });
+
+    await this.seedDefaultCategories(user.id);
 
     return user;
   }
@@ -443,5 +447,19 @@ export class AuthService {
     };
 
     return value * unitMs[match[2]];
+  }
+
+  private async seedDefaultCategories(userId: string) {
+    const defaultCategories = [
+      { userId, name: 'Salary', type: 'income' as const, color: '#10b981', icon: 'banknote', isDefault: true, sortOrder: 0 },
+      { userId, name: 'Freelance', type: 'income' as const, color: '#3b82f6', icon: 'briefcase', isDefault: true, sortOrder: 1 },
+      { userId, name: 'Groceries', type: 'expense' as const, color: '#f59e0b', icon: 'shopping-cart', isDefault: true, sortOrder: 2 },
+      { userId, name: 'Rent', type: 'expense' as const, color: '#ef4444', icon: 'home', isDefault: true, sortOrder: 3 },
+      { userId, name: 'Utilities', type: 'expense' as const, color: '#6366f1', icon: 'zap', isDefault: true, sortOrder: 4 },
+      { userId, name: 'Transport', type: 'expense' as const, color: '#8b5cf6', icon: 'car', isDefault: true, sortOrder: 5 },
+      { userId, name: 'Entertainment', type: 'expense' as const, color: '#ec4899', icon: 'film', isDefault: true, sortOrder: 6 },
+      { userId, name: 'Health', type: 'expense' as const, color: '#14b8a6', icon: 'heart', isDefault: true, sortOrder: 7 },
+    ];
+    await this.db.insert(categories).values(defaultCategories);
   }
 }
