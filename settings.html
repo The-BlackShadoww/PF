@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Account Settings</title>
+  <meta name="description" content="Manage your account settings including profile, security, and preferences." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Reset & Base ─────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-deep: #0b0e17;
+      --bg-surface: rgba(17, 21, 35, .82);
+      --bg-card: rgba(24, 29, 50, .72);
+      --bg-input: rgba(30, 36, 62, .65);
+      --border: rgba(99, 115, 175, .18);
+      --border-focus: rgba(124, 131, 255, .55);
+      --text-primary: #e8eaf6;
+      --text-secondary: #8b92b3;
+      --text-muted: #5c6380;
+      --accent: #7c83ff;
+      --accent-glow: rgba(124, 131, 255, .35);
+      --accent-hover: #9499ff;
+      --success: #34d399;
+      --success-glow: rgba(52, 211, 153, .25);
+      --danger: #f87171;
+      --danger-glow: rgba(248, 113, 113, .2);
+      --warning: #fbbf24;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --transition: 260ms cubic-bezier(.4,0,.2,1);
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    html { font-size: 15px; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 48px 20px 80px;
+      overflow-x: hidden;
+    }
+
+    /* Ambient background blobs */
+    body::before, body::after {
+      content: '';
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: .35;
+      pointer-events: none;
+      z-index: 0;
+    }
+    body::before {
+      width: 520px; height: 520px;
+      background: radial-gradient(circle, #7c83ff 0%, transparent 70%);
+      top: -120px; left: -80px;
+    }
+    body::after {
+      width: 440px; height: 440px;
+      background: radial-gradient(circle, #a78bfa 0%, transparent 70%);
+      bottom: -60px; right: -60px;
+    }
+
+    /* ─── Layout ────────────────────────────────────────────── */
+    .settings-container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 680px;
+    }
+
+    .settings-header {
+      margin-bottom: 32px;
+    }
+    .settings-header h1 {
+      font-size: 1.85rem;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      background: linear-gradient(135deg, var(--text-primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .settings-header p {
+      margin-top: 6px;
+      color: var(--text-secondary);
+      font-size: .92rem;
+    }
+
+    /* ─── Tabs ──────────────────────────────────────────────── */
+    .tabs-bar {
+      display: flex;
+      gap: 4px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 5px;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      margin-bottom: 28px;
+      position: relative;
+    }
+
+    .tab-btn {
+      flex: 1;
+      position: relative;
+      z-index: 1;
+      padding: 12px 10px;
+      border: none;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: var(--font);
+      font-size: .88rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .tab-btn:hover { color: var(--text-primary); }
+    .tab-btn.active {
+      color: #fff;
+      background: linear-gradient(135deg, rgba(124,131,255,.22), rgba(124,131,255,.08));
+      box-shadow: 0 0 18px var(--accent-glow);
+    }
+    .tab-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+    /* ─── Panel (shared) ───────────────────────────────────── */
+    .tab-panel {
+      display: none;
+      animation: panelIn 360ms ease forwards;
+    }
+    .tab-panel.active { display: block; }
+
+    @keyframes panelIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .card:hover {
+      border-color: rgba(124,131,255,.22);
+      box-shadow: 0 4px 30px rgba(124,131,255,.06);
+    }
+    .card + .card { margin-top: 20px; }
+
+    .card-title {
+      font-size: 1.08rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .card-desc {
+      color: var(--text-secondary);
+      font-size: .82rem;
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    /* ─── Form Elements ────────────────────────────────────── */
+    .form-group { margin-bottom: 20px; }
+    .form-group:last-of-type { margin-bottom: 0; }
+
+    label {
+      display: block;
+      font-size: .82rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 7px;
+      letter-spacing: .02em;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    select {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-family: var(--font);
+      font-size: .9rem;
+      outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    input:focus, select:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    input::placeholder { color: var(--text-muted); }
+
+    /* Custom select arrow */
+    .select-wrap {
+      position: relative;
+    }
+    .select-wrap::after {
+      content: '';
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0; height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 5px solid var(--text-secondary);
+      pointer-events: none;
+    }
+    .select-wrap select { padding-right: 40px; cursor: pointer; }
+    select option {
+      background: #181d32;
+      color: var(--text-primary);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .password-wrap {
+      position: relative;
+    }
+    .password-toggle {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 2px;
+      transition: color var(--transition);
+    }
+    .password-toggle:hover { color: var(--text-primary); }
+    .password-toggle svg { width: 18px; height: 18px; }
+
+    /* ─── Avatar ────────────────────────────────────────────── */
+    .avatar-section {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+    .avatar-ring {
+      position: relative;
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #a78bfa);
+      padding: 3px;
+      flex-shrink: 0;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .avatar-ring:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 28px var(--accent-glow);
+    }
+    .avatar-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      background: var(--bg-deep);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .avatar-actions { display: flex; flex-direction: column; gap: 8px; }
+    .avatar-actions span {
+      font-size: .76rem;
+      color: var(--text-muted);
+    }
+
+    .btn-upload {
+      padding: 9px 18px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-input);
+      color: var(--text-primary);
+      font-family: var(--font);
+      font-size: .82rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background var(--transition), border-color var(--transition);
+    }
+    .btn-upload:hover {
+      background: rgba(124,131,255,.12);
+      border-color: var(--accent);
+    }
+
+    #avatar-input { display: none; }
+
+    /* ─── 2FA Card ──────────────────────────────────────────── */
+    .tfa-status {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 20px;
+      background: var(--bg-input);
+      border-radius: var(--radius-sm);
+      margin-bottom: 16px;
+    }
+    .tfa-status-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .tfa-icon {
+      width: 42px; height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .tfa-icon.enabled {
+      background: var(--success-glow);
+      color: var(--success);
+    }
+    .tfa-icon.disabled {
+      background: var(--danger-glow);
+      color: var(--danger);
+    }
+    .tfa-icon svg { width: 22px; height: 22px; }
+    .tfa-label { font-weight: 500; font-size: .92rem; }
+    .tfa-sublabel { font-size: .78rem; color: var(--text-muted); margin-top: 2px; }
+
+    /* Toggle switch */
+    .toggle {
+      position: relative;
+      width: 48px;
+      height: 26px;
+      cursor: pointer;
+    }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,.08);
+      border-radius: 99px;
+      transition: background var(--transition);
+    }
+    .toggle input:checked + .toggle-track {
+      background: var(--accent);
+    }
+    .toggle-thumb {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 20px;
+      height: 20px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform var(--transition);
+      box-shadow: 0 1px 4px rgba(0,0,0,.3);
+    }
+    .toggle input:checked ~ .toggle-thumb {
+      transform: translateX(22px);
+    }
+
+    .tfa-setup {
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transition: max-height 400ms ease, opacity 300ms ease, margin 300ms ease;
+      margin-top: 0;
+    }
+    .tfa-setup.open {
+      max-height: 300px;
+      opacity: 1;
+      margin-top: 16px;
+    }
+    .tfa-setup-inner {
+      padding: 20px;
+      background: rgba(124,131,255,.05);
+      border: 1px dashed rgba(124,131,255,.2);
+      border-radius: var(--radius-sm);
+    }
+    .tfa-setup-inner p {
+      font-size: .84rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+    .tfa-code-input {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .tfa-code-input input {
+      width: 44px;
+      height: 48px;
+      text-align: center;
+      font-size: 1.15rem;
+      font-weight: 600;
+      padding: 0;
+      border-radius: 8px;
+      letter-spacing: 0;
+    }
+
+    /* ─── Timezone extras ──────────────────────────────────── */
+    .tz-current {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 18px;
+      background: var(--bg-input);
+      border-radius: var(--radius-sm);
+      margin-bottom: 20px;
+      font-size: .88rem;
+    }
+    .tz-current svg { color: var(--accent); flex-shrink: 0; width: 18px; height: 18px; }
+    .tz-current strong { color: var(--text-primary); }
+
+    /* ─── Buttons ───────────────────────────────────────────── */
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 28px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font);
+      font-size: .88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+      position: relative;
+      overflow: hidden;
+      min-width: 140px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #6366f1);
+      color: #fff;
+      box-shadow: 0 4px 18px var(--accent-glow);
+    }
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 28px rgba(124,131,255,.45);
+    }
+    .btn-primary:active:not(:disabled) { transform: translateY(0); }
+
+    .btn-danger {
+      background: linear-gradient(135deg, var(--danger), #dc2626);
+      color: #fff;
+      box-shadow: 0 4px 14px var(--danger-glow);
+    }
+    .btn-danger:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 22px rgba(248,113,113,.35);
+    }
+
+    .btn:disabled {
+      opacity: .65;
+      cursor: not-allowed;
+    }
+
+    /* Loading spinner inside button */
+    .btn .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── Toast ─────────────────────────────────────────────── */
+    .toast-container {
+      position: fixed;
+      top: 28px;
+      right: 28px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .toast {
+      padding: 14px 22px;
+      border-radius: var(--radius-sm);
+      font-size: .86rem;
+      font-weight: 500;
+      color: #fff;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 8px 32px rgba(0,0,0,.35);
+      animation: toastIn 400ms ease forwards;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 260px;
+    }
+    .toast.success {
+      background: linear-gradient(135deg, rgba(52,211,153,.88), rgba(16,185,129,.88));
+    }
+    .toast.error {
+      background: linear-gradient(135deg, rgba(248,113,113,.88), rgba(220,38,38,.88));
+    }
+    .toast svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateX(40px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes toastOut {
+      from { opacity: 1; transform: translateX(0); }
+      to   { opacity: 0; transform: translateX(40px); }
+    }
+
+    /* ─── Responsive ───────────────────────────────────────── */
+    @media (max-width: 600px) {
+      body { padding: 24px 14px 60px; }
+      .form-row { grid-template-columns: 1fr; }
+      .tab-btn span { display: none; }
+      .card { padding: 22px 18px; }
+      .avatar-section { flex-direction: column; text-align: center; }
+      .avatar-actions { align-items: center; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="settings-container">
+
+  <!-- Header -->
+  <header class="settings-header">
+    <h1>Settings</h1>
+    <p>Manage your account preferences and security options.</p>
+  </header>
+
+  <!-- Tabs -->
+  <nav class="tabs-bar" role="tablist" aria-label="Settings sections">
+    <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="panel-profile" id="tab-profile" data-tab="profile">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>Profile</span>
+    </button>
+    <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-security" id="tab-security" data-tab="security">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <span>Security</span>
+    </button>
+    <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-preferences" id="tab-preferences" data-tab="preferences">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span>Preferences</span>
+    </button>
+  </nav>
+
+  <!-- ═══════════════ PROFILE PANEL ═══════════════ -->
+  <section class="tab-panel active" id="panel-profile" role="tabpanel" aria-labelledby="tab-profile">
+    <form class="card" id="profile-form" autocomplete="off">
+      <h2 class="card-title">Profile Information</h2>
+      <p class="card-desc">Update your personal details and public profile.</p>
+
+      <!-- Avatar -->
+      <div class="avatar-section">
+        <div class="avatar-ring">
+          <div class="avatar-img" id="avatar-preview">JD</div>
+        </div>
+        <div class="avatar-actions">
+          <button type="button" class="btn-upload" id="avatar-upload-btn" aria-label="Upload new avatar">Upload Photo</button>
+          <input type="file" id="avatar-input" accept="image/*" />
+          <span>JPG, PNG or WebP · Max 2 MB</span>
+        </div>
+      </div>
+
+      <!-- Name fields -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="first-name">First Name</label>
+          <input type="text" id="first-name" placeholder="John" value="John" />
+        </div>
+        <div class="form-group">
+          <label for="last-name">Last Name</label>
+          <input type="text" id="last-name" placeholder="Doe" value="Doe" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="display-name">Display Name</label>
+        <input type="text" id="display-name" placeholder="johndoe" value="johndoe" />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" placeholder="john@example.com" value="john@example.com" />
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary" id="profile-submit">
+          <span class="btn-label">Save Changes</span>
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <!-- ═══════════════ SECURITY PANEL ═══════════════ -->
+  <section class="tab-panel" id="panel-security" role="tabpanel" aria-labelledby="tab-security">
+
+    <!-- Change Password -->
+    <form class="card" id="password-form" autocomplete="off">
+      <h2 class="card-title">Change Password</h2>
+      <p class="card-desc">Ensure your account stays secure by using a strong password.</p>
+
+      <div class="form-group">
+        <label for="current-password">Current Password</label>
+        <div class="password-wrap">
+          <input type="password" id="current-password" placeholder="••••••••" />
+          <button type="button" class="password-toggle" aria-label="Toggle password visibility" data-target="current-password">
+            <svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="new-password">New Password</label>
+          <div class="password-wrap">
+            <input type="password" id="new-password" placeholder="••••••••" />
+            <button type="button" class="password-toggle" aria-label="Toggle password visibility" data-target="new-password">
+              <svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="confirm-password">Confirm Password</label>
+          <div class="password-wrap">
+            <input type="password" id="confirm-password" placeholder="••••••••" />
+            <button type="button" class="password-toggle" aria-label="Toggle password visibility" data-target="confirm-password">
+              <svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Password strength bar -->
+      <div style="margin-top:4px">
+        <div style="height:4px;border-radius:4px;background:rgba(255,255,255,.06);overflow:hidden">
+          <div id="pw-strength-bar" style="height:100%;width:0;border-radius:4px;transition:width .35s ease,background .35s ease"></div>
+        </div>
+        <p id="pw-strength-label" style="font-size:.76rem;color:var(--text-muted);margin-top:5px"></p>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary" id="password-submit">
+          <span class="btn-label">Update Password</span>
+        </button>
+      </div>
+    </form>
+
+    <!-- 2FA -->
+    <div class="card" id="tfa-card">
+      <h2 class="card-title">Two-Factor Authentication</h2>
+      <p class="card-desc">Add an extra layer of security to your account using an authenticator app.</p>
+
+      <div class="tfa-status">
+        <div class="tfa-status-left">
+          <div class="tfa-icon disabled" id="tfa-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div>
+            <div class="tfa-label" id="tfa-label">2FA is Disabled</div>
+            <div class="tfa-sublabel" id="tfa-sublabel">Your account is less secure</div>
+          </div>
+        </div>
+        <label class="toggle" id="tfa-toggle">
+          <input type="checkbox" id="tfa-checkbox" />
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+
+      <div class="tfa-setup" id="tfa-setup">
+        <div class="tfa-setup-inner">
+          <p>Enter the 6-digit code from your authenticator app to verify and enable 2FA.</p>
+          <div class="tfa-code-input" id="tfa-code-group">
+            <input type="text" maxlength="1" class="tfa-digit" data-index="0" aria-label="Digit 1" />
+            <input type="text" maxlength="1" class="tfa-digit" data-index="1" aria-label="Digit 2" />
+            <input type="text" maxlength="1" class="tfa-digit" data-index="2" aria-label="Digit 3" />
+            <input type="text" maxlength="1" class="tfa-digit" data-index="3" aria-label="Digit 4" />
+            <input type="text" maxlength="1" class="tfa-digit" data-index="4" aria-label="Digit 5" />
+            <input type="text" maxlength="1" class="tfa-digit" data-index="5" aria-label="Digit 6" />
+          </div>
+          <button type="button" class="btn btn-primary" id="tfa-verify-btn" style="width:100%">
+            <span class="btn-label">Verify &amp; Enable</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ PREFERENCES PANEL ═══════════════ -->
+  <section class="tab-panel" id="panel-preferences" role="tabpanel" aria-labelledby="tab-preferences">
+    <form class="card" id="preferences-form">
+      <h2 class="card-title">Preferences</h2>
+      <p class="card-desc">Customise your experience and regional settings.</p>
+
+      <div class="tz-current" id="tz-current">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>Your detected timezone: <strong id="tz-detected">—</strong></span>
+      </div>
+
+      <div class="form-group">
+        <label for="timezone-select">Timezone</label>
+        <div class="select-wrap">
+          <select id="timezone-select"></select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="date-format">Date Format</label>
+        <div class="select-wrap">
+          <select id="date-format">
+            <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+            <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+            <option value="YYYY-MM-DD" selected>YYYY-MM-DD (ISO)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="language-select">Language</label>
+        <div class="select-wrap">
+          <select id="language-select">
+            <option value="en" selected>English</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+            <option value="de">Deutsch</option>
+            <option value="ja">日本語</option>
+            <option value="zh">中文</option>
+            <option value="ar">العربية</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary" id="preferences-submit">
+          <span class="btn-label">Save Preferences</span>
+        </button>
+      </div>
+    </form>
+  </section>
+
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+  /* ─── Tab Switching ──────────────────────────────────────── */
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const panels  = document.querySelectorAll('.tab-panel');
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+      panels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected', 'true');
+      const panel = document.getElementById('panel-' + btn.dataset.tab);
+      panel.classList.add('active');
+      // Re-trigger animation
+      panel.style.animation = 'none';
+      panel.offsetHeight;
+      panel.style.animation = '';
+    });
+  });
+
+  /* ─── Toast Utility ─────────────────────────────────────── */
+  function showToast(message, type = 'success') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    const icon = type === 'success'
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+    toast.innerHTML = icon + message;
+    container.appendChild(toast);
+    setTimeout(() => {
+      toast.style.animation = 'toastOut 350ms ease forwards';
+      toast.addEventListener('animationend', () => toast.remove());
+    }, 3200);
+  }
+
+  /* ─── Loading Button Helper ─────────────────────────────── */
+  function setLoading(btn, loading) {
+    const label = btn.querySelector('.btn-label');
+    if (loading) {
+      btn.disabled = true;
+      btn._origLabel = label.textContent;
+      label.textContent = '';
+      const spinner = document.createElement('span');
+      spinner.className = 'spinner';
+      btn.insertBefore(spinner, label);
+      label.textContent = 'Saving…';
+    } else {
+      btn.disabled = false;
+      const spinner = btn.querySelector('.spinner');
+      if (spinner) spinner.remove();
+      label.textContent = btn._origLabel || label.textContent;
+    }
+  }
+
+  function simulateSubmit(btn, successMsg) {
+    return new Promise(resolve => {
+      setLoading(btn, true);
+      setTimeout(() => {
+        setLoading(btn, false);
+        showToast(successMsg);
+        resolve();
+      }, 1500);
+    });
+  }
+
+  /* ─── Avatar Upload ─────────────────────────────────────── */
+  const avatarInput = document.getElementById('avatar-input');
+  const avatarPreview = document.getElementById('avatar-preview');
+
+  document.getElementById('avatar-upload-btn').addEventListener('click', () => avatarInput.click());
+
+  avatarInput.addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      showToast('File exceeds 2 MB limit', 'error');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = ev => {
+      avatarPreview.textContent = '';
+      avatarPreview.style.backgroundImage = `url(${ev.target.result})`;
+      avatarPreview.style.backgroundSize = 'cover';
+      avatarPreview.style.backgroundPosition = 'center';
+    };
+    reader.readAsDataURL(file);
+  });
+
+  /* ─── Profile Form ──────────────────────────────────────── */
+  document.getElementById('profile-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const first = document.getElementById('first-name').value.trim();
+    const last  = document.getElementById('last-name').value.trim();
+    if (!first || !last) { showToast('Name fields are required', 'error'); return; }
+    await simulateSubmit(document.getElementById('profile-submit'), 'Profile updated successfully');
+  });
+
+  /* ─── Password Visibility Toggles ───────────────────────── */
+  document.querySelectorAll('.password-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const input = document.getElementById(btn.dataset.target);
+      input.type = input.type === 'password' ? 'text' : 'password';
+    });
+  });
+
+  /* ─── Password Strength Meter ───────────────────────────── */
+  const newPw    = document.getElementById('new-password');
+  const bar      = document.getElementById('pw-strength-bar');
+  const barLabel = document.getElementById('pw-strength-label');
+
+  newPw.addEventListener('input', () => {
+    const val = newPw.value;
+    let score = 0;
+    if (val.length >= 8)  score++;
+    if (val.length >= 12) score++;
+    if (/[A-Z]/.test(val) && /[a-z]/.test(val)) score++;
+    if (/\d/.test(val))   score++;
+    if (/[^A-Za-z0-9]/.test(val)) score++;
+
+    const levels = [
+      { w: '0%',   c: 'transparent',  t: '' },
+      { w: '20%',  c: '#f87171',      t: 'Very weak' },
+      { w: '40%',  c: '#fb923c',      t: 'Weak' },
+      { w: '60%',  c: '#fbbf24',      t: 'Fair' },
+      { w: '80%',  c: '#a3e635',      t: 'Good' },
+      { w: '100%', c: '#34d399',      t: 'Strong' },
+    ];
+    const lvl = levels[score];
+    bar.style.width = lvl.w;
+    bar.style.background = lvl.c;
+    barLabel.textContent = lvl.t;
+    barLabel.style.color = lvl.c;
+  });
+
+  /* ─── Password Form ─────────────────────────────────────── */
+  document.getElementById('password-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const cur  = document.getElementById('current-password').value;
+    const np   = document.getElementById('new-password').value;
+    const conf = document.getElementById('confirm-password').value;
+    if (!cur || !np || !conf) { showToast('All password fields are required', 'error'); return; }
+    if (np !== conf) { showToast('Passwords do not match', 'error'); return; }
+    if (np.length < 8) { showToast('Password must be at least 8 characters', 'error'); return; }
+    await simulateSubmit(document.getElementById('password-submit'), 'Password updated successfully');
+    document.getElementById('password-form').reset();
+    bar.style.width = '0';
+    barLabel.textContent = '';
+  });
+
+  /* ─── 2FA Toggle ─────────────────────────────────────────── */
+  const tfaCb    = document.getElementById('tfa-checkbox');
+  const tfaSetup = document.getElementById('tfa-setup');
+  const tfaIcon  = document.getElementById('tfa-icon');
+  const tfaLabel = document.getElementById('tfa-label');
+  const tfaSub   = document.getElementById('tfa-sublabel');
+  let tfaEnabled = false;
+
+  tfaCb.addEventListener('change', () => {
+    if (tfaCb.checked && !tfaEnabled) {
+      tfaSetup.classList.add('open');
+    } else if (!tfaCb.checked && tfaEnabled) {
+      // Disable 2FA
+      tfaEnabled = false;
+      tfaSetup.classList.remove('open');
+      tfaIcon.className = 'tfa-icon disabled';
+      tfaLabel.textContent = '2FA is Disabled';
+      tfaSub.textContent   = 'Your account is less secure';
+      showToast('Two-factor authentication disabled', 'error');
+    } else {
+      tfaSetup.classList.remove('open');
+    }
+  });
+
+  /* 2FA Code Inputs */
+  const digits = document.querySelectorAll('.tfa-digit');
+  digits.forEach((d, i) => {
+    d.addEventListener('input', e => {
+      d.value = d.value.replace(/\D/g, '');
+      if (d.value && i < digits.length - 1) digits[i + 1].focus();
+    });
+    d.addEventListener('keydown', e => {
+      if (e.key === 'Backspace' && !d.value && i > 0) digits[i - 1].focus();
+    });
+    d.addEventListener('paste', e => {
+      e.preventDefault();
+      const data = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '').slice(0, 6);
+      data.split('').forEach((ch, idx) => { if (digits[idx]) digits[idx].value = ch; });
+      const next = Math.min(data.length, digits.length - 1);
+      digits[next].focus();
+    });
+  });
+
+  document.getElementById('tfa-verify-btn').addEventListener('click', async () => {
+    const code = Array.from(digits).map(d => d.value).join('');
+    if (code.length < 6) { showToast('Please enter all 6 digits', 'error'); return; }
+
+    const btn = document.getElementById('tfa-verify-btn');
+    setLoading(btn, true);
+    btn.querySelector('.btn-label').textContent = 'Verifying…';
+
+    setTimeout(() => {
+      setLoading(btn, false);
+      tfaEnabled = true;
+      tfaSetup.classList.remove('open');
+      tfaIcon.className = 'tfa-icon enabled';
+      tfaLabel.textContent = '2FA is Enabled';
+      tfaSub.textContent   = 'Your account is protected';
+      showToast('Two-factor authentication enabled');
+      digits.forEach(d => d.value = '');
+    }, 1800);
+  });
+
+  /* ─── Timezone Population ───────────────────────────────── */
+  const tzSelect = document.getElementById('timezone-select');
+  const commonTZ = [
+    'Pacific/Midway','Pacific/Honolulu','America/Anchorage','America/Los_Angeles',
+    'America/Denver','America/Chicago','America/New_York','America/Sao_Paulo',
+    'Atlantic/Azores','Europe/London','Europe/Paris','Europe/Berlin',
+    'Europe/Helsinki','Europe/Moscow','Asia/Dubai','Asia/Karachi',
+    'Asia/Dhaka','Asia/Bangkok','Asia/Shanghai','Asia/Tokyo',
+    'Australia/Sydney','Pacific/Auckland'
+  ];
+
+  // Use Intl API for full list, fallback to common set
+  const allTZ = typeof Intl !== 'undefined' && Intl.supportedValuesOf
+    ? Intl.supportedValuesOf('timeZone')
+    : commonTZ;
+
+  allTZ.forEach(tz => {
+    const opt = document.createElement('option');
+    opt.value = tz;
+    opt.textContent = tz.replace(/_/g, ' ');
+    tzSelect.appendChild(opt);
+  });
+
+  // Detect & select user timezone
+  const detected = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  document.getElementById('tz-detected').textContent = detected.replace(/_/g, ' ');
+  tzSelect.value = detected;
+
+  /* ─── Preferences Form ──────────────────────────────────── */
+  document.getElementById('preferences-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    await simulateSubmit(document.getElementById('preferences-submit'), 'Preferences saved successfully');
+  });
+</script>
+
+</body>
+</html>
