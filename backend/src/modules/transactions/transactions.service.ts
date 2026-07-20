@@ -190,6 +190,48 @@ export class TransactionsService {
     return { success: true };
   }
 
+  async getRawTransactionsForReport(
+    userId: string,
+    startDate: Date,
+    endDate: Date,
+  ): Promise<
+    Array<{
+      date: Date;
+      type: 'income' | 'expense';
+      categoryName: string;
+      amountCents: number;
+      note: string | null;
+    }>
+  > {
+    const rows = await this.db
+      .select({
+        date: transactions.date,
+        type: transactions.type,
+        categoryName: categories.name,
+        amountCents: transactions.amountCents,
+        note: transactions.note,
+      })
+      .from(transactions)
+      .innerJoin(categories, eq(transactions.categoryId, categories.id))
+      .where(
+        and(
+          eq(transactions.userId, userId),
+          gte(transactions.date, startDate),
+          lte(transactions.date, endDate),
+          isNull(transactions.deletedAt),
+        ),
+      )
+      .orderBy(transactions.date);
+
+    return rows as Array<{
+      date: Date;
+      type: 'income' | 'expense';
+      categoryName: string;
+      amountCents: number;
+      note: string | null;
+    }>;
+  }
+
   private buildTransactionWhere(
     userId: string,
     filters: TransactionFiltersDto,

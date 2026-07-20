@@ -1,9 +1,16 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { PassThrough } from 'stream';
 import { writeToStream } from 'fast-csv';
 import { and, desc, eq, gte, isNull, lte } from 'drizzle-orm';
+import { renderToBuffer } from '@react-pdf/renderer';
+import { createElement } from 'react';
+import { format, parseISO } from 'date-fns';
 import { DB_TOKEN, type DrizzleDB } from '../../db/db.constants';
 import { categories, transactions } from '../../db/schema';
+import { TransactionsService } from '../transactions/transactions.service';
+import FinancialReportDocument, {
+  type ReportData,
+} from './pdf/financial-report.document';
 
 type CsvFilters = {
   startDate?: string;
@@ -14,7 +21,10 @@ type CsvFilters = {
 
 @Injectable()
 export class ReportsService {
-  constructor(@Inject(DB_TOKEN) private readonly db: DrizzleDB) {}
+  constructor(
+    @Inject(DB_TOKEN) private readonly db: DrizzleDB,
+    private readonly transactionsService: TransactionsService,
+  ) {}
 
   async generateCsv(userId: string, filters: CsvFilters) {
     const rows = await this.findTransactions(userId, filters);
@@ -33,6 +43,86 @@ export class ReportsService {
     ).on('error', (error) => stream.destroy(error));
 
     return stream;
+  }
+
+  async generatePdf(
+    userId: string,
+    userName: string,
+    userEmail: string,
+    startDate: string,
+    endDate: string,
+  ): Promise<Buffer> {
+    // Step 1 — Parse and validate dates
+    const start = parseISO(startDate);
+    const end = parseISO(endDate);
+
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+      throw new BadRequestException('Invalid date format');
+    }
+
+    if (end < start) {
+      throw new BadRequestException('endDate must be after startDate');
+    }
+
+    // Step 2 — Fetch all transactions for the period
+    const rawTransactions =
+      await this.transactionsService.getRawTransactionsForReport(
+        userId,
+        start,
+        end,
+      );
+
+    // Step 3 — Compute summary by aggregating rawTransactions in JavaScript
+    const totalIncomeCents = rawTransactions
+      .filter((t) => t.type === 'income')
+      .reduce((sum, t) => sum + t.amountCents, 0);
+
+    const totalExpenseCents = rawTransactions
+      .filter((t) => t.type === 'expense')
+      .reduce((sum, t) => sum + t.amountCents, 0);
+
+    const savingsCents = totalIncomeCents - totalExpenseCents;
+
+    const savingsRate =
+      totalIncomeCents > 0
+        ? ((savingsCents / totalIncomeCents) * 100).toFixed(1)
+        : '0.0';
+
+    // Step 4 — Build the ReportData object
+    const reportData: ReportData = {
+      period: {
+        startDate,
+        endDate,
+        label:
+          start.getFullYear() === end.getFullYear() &&
+          start.getMonth() === end.getMonth()
+            ? format(start, 'MMMM yyyy')
+            : `${format(start, 'MMMM yyyy')} – ${format(end, 'MMMM yyyy')}`,
+      },
+      user: { name: userName, email: userEmail },
+      summary: {
+        totalIncomeCents,
+        totalExpenseCents,
+        savingsCents,
+        savingsRate,
+        transactionCount: rawTransactions.length,
+      },
+      transactions: rawTransactions.map((t) => ({
+        date: format(t.date, 'MMM dd, yyyy'),
+        type: t.type,
+        categoryName: t.categoryName,
+        amountCents: t.amountCents,
+        note: t.note,
+      })),
+      generatedAt: format(new Date(), "MMMM d, yyyy 'at' h:mm a"),
+    };
+
+    // Step 5 — Render to Buffer
+    const element = createElement(FinancialReportDocument, {
+      data: reportData,
+    });
+    const buffer = await renderToBuffer(element as any);
+    return buffer as unknown as Buffer;
   }
 
   private findTransactions(userId: string, filters: CsvFilters) {

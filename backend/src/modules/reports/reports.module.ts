@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { TransactionsModule } from '../transactions/transactions.module';
 import { ReportsController } from './reports.controller';
 import { ReportsService } from './reports.service';
 
@@ -15,6 +16,7 @@ import { ReportsService } from './reports.service';
         },
       ],
     }),
+    TransactionsModule,
   ],
   controllers: [ReportsController],
   providers: [ReportsService],
