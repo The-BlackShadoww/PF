@@ -26,6 +26,7 @@ import { TransactionsModule } from './modules/transactions/transactions.module';
         JWT_SECRET: Joi.string().required(),
         REFRESH_TOKEN_SECRET: Joi.string().required(),
         FRONTEND_URL: Joi.string().required(),
+        BACKEND_URL: Joi.string().required(),
         GOOGLE_CLIENT_ID: Joi.string().optional(),
         GOOGLE_CLIENT_SECRET: Joi.string().optional(),
         REDIS_URL: Joi.string().optional(),

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Inject,
   Injectable,
@@ -45,60 +46,94 @@ export class AuthService {
     private readonly configService: ConfigService,
   ) {}
 
-  async validateGoogleUser(profile: {
+  async upsertGoogleUser(googleUser: {
     googleId: string;
-    email: string;
+    email: string | null;
     name: string;
-    avatarUrl?: string;
-  }): Promise<RegisteredUser> {
-    const [existingUser] = await this.db
-      .select({
-        id: users.id,
-        name: users.name,
-        email: users.email,
-        createdAt: users.createdAt,
-        googleId: users.googleId,
-      })
+    avatarUrl: string | null;
+  }): Promise<{ id: string; email: string; name: string }> {
+
+    // Step 1: Try to find an existing user by googleId
+    // This handles returning users who previously signed in with Google
+    const existingByGoogleId = await this.db
+      .select()
       .from(users)
-      .where(and(eq(users.email, profile.email), isNull(users.deletedAt)))
+      .where(
+        and(
+          eq(users.googleId, googleUser.googleId),
+          isNull(users.deletedAt),
+        )
+      )
       .limit(1);
 
-    if (existingUser) {
-      if (!existingUser.googleId) {
+    if (existingByGoogleId.length > 0) {
+      // User exists — return them as-is
+      // We intentionally do NOT update their name or avatar on every login:
+      // if they changed their Google profile but also customized their app
+      // profile, we'd silently overwrite their changes. Let them update
+      // their profile manually in Settings.
+      const user = existingByGoogleId[0];
+      return { id: user.id, email: user.email, name: user.name };
+    }
+
+    // Step 2: If no user found by googleId, check if their email already exists
+    // This handles the case: user registered with email/password using the SAME
+    // email address, then later tries to "Sign in with Google".
+    // We link the Google account to their existing account instead of
+    // creating a duplicate account.
+    if (googleUser.email) {
+      const existingByEmail = await this.db
+        .select()
+        .from(users)
+        .where(
+          and(
+            eq(users.email, googleUser.email),
+            isNull(users.deletedAt),
+          )
+        )
+        .limit(1);
+
+      if (existingByEmail.length > 0) {
+        // Link the Google ID to the existing account
         const [updatedUser] = await this.db
           .update(users)
-          .set({ googleId: profile.googleId, avatarUrl: profile.avatarUrl })
-          .where(eq(users.id, existingUser.id))
-          .returning({
-            id: users.id,
-            name: users.name,
-            email: users.email,
-            createdAt: users.createdAt,
-          });
+          .set({
+            googleId: googleUser.googleId,
+            avatarUrl: googleUser.avatarUrl ?? existingByEmail[0].avatarUrl,
+            updatedAt: new Date(),
+          })
+          .where(eq(users.id, existingByEmail[0].id))
+          .returning({ id: users.id, email: users.email, name: users.name });
+
         return updatedUser;
       }
-      return {
-        id: existingUser.id,
-        name: existingUser.name,
-        email: existingUser.email,
-        createdAt: existingUser.createdAt,
-      };
+    }
+
+    // Step 3: Completely new user — create their account
+    // OAuth users have no passwordHash (they authenticate via Google, not password)
+    const email = googleUser.email;
+    if (!email) {
+      // Google did not return an email — this is rare but possible
+      // (user may have denied email permission in the consent screen)
+      // We cannot create an account without an email — it's our unique identifier
+      throw new BadRequestException(
+        'Google account did not provide an email address. ' +
+        'Please ensure your Google account has a verified email.'
+      );
     }
 
     const [newUser] = await this.db
       .insert(users)
       .values({
-        name: profile.name,
-        email: profile.email,
-        googleId: profile.googleId,
-        avatarUrl: profile.avatarUrl,
+        name: googleUser.name,
+        email: email,
+        passwordHash: null,       // OAuth users have no password
+        googleId: googleUser.googleId,
+        avatarUrl: googleUser.avatarUrl,
+        // twoFactorEnabled defaults to false (from schema)
+        // timezone defaults to 'UTC' (from schema)
       })
-      .returning({
-        id: users.id,
-        name: users.name,
-        email: users.email,
-        createdAt: users.createdAt,
-      });
+      .returning({ id: users.id, email: users.email, name: users.name });
 
     await this.seedDefaultCategories(newUser.id);
 
@@ -449,17 +484,25 @@ export class AuthService {
     return value * unitMs[match[2]];
   }
 
-  private async seedDefaultCategories(userId: string) {
-    const defaultCategories = [
-      { userId, name: 'Salary', type: 'income' as const, color: '#10b981', icon: 'banknote', isDefault: true, sortOrder: 0 },
-      { userId, name: 'Freelance', type: 'income' as const, color: '#3b82f6', icon: 'briefcase', isDefault: true, sortOrder: 1 },
-      { userId, name: 'Groceries', type: 'expense' as const, color: '#f59e0b', icon: 'shopping-cart', isDefault: true, sortOrder: 2 },
-      { userId, name: 'Rent', type: 'expense' as const, color: '#ef4444', icon: 'home', isDefault: true, sortOrder: 3 },
-      { userId, name: 'Utilities', type: 'expense' as const, color: '#6366f1', icon: 'zap', isDefault: true, sortOrder: 4 },
-      { userId, name: 'Transport', type: 'expense' as const, color: '#8b5cf6', icon: 'car', isDefault: true, sortOrder: 5 },
-      { userId, name: 'Entertainment', type: 'expense' as const, color: '#ec4899', icon: 'film', isDefault: true, sortOrder: 6 },
-      { userId, name: 'Health', type: 'expense' as const, color: '#14b8a6', icon: 'heart', isDefault: true, sortOrder: 7 },
+  private async seedDefaultCategories(userId: string): Promise<void> {
+    const defaults = [
+      // Income categories
+      { name: 'Salary',        type: 'income' as const,  color: '#16a34a', icon: 'briefcase',       isDefault: true, sortOrder: 0 },
+      { name: 'Freelance',     type: 'income' as const,  color: '#2563eb', icon: 'laptop',          isDefault: true, sortOrder: 1 },
+      { name: 'Investment',    type: 'income' as const,  color: '#7c3aed', icon: 'trending-up',     isDefault: true, sortOrder: 2 },
+      { name: 'Other Income',  type: 'income' as const,  color: '#0891b2', icon: 'plus-circle',     isDefault: true, sortOrder: 3 },
+      // Expense categories
+      { name: 'Groceries',     type: 'expense' as const, color: '#dc2626', icon: 'shopping-cart',   isDefault: true, sortOrder: 0 },
+      { name: 'Rent',          type: 'expense' as const, color: '#ea580c', icon: 'home',            isDefault: true, sortOrder: 1 },
+      { name: 'Utilities',     type: 'expense' as const, color: '#d97706', icon: 'zap',             isDefault: true, sortOrder: 2 },
+      { name: 'Transport',     type: 'expense' as const, color: '#65a30d', icon: 'car',             isDefault: true, sortOrder: 3 },
+      { name: 'Entertainment', type: 'expense' as const, color: '#0284c7', icon: 'film',            isDefault: true, sortOrder: 4 },
+      { name: 'Health',        type: 'expense' as const, color: '#db2777', icon: 'heart',           isDefault: true, sortOrder: 5 },
+      { name: 'Other Expense', type: 'expense' as const, color: '#6b7280', icon: 'more-horizontal', isDefault: true, sortOrder: 6 },
     ];
-    await this.db.insert(categories).values(defaultCategories);
+
+    await this.db.insert(categories).values(
+      defaults.map(d => ({ ...d, userId }))
+    );
   }
 }

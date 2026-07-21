@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule, type JwtSignOptions } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
 import { DbModule } from '../../db/db.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -9,6 +10,7 @@ import { GoogleStrategy } from './strategies/google.strategy';
 @Module({
   imports: [
     DbModule,
+    PassportModule.register({ defaultStrategy: 'google', session: false }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
@@ -27,6 +29,6 @@ import { GoogleStrategy } from './strategies/google.strategy';
   ],
   providers: [AuthService, GoogleStrategy],
   controllers: [AuthController],
-  exports: [JwtModule],
+  exports: [JwtModule, AuthService],
 })
 export class AuthModule {}
