@@ -11,7 +11,8 @@ import * as bcrypt from 'bcrypt';
 import { randomBytes, randomUUID } from 'crypto';
 import { and, desc, eq, gt, isNull } from 'drizzle-orm';
 import * as OTPAuth from 'otpauth';
-import * as qrcode from 'qrcode';
+import * as QRCode from 'qrcode';
+import { encryptSecret, decryptSecret } from './utils/crypto.utils';
 import { DB_TOKEN, type DrizzleDB } from '../../db/db.constants';
 import { categories, refreshTokens, users } from '../../db/schema';
 import { LoginDto } from './dto/login.dto';
@@ -312,115 +313,147 @@ export class AuthService {
     return { accessToken, refreshToken: `${tokenFamily}.${refreshTokenValue}` };
   }
 
-  async setup2fa(userId: string) {
-    const [user] = await this.db
-      .select({ id: users.id, email: users.email })
-      .from(users)
-      .where(and(eq(users.id, userId), isNull(users.deletedAt)))
-      .limit(1);
-
-    if (!user) {
-      throw new UnauthorizedException('User not found');
-    }
-
+  async setupTwoFactor(
+    userId: string,
+    userEmail: string,
+  ): Promise<{ otpAuthUrl: string; qrCodeDataUrl: string }> {
     const totp = new OTPAuth.TOTP({
-      issuer: 'PersonalFinance',
-      label: user.email,
+      issuer: 'FinanceApp',
+      label: userEmail,
       algorithm: 'SHA1',
       digits: 6,
       period: 30,
       secret: new OTPAuth.Secret(),
     });
 
-    const secret = totp.secret.base32;
-    const otpAuthUrl = totp.toString();
-    const qrCodeDataUrl = await qrcode.toDataURL(otpAuthUrl);
+    const rawSecret = totp.secret.base32;
+    const encryptionKey = this.configService.get<string>('TWO_FACTOR_ENCRYPTION_KEY');
+    
+    if (!encryptionKey) {
+      throw new Error('TWO_FACTOR_ENCRYPTION_KEY is not defined');
+    }
+
+    const encryptedSecret = encryptSecret(rawSecret, encryptionKey);
 
     await this.db
       .update(users)
-      .set({ twoFactorSecret: secret })
+      .set({
+        twoFactorSecret: encryptedSecret,
+        updatedAt: new Date(),
+      })
       .where(eq(users.id, userId));
+
+    const otpAuthUrl = totp.toString();
+    const qrCodeDataUrl = await QRCode.toDataURL(otpAuthUrl, {
+      errorCorrectionLevel: 'M',
+      width: 256,
+      margin: 2,
+    });
 
     return { otpAuthUrl, qrCodeDataUrl };
   }
 
-  async enable2fa(userId: string, code: string) {
+  async enableTwoFactor(userId: string, code: string): Promise<{ success: boolean }> {
     const [user] = await this.db
-      .select({ id: users.id, twoFactorSecret: users.twoFactorSecret })
+      .select({
+        twoFactorSecret: users.twoFactorSecret,
+        twoFactorEnabled: users.twoFactorEnabled,
+      })
       .from(users)
       .where(and(eq(users.id, userId), isNull(users.deletedAt)))
       .limit(1);
 
-    if (!user || !user.twoFactorSecret) {
-      throw new ConflictException('2FA setup not initiated');
+    if (!user) {
+      throw new BadRequestException('User not found');
     }
 
-    const totp = new OTPAuth.TOTP({
-      issuer: 'PersonalFinance',
-      algorithm: 'SHA1',
-      digits: 6,
-      period: 30,
-      secret: OTPAuth.Secret.fromBase32(user.twoFactorSecret),
-    });
+    if (user.twoFactorEnabled) {
+      throw new BadRequestException('Two-factor authentication is already enabled');
+    }
 
-    const isValid = totp.validate({ token: code, window: 1 }) !== null;
+    if (!user.twoFactorSecret) {
+      throw new BadRequestException(
+        'No 2FA secret found. Call POST /auth/2fa/setup first to generate a secret.'
+      );
+    }
+
+    const encryptionKey = this.configService.get<string>('TWO_FACTOR_ENCRYPTION_KEY');
+    if (!encryptionKey) {
+      throw new Error('TWO_FACTOR_ENCRYPTION_KEY is not defined');
+    }
+
+    const rawSecret = decryptSecret(user.twoFactorSecret, encryptionKey);
+    const isValid = this.verifyTotpCode(rawSecret, code);
 
     if (!isValid) {
-      throw new UnauthorizedException('Invalid 2FA code');
+      throw new UnauthorizedException(
+        'Invalid code. Make sure your authenticator app is showing the current code and your device clock is correct.'
+      );
     }
 
     await this.db
       .update(users)
-      .set({ twoFactorEnabled: true })
+      .set({ twoFactorEnabled: true, updatedAt: new Date() })
       .where(eq(users.id, userId));
 
     return { success: true };
   }
 
-  async verify2fa(tempToken: string, code: string): Promise<TokenResult> {
-    let userId: string;
+  async verifyTwoFactorLogin(
+    tempToken: string,
+    code: string,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    let payload: { sub: string; type: string };
     try {
-      const payload = this.jwtService.verify(tempToken);
-      userId = payload.sub;
-    } catch (e) {
-      throw new UnauthorizedException('Invalid or expired temporary token');
+      payload = this.jwtService.verify(tempToken, {
+        secret: this.configService.get<string>('JWT_SECRET'),
+      });
+    } catch (error) {
+      throw new UnauthorizedException('Invalid or expired session. Please log in again.');
     }
+
+    if (payload.type !== 'two_factor_pending') {
+      throw new UnauthorizedException('Invalid token type');
+    }
+
+    const userId = payload.sub;
 
     const [user] = await this.db
       .select({
-        id: users.id,
         twoFactorSecret: users.twoFactorSecret,
         twoFactorEnabled: users.twoFactorEnabled,
+        deletedAt: users.deletedAt,
       })
       .from(users)
-      .where(and(eq(users.id, userId), isNull(users.deletedAt)))
+      .where(eq(users.id, userId))
       .limit(1);
 
-    if (!user || !user.twoFactorEnabled || !user.twoFactorSecret) {
-      throw new UnauthorizedException('2FA is not enabled for this user');
+    if (!user || user.deletedAt !== null) {
+      throw new UnauthorizedException('User not found');
     }
 
-    const totp = new OTPAuth.TOTP({
-      issuer: 'PersonalFinance',
-      algorithm: 'SHA1',
-      digits: 6,
-      period: 30,
-      secret: OTPAuth.Secret.fromBase32(user.twoFactorSecret),
-    });
+    if (!user.twoFactorEnabled || !user.twoFactorSecret) {
+      throw new BadRequestException('Two-factor authentication is not enabled for this account');
+    }
 
-    const isValid = totp.validate({ token: code, window: 1 }) !== null;
+    const encryptionKey = this.configService.get<string>('TWO_FACTOR_ENCRYPTION_KEY');
+    if (!encryptionKey) {
+      throw new Error('TWO_FACTOR_ENCRYPTION_KEY is not defined');
+    }
+
+    const rawSecret = decryptSecret(user.twoFactorSecret, encryptionKey);
+    const isValid = this.verifyTotpCode(rawSecret, code);
 
     if (!isValid) {
-      throw new UnauthorizedException('Invalid 2FA code');
+      throw new UnauthorizedException('Invalid verification code');
     }
 
-    return this.generateTokens(user.id);
+    return this.generateTokens(userId);
   }
 
-  async disable2fa(userId: string, code: string) {
+  async disableTwoFactor(userId: string, code: string): Promise<{ success: boolean }> {
     const [user] = await this.db
       .select({
-        id: users.id,
         twoFactorSecret: users.twoFactorSecret,
         twoFactorEnabled: users.twoFactorEnabled,
       })
@@ -428,30 +461,59 @@ export class AuthService {
       .where(and(eq(users.id, userId), isNull(users.deletedAt)))
       .limit(1);
 
-    if (!user || !user.twoFactorEnabled || !user.twoFactorSecret) {
-      throw new ConflictException('2FA is not enabled');
+    if (!user) {
+      throw new BadRequestException('User not found');
     }
 
-    const totp = new OTPAuth.TOTP({
-      issuer: 'PersonalFinance',
-      algorithm: 'SHA1',
-      digits: 6,
-      period: 30,
-      secret: OTPAuth.Secret.fromBase32(user.twoFactorSecret),
-    });
+    if (!user.twoFactorEnabled) {
+      throw new BadRequestException('Two-factor authentication is not currently enabled');
+    }
 
-    const isValid = totp.validate({ token: code, window: 1 }) !== null;
+    if (!user.twoFactorSecret) {
+      throw new BadRequestException('No 2FA secret found — cannot verify code');
+    }
+
+    const encryptionKey = this.configService.get<string>('TWO_FACTOR_ENCRYPTION_KEY');
+    if (!encryptionKey) {
+      throw new Error('TWO_FACTOR_ENCRYPTION_KEY is not defined');
+    }
+
+    const rawSecret = decryptSecret(user.twoFactorSecret, encryptionKey);
+    const isValid = this.verifyTotpCode(rawSecret, code);
 
     if (!isValid) {
-      throw new UnauthorizedException('Invalid 2FA code');
+      throw new UnauthorizedException(
+        'Invalid code. You must provide a valid authenticator code to disable 2FA.'
+      );
     }
 
     await this.db
       .update(users)
-      .set({ twoFactorEnabled: false, twoFactorSecret: null })
+      .set({
+        twoFactorEnabled: false,
+        twoFactorSecret: null,
+        updatedAt: new Date(),
+      })
       .where(eq(users.id, userId));
 
     return { success: true };
+  }
+
+  private verifyTotpCode(rawSecret: string, code: string): boolean {
+    const totp = new OTPAuth.TOTP({
+      issuer: 'FinanceApp',
+      algorithm: 'SHA1',
+      digits: 6,
+      period: 30,
+      secret: OTPAuth.Secret.fromBase32(rawSecret),
+    });
+
+    const delta = totp.validate({
+      token: code,
+      window: 1,
+    });
+
+    return delta !== null;
   }
 
   private async revokeAllRefreshTokens(userId: string): Promise<void> {

@@ -20,7 +20,7 @@ import type { AuthenticatedUser } from '../../common/types/authenticated-user.in
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
-import { Disable2FaDto, Enable2FaDto, Verify2FaDto } from './dto/two-factor.dto';
+import { DisableTwoFactorDto, EnableTwoFactorDto, VerifyTwoFactorDto } from './dto/two-factor.dto';
 
 @ApiTags('Authentication')
 @ApiBearerAuth()
@@ -169,28 +169,28 @@ export class AuthController {
   @ApiResponse({ status: 200, description: '2FA setup initiated successfully.' })
   @Post('2fa/setup')
   @HttpCode(HttpStatus.OK)
-  setup2fa(@CurrentUser() user: AuthenticatedUser) {
-    return this.authService.setup2fa(user.id);
+  async setupTwoFactor(@CurrentUser() user: AuthenticatedUser) {
+    return this.authService.setupTwoFactor(user.id, user.email);
   }
 
-  @ApiOperation({ summary: 'Enable Two-Factor Authentication' })
-  @ApiResponse({ status: 200, description: '2FA enabled successfully.' })
   @Post('2fa/enable')
   @HttpCode(HttpStatus.OK)
-  enable2fa(@CurrentUser() user: AuthenticatedUser, @Body() dto: Enable2FaDto) {
-    return this.authService.enable2fa(user.id, dto.code);
+  async enableTwoFactor(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: EnableTwoFactorDto,
+  ) {
+    return this.authService.enableTwoFactor(user.id, dto.code);
   }
 
-  @ApiOperation({ summary: 'Verify Two-Factor Authentication code' })
-  @ApiResponse({ status: 200, description: '2FA verified successfully.' })
-  @Public()
   @Post('2fa/verify')
+  @Public()
+  @Throttle({ default: { limit: 5, ttl: 900000 } })
   @HttpCode(HttpStatus.OK)
-  async verify2fa(
-    @Body() dto: Verify2FaDto,
+  async verifyTwoFactor(
+    @Body() dto: VerifyTwoFactorDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { accessToken, refreshToken } = await this.authService.verify2fa(
+    const { accessToken, refreshToken } = await this.authService.verifyTwoFactorLogin(
       dto.tempToken,
       dto.code,
     );
@@ -200,12 +200,13 @@ export class AuthController {
     return { accessToken };
   }
 
-  @ApiOperation({ summary: 'Disable Two-Factor Authentication' })
-  @ApiResponse({ status: 200, description: '2FA disabled successfully.' })
   @Post('2fa/disable')
   @HttpCode(HttpStatus.OK)
-  disable2fa(@CurrentUser() user: AuthenticatedUser, @Body() dto: Disable2FaDto) {
-    return this.authService.disable2fa(user.id, dto.code);
+  async disableTwoFactor(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: DisableTwoFactorDto,
+  ) {
+    return this.authService.disableTwoFactor(user.id, dto.code);
   }
 
   @ApiOperation({ summary: 'Get current user profile' })

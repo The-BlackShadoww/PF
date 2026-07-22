@@ -1,26 +1,28 @@
-import { IsNotEmpty, IsString, Length } from 'class-validator';
+import { IsString, Length, Matches, IsJWT } from 'class-validator';
 
-export class Enable2FaDto {
+// Used by POST /auth/2fa/enable
+export class EnableTwoFactorDto {
   @IsString()
-  @IsNotEmpty()
   @Length(6, 6)
+  @Matches(/^\d{6}$/, { message: 'code must be exactly 6 digits' })
   code!: string;
 }
 
-export class Verify2FaDto {
-  @IsString()
-  @IsNotEmpty()
+// Used by POST /auth/2fa/verify (during login)
+export class VerifyTwoFactorDto {
+  @IsJWT()
   tempToken!: string;
 
   @IsString()
-  @IsNotEmpty()
   @Length(6, 6)
+  @Matches(/^\d{6}$/, { message: 'code must be exactly 6 digits' })
   code!: string;
 }
 
-export class Disable2FaDto {
+// Used by POST /auth/2fa/disable
+export class DisableTwoFactorDto {
   @IsString()
-  @IsNotEmpty()
   @Length(6, 6)
+  @Matches(/^\d{6}$/, { message: 'code must be exactly 6 digits' })
   code!: string;
 }
