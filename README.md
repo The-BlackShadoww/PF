@@ -1,1 +1,89 @@
-#Personal Finance App
+# Personal Finance App
+
+A modern, full-stack personal finance application designed for tracking income and expenses, organizing spending by category, and setting monthly budgets. The application is multi-tenant, providing secure, isolated data for each user.
+
+---
+
+## 🚀 Features
+
+### Current
+- **User Authentication**: Secure user registration API with `bcrypt` password hashing.
+- **Database Schema**: Fully defined PostgreSQL schema using Drizzle ORM (Users, Categories, Transactions, Budgets, Refresh Tokens).
+- **Core API Architecture**: Standardized error handling, global validation, logging, and response formatting.
+- **Local Infrastructure**: Docker Compose setup for PostgreSQL and Redis.
+
+### Planned
+- **Full Authentication**: Login, JWT session management, Google OAuth, and Two-Factor Authentication (2FA).
+- **Transaction Management**: Record income and expenses with precise dates, notes, and categories.
+- **Categorization**: Group spending into custom categories with colors and icons.
+- **Budgeting**: Define and track monthly limits globally or per category.
+- **Frontend Dashboard**: A comprehensive UI built with Next.js, Tailwind CSS v4, and Recharts.
+
+---
+
+## 🛠️ Tech Stack
+
+**Frontend** ([`frontend/`](./frontend))
+- Framework: **Next.js 15** (React 19)
+- Styling: **Tailwind CSS v4**
+- State & Data Fetching: **TanStack React Query v5**
+- Forms & Validation: **React Hook Form** + **Zod**
+- UI/Charts: **Lucide React** + **Recharts**
+
+**Backend** ([`backend/`](./backend))
+- Framework: **NestJS 11** (Node.js 20+)
+- Language: **TypeScript**
+- Database: **PostgreSQL 16**
+- ORM: **Drizzle ORM**
+- Validation: `class-validator` & `class-transformer`
+- Security: Helmet, CORS, bcrypt
+
+**Infrastructure**
+- **Docker Compose** (Postgres & Redis)
+
+---
+
+## 📁 Repository Structure
+
+```text
+PF/
+├── backend/                # NestJS REST API and database migrations
+├── frontend/               # Next.js Client App
+├── docker-compose.yml      # Local infrastructure (Postgres + Redis)
+├── WIKI.md                 # Detailed project documentation and architecture
+└── README.md               # This file
+```
+
+---
+
+## 🏁 Getting Started (Development)
+
+### 1. Start Infrastructure
+Run the database and caching layers via Docker Compose:
+```bash
+docker compose up -d postgres redis
+```
+
+### 2. Run the Backend API
+```bash
+cd backend
+cp .env.example .env
+npm install
+npm run db:migrate
+npm run start:dev
+```
+The API will be available at `http://localhost:3001/api/v1`.
+
+### 3. Run the Frontend (Coming Soon)
+```bash
+cd frontend
+npm install
+npm run dev
+```
+The UI will be available at `http://localhost:3000` (or `5173`).
+
+---
+
+## 📘 Documentation
+
+For a more in-depth look at the architecture, design decisions, data model, and API conventions, please refer to the [Project Wiki (WIKI.md)](./WIKI.md).
