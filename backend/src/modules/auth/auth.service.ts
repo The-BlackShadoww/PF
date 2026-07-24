@@ -546,7 +546,7 @@ export class AuthService {
     return value * unitMs[match[2]];
   }
 
-  private async seedDefaultCategories(userId: string): Promise<void> {
+  async seedDefaultCategories(userId: string): Promise<void> {
     const defaults = [
       // Income categories
       { name: 'Salary',        type: 'income' as const,  color: '#16a34a', icon: 'briefcase',       isDefault: true, sortOrder: 0 },

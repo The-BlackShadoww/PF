@@ -1,58 +1,52 @@
-import type { ApiResponse } from "@/types/api";
+import { apiClient } from './client';
 
-import { apiClient } from "./client";
-import type { TransactionType } from "./transactions";
+export type CategoryType = 'income' | 'expense';
 
-export type Category = {
+export interface Category {
   id: string;
   userId: string;
   name: string;
-  type: TransactionType;
-  color?: string | null;
-  icon?: string | null;
+  type: CategoryType;
+  color: string;
+  icon: string;
   isDefault: boolean;
   sortOrder: number;
   createdAt: string;
   updatedAt: string;
-  deletedAt?: string | null;
-};
+}
 
-export type CreateCategoryPayload = {
+export interface CreateCategoryPayload {
   name: string;
-  type: TransactionType;
+  type: CategoryType;
+  color: string;
+  icon: string;
+}
+
+export interface UpdateCategoryPayload {
+  name?: string;
   color?: string;
   icon?: string;
   sortOrder?: number;
-};
-
-export type UpdateCategoryPayload = Partial<CreateCategoryPayload>;
+}
 
 export const categoriesApi = {
-  async getAll() {
-    const response = await apiClient<ApiResponse<Category[]>>("/categories");
-    return response.data;
-  },
+  getAll: () =>
+    apiClient<Category[]>('/categories'),
 
-  async create(data: CreateCategoryPayload) {
-    const response = await apiClient<ApiResponse<Category>>("/categories", {
-      method: "POST",
+  create: (data: CreateCategoryPayload) =>
+    apiClient<Category>('/categories', {
+      method: 'POST',
       body: JSON.stringify(data),
-    });
-    return response.data;
-  },
+    }),
 
-  async update(id: string, data: UpdateCategoryPayload) {
-    const response = await apiClient<ApiResponse<Category>>(`/categories/${id}`, {
-      method: "PATCH",
+  update: (id: string, data: UpdateCategoryPayload) =>
+    apiClient<Category>(`/categories/${id}`, {
+      method: 'PATCH',
       body: JSON.stringify(data),
-    });
-    return response.data;
-  },
+    }),
 
-  async delete(id: string) {
-    const response = await apiClient<ApiResponse<Category>>(`/categories/${id}`, {
-      method: "DELETE",
-    });
-    return response.data;
-  },
+  delete: (id: string) =>
+    apiClient<{ success: boolean }>(`/categories/${id}`, {
+      method: 'DELETE',
+    }),
 };

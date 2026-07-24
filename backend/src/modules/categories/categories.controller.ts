@@ -1,51 +1,44 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  Controller, Get, Post, Patch, Delete,
+  Body, Param, ParseUUIDPipe, HttpCode, HttpStatus
+} from '@nestjs/common';
+import { CategoriesService } from './categories.service';
+import { CreateCategoryDto, UpdateCategoryDto } from './dto/category.dto';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import type { AuthenticatedUser } from '../../common/types/authenticated-user.interface';
-import { CategoriesService } from './categories.service';
-import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
 
-@ApiTags('Categories')
-@ApiBearerAuth()
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
-  @ApiOperation({ summary: 'Find all categories' })
-  @ApiResponse({ status: 200, description: 'Categories retrieved successfully.' })
   @Get()
   findAll(@CurrentUser() user: AuthenticatedUser) {
     return this.categoriesService.findAll(user.id);
   }
 
-  @ApiOperation({ summary: 'Create category' })
-  @ApiResponse({ status: 201, description: 'Category created successfully.' })
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   create(
     @CurrentUser() user: AuthenticatedUser,
-    @Body() createCategoryDto: CreateCategoryDto,
+    @Body() dto: CreateCategoryDto,
   ) {
-    return this.categoriesService.create(user.id, createCategoryDto);
+    return this.categoriesService.create(user.id, dto);
   }
 
-  @ApiOperation({ summary: 'Update category' })
-  @ApiResponse({ status: 200, description: 'Category updated successfully.' })
   @Patch(':id')
   update(
     @CurrentUser() user: AuthenticatedUser,
-    @Param('id') id: string,
-    @Body() updateCategoryDto: UpdateCategoryDto,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateCategoryDto,
   ) {
-    return this.categoriesService.update(user.id, id, updateCategoryDto);
+    return this.categoriesService.update(user.id, id, dto);
   }
 
-  @ApiOperation({ summary: 'Delete category' })
-  @ApiResponse({ status: 200, description: 'Category deleted successfully.' })
   @Delete(':id')
+  @HttpCode(HttpStatus.OK)
   remove(
     @CurrentUser() user: AuthenticatedUser,
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
   ) {
     return this.categoriesService.remove(user.id, id);
   }
