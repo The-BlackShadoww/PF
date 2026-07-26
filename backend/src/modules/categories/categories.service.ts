@@ -1,6 +1,7 @@
 import { Injectable, Inject, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { eq, and, isNull, asc } from 'drizzle-orm';
-import { DB_TOKEN, DrizzleDB } from '../../db/db.constants';
+import { DB_TOKEN } from '../../db/db.constants';
+import type { DrizzleDB } from '../../db/db.constants';
 import { categories } from '../../db/schema/index';
 import { CreateCategoryDto, UpdateCategoryDto } from './dto/category.dto';
 
