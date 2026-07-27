@@ -62,6 +62,9 @@ export class JwtAuthGuard implements CanActivate {
           id: users.id,
           email: users.email,
           name: users.name,
+          avatarUrl: users.avatarUrl,
+          twoFactorEnabled: users.twoFactorEnabled,
+          timezone: users.timezone,
         })
         .from(users)
         .where(and(eq(users.id, payload.sub), isNull(users.deletedAt)))

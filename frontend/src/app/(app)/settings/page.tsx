@@ -12,11 +12,21 @@ import {
 } from '../../../lib/hooks/useCategories';
 import { Category } from '../../../lib/api/categories';
 import { cn } from '../../../lib/utils/cn';
+import { ProfileTab } from '../../../components/settings/ProfileTab';
+import { SecurityTab } from '../../../components/settings/SecurityTab';
+import { PreferencesTab } from '../../../components/settings/PreferencesTab';
 
-type Tab = 'categories' | 'profile';
+type Tab = 'profile' | 'security' | 'preferences' | 'categories';
+
+const TABS: Array<{ id: Tab; label: string }> = [
+  { id: 'profile',      label: 'Profile' },
+  { id: 'security',     label: 'Security' },
+  { id: 'preferences',  label: 'Preferences' },
+  { id: 'categories',   label: 'Categories' },
+];
 
 export default function SettingsPage() {
-  const [activeTab, setActiveTab] = useState<Tab>('categories');
+  const [activeTab, setActiveTab] = useState<Tab>('profile');
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
@@ -81,24 +91,27 @@ export default function SettingsPage() {
       </div>
 
       {/* Tab navigation */}
-      <div className="flex gap-1 mb-6 border-b border-gray-200">
-        {(['categories', 'profile'] as Tab[]).map((tab) => (
+      <div className="flex gap-1 mb-6 border-b border-gray-200 overflow-x-auto">
+        {TABS.map((tab) => (
           <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
             className={cn(
-              'px-4 py-2 text-sm font-medium capitalize transition-colors -mb-px',
-              activeTab === tab
+              'px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors -mb-px',
+              'focus:outline-none',
+              activeTab === tab.id
                 ? 'border-b-2 border-gray-900 text-gray-900'
                 : 'text-gray-500 hover:text-gray-700',
             )}
           >
-            {tab}
+            {tab.label}
           </button>
         ))}
       </div>
+      {/* overflow-x-auto allows the tab bar to scroll horizontally on mobile
+          without wrapping, which would break the underline indicator layout. */}
 
-      {/* Error banner */}
+      {/* Error banner (belongs to categories tab state but shown globally) */}
       {error && (
         <div className="flex items-start justify-between gap-3 mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
           <p className="text-sm text-red-700">{error}</p>
@@ -107,6 +120,15 @@ export default function SettingsPage() {
           </button>
         </div>
       )}
+
+      {/* PROFILE TAB */}
+      {activeTab === 'profile' && <ProfileTab />}
+
+      {/* SECURITY TAB */}
+      {activeTab === 'security' && <SecurityTab />}
+
+      {/* PREFERENCES TAB */}
+      {activeTab === 'preferences' && <PreferencesTab />}
 
       {/* CATEGORIES TAB */}
       {activeTab === 'categories' && (
@@ -170,7 +192,7 @@ export default function SettingsPage() {
                     {/* Inline delete confirmation */}
                     {deleteConfirmId === category.id && (
                       <div className="mt-1 ml-12 flex items-center gap-3 text-sm text-red-600">
-                        <span>Delete "{category.name}"? This cannot be undone.</span>
+                        <span>Delete &quot;{category.name}&quot;? This cannot be undone.</span>
                         <button
                           onClick={() => handleDeleteClick(category)}
                           className="font-medium underline hover:no-underline"
@@ -212,7 +234,7 @@ export default function SettingsPage() {
                     />
                     {deleteConfirmId === category.id && (
                       <div className="mt-1 ml-12 flex items-center gap-3 text-sm text-red-600">
-                        <span>Delete "{category.name}"? This cannot be undone.</span>
+                        <span>Delete &quot;{category.name}&quot;? This cannot be undone.</span>
                         <button
                           onClick={() => handleDeleteClick(category)}
                           className="font-medium underline hover:no-underline"
@@ -241,13 +263,6 @@ export default function SettingsPage() {
             </div>
           )}
 
-        </div>
-      )}
-
-      {/* PROFILE TAB — placeholder */}
-      {activeTab === 'profile' && (
-        <div className="text-center py-12 text-gray-400 text-sm">
-          Profile settings coming soon.
         </div>
       )}
 
