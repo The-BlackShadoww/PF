@@ -8,8 +8,10 @@ A modern, full-stack personal finance application designed for tracking income a
 
 ### Current
 - **User Authentication**: Secure user registration API, login, JWT session management, Google OAuth, and Two-Factor Authentication (2FA) with encryption.
+- **Settings Page**: Manage user profile, security settings, and personal preferences.
 - **Categorization**: Group spending into custom categories with colors and icons (CRUD implemented for backend and frontend).
 - **Financial Reports**: PDF generation for financial reports using `date-fns` for accurate date handling.
+- **API Documentation**: Comprehensive Swagger/OpenAPI documentation decorators integrated across controllers and DTOs.
 - **Database Schema**: Fully defined PostgreSQL schema using Drizzle ORM (Users, Categories, Transactions, Budgets, Refresh Tokens).
 - **Core API Architecture**: Standardized error handling, global validation, logging, and response formatting.
 - **Local Infrastructure**: Docker Compose setup for PostgreSQL and Redis.
