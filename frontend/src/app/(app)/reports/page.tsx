@@ -1,248 +1,304 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { format } from "date-fns";
-import { clsx } from "clsx";
-import { reportsApi } from "@/lib/api/reports";
-import { useReportPreview } from "@/lib/hooks/useReportPreview";
-import { ReportPreviewCard } from "@/components/reports/ReportPreviewCard";
-import {
-  DownloadHistory,
-  addToHistory,
-  type DownloadHistoryEntry,
-} from "@/components/reports/DownloadHistory";
-import { Spinner } from "@/components/ui/Spinner";
+import { useState, useCallback } from 'react';
+import { format } from 'date-fns';
+import { Download, FileText, FileSpreadsheet, AlertCircle, X } from 'lucide-react';
+import { ReportPreviewCard } from '../../../components/reports/ReportPreviewCard';
+import { DownloadHistoryList } from '../../../components/reports/DownloadHistoryList';
+import { useReportPreview } from '../../../lib/hooks/useReportPreview';
+import { useDownloadHistory, DownloadHistoryEntry } from '../../../lib/hooks/useDownloadHistory';
+import { reportsApi } from '../../../lib/api/reports';
+import { cn } from '../../../lib/utils/cn';
+
+type ReportFormat = 'csv' | 'pdf';
+
+const TODAY = format(new Date(), 'yyyy-MM-dd');
 
 export default function ReportsPage() {
-  const [startDate, setStartDate] = useState<string | null>(null);
-  const [endDate, setEndDate] = useState<string | null>(null);
-  const [reportFormat, setReportFormat] = useState<"csv" | "pdf">("csv");
+
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
+  const [format_, setFormat] = useState<ReportFormat>('csv');
+
   const [isDownloading, setIsDownloading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [downloadError, setDownloadError] = useState<string | null>(null);
 
-  const { data: preview, isLoading } = useReportPreview(startDate, endDate);
+  const validStartDate = startDate || null;
+  const validEndDate = endDate || null;
 
-  const isDateInvalid = Boolean(startDate && endDate && endDate < startDate);
-  const today = format(new Date(), "yyyy-MM-dd");
+  const dateRangeError = (validStartDate && validEndDate && endDate < startDate)
+    ? 'End date must be on or after the start date'
+    : null;
 
-  const triggerDownload = async (
-    overrideStartDate?: string,
-    overrideEndDate?: string,
-    overrideFormat?: "csv" | "pdf",
+  const canDownload = Boolean(validStartDate && validEndDate && !dateRangeError && !isDownloading);
+
+  const { data: preview, isLoading: isPreviewLoading } = useReportPreview(
+    dateRangeError ? null : validStartDate,
+    dateRangeError ? null : validEndDate,
+  );
+
+  const { history, addEntry, clearHistory } = useDownloadHistory();
+
+  const triggerDownload = useCallback(async (
+    dlStartDate: string,
+    dlEndDate: string,
+    dlFormat: ReportFormat,
   ) => {
-    const finalStart = overrideStartDate || startDate;
-    const finalEnd = overrideEndDate || endDate;
-    const finalFormat = overrideFormat || reportFormat;
-
-    if (!finalStart || !finalEnd) return;
-
     setIsDownloading(true);
-    setError(null);
+    setDownloadError(null);
+
+    let objectUrl: string | null = null;
 
     try {
-      // 1. Fetch the blob from the API
-      const blob =
-        finalFormat === "csv"
-          ? await reportsApi.downloadCsv({
-              startDate: finalStart,
-              endDate: finalEnd,
-            })
-          : await reportsApi.downloadPdf({
-              startDate: finalStart,
-              endDate: finalEnd,
-            });
+      const blob = dlFormat === 'csv'
+        ? await reportsApi.downloadCsv({ startDate: dlStartDate, endDate: dlEndDate })
+        : await reportsApi.downloadPdf({ startDate: dlStartDate, endDate: dlEndDate });
 
-      if (typeof window === "undefined") return;
+      objectUrl = URL.createObjectURL(blob);
 
-      // 2. Create a temporary object URL
-      const url = URL.createObjectURL(blob);
-
-      // 3. Create a hidden anchor element, set the download attribute, click it
-      const filename = `report_${finalStart}_to_${finalEnd}.${finalFormat}`;
-      const anchor = document.createElement("a");
-      anchor.href = url;
+      const filename = `report_${dlStartDate}_to_${dlEndDate}.${dlFormat}`;
+      const anchor = document.createElement('a');
+      anchor.href = objectUrl;
       anchor.download = filename;
       document.body.appendChild(anchor);
       anchor.click();
-
-      // 4. Clean up
       document.body.removeChild(anchor);
-      URL.revokeObjectURL(url);
 
-      // 5. Add to download history
-      addToHistory({
+      const entry: DownloadHistoryEntry = {
         id: crypto.randomUUID(),
-        format: finalFormat,
-        startDate: finalStart,
-        endDate: finalEnd,
+        format: dlFormat,
+        startDate: dlStartDate,
+        endDate: dlEndDate,
         downloadedAt: new Date().toISOString(),
         filename,
-      });
-    } catch (err) {
-      setError("Download failed. Please try again.");
+      };
+      addEntry(entry);
+
+    } catch (err: unknown) {
+      const message = err instanceof Error
+        ? err.message
+        : 'Download failed. Please try again.';
+      setDownloadError(message);
     } finally {
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl);
+      }
       setIsDownloading(false);
     }
-  };
+  }, [addEntry]);
 
-  const handleRedownload = (entry: DownloadHistoryEntry) => {
-    setStartDate(entry.startDate);
-    setEndDate(entry.endDate);
-    setReportFormat(entry.format);
+  function handleDownloadClick() {
+    if (!canDownload) return;
+    triggerDownload(startDate, endDate, format_);
+  }
+
+  function handleRedownload(entry: DownloadHistoryEntry) {
     triggerDownload(entry.startDate, entry.endDate, entry.format);
-  };
-
-  const isButtonDisabled =
-    !startDate || !endDate || isDateInvalid || isDownloading;
+  }
 
   return (
-    <div className="mx-auto max-w-4xl p-6">
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Reports</h1>
-        <p className="mt-2 text-gray-500">Download your financial data</p>
-      </header>
+    <div className="max-w-2xl mx-auto py-8 px-4 space-y-6">
 
-      <div className="grid gap-8 md:grid-cols-2">
-        <div className="space-y-6">
-          <section className="rounded-xl border border-gray-200 bg-white p-6">
-            <h2 className="mb-4 text-lg font-semibold text-gray-900">
-              Configure your report
-            </h2>
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">Reports</h1>
+        <p className="text-sm text-gray-500 mt-1">
+          Download your financial data for any date range
+        </p>
+      </div>
 
-            <div className="mb-6">
-              <label className="mb-2 block text-sm font-medium text-gray-700">
-                Date Range
-              </label>
-              <div className="flex items-center space-x-4">
-                <div className="flex-1">
-                  <label className="mb-1 block text-xs text-gray-500">
-                    From
-                  </label>
-                  <input
-                    type="date"
-                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    max={today}
-                    value={startDate || ""}
-                    onChange={(e) => setStartDate(e.target.value)}
-                  />
-                </div>
-                <div className="flex-1">
-                  <label className="mb-1 block text-xs text-gray-500">To</label>
-                  <input
-                    type="date"
-                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    max={today}
-                    value={endDate || ""}
-                    onChange={(e) => setEndDate(e.target.value)}
-                  />
-                </div>
-              </div>
-              {isDateInvalid && (
-                <p className="mt-2 text-sm text-red-600">
-                  End date cannot be before start date.
-                </p>
-              )}
-            </div>
+      <div className="bg-white border border-gray-200 rounded-xl p-6 space-y-6">
+        <h2 className="text-sm font-semibold text-gray-900">Configure Report</h2>
 
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Date Range
+          </label>
+          <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
-                Format
-              </label>
-              <div className="flex space-x-4">
-                <button
-                  type="button"
-                  onClick={() => setReportFormat("csv")}
-                  className={clsx(
-                    "flex flex-1 flex-col items-center justify-center rounded-lg border p-4 transition-colors",
-                    reportFormat === "csv"
-                      ? "border-gray-900 bg-gray-900 text-white"
-                      : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50",
-                  )}
-                >
-                  <span className="font-semibold uppercase tracking-wider">
-                    CSV
-                  </span>
-                  <span
-                    className={clsx(
-                      "mt-1 text-center text-xs",
-                      reportFormat === "csv"
-                        ? "text-gray-300"
-                        : "text-gray-500",
-                    )}
-                  >
-                    Spreadsheet-compatible, opens in Excel or Google Sheets
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setReportFormat("pdf")}
-                  className={clsx(
-                    "flex flex-1 flex-col items-center justify-center rounded-lg border p-4 transition-colors",
-                    reportFormat === "pdf"
-                      ? "border-gray-900 bg-gray-900 text-white"
-                      : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50",
-                  )}
-                >
-                  <span className="font-semibold uppercase tracking-wider">
-                    PDF
-                  </span>
-                  <span
-                    className={clsx(
-                      "mt-1 text-center text-xs",
-                      reportFormat === "pdf"
-                        ? "text-gray-300"
-                        : "text-gray-500",
-                    )}
-                  >
-                    Formatted report, ideal for printing or sharing
-                  </span>
-                </button>
-              </div>
+              <label className="block text-xs text-gray-500 mb-1">From</label>
+              <input
+                type="date"
+                value={startDate}
+                max={TODAY}
+                onChange={(e) => {
+                  setStartDate(e.target.value);
+                  setDownloadError(null);
+                }}
+                className={cn(
+                  'w-full px-3 py-2 border rounded-lg text-sm',
+                  'focus:outline-none focus:ring-2 focus:ring-gray-900',
+                  dateRangeError ? 'border-red-400' : 'border-gray-300',
+                )}
+              />
             </div>
-          </section>
-
-          <div>
-            <button
-              onClick={() => triggerDownload()}
-              disabled={isButtonDisabled}
-              className="flex w-full items-center justify-center rounded-lg bg-gray-900 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500"
-            >
-              {isDownloading ? (
-                <>
-                  <Spinner className="mr-2 h-4 w-4" />
-                  Downloading...
-                </>
-              ) : (
-                `Download ${reportFormat.toUpperCase()} Report`
-              )}
-            </button>
-
-            {error && (
-              <div className="mt-4 flex items-center justify-between rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-                <span>{error}</span>
-                <button
-                  onClick={() => setError(null)}
-                  className="ml-2 text-red-500 hover:text-red-700 focus:outline-none"
-                >
-                  ✕
-                </button>
-              </div>
-            )}
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">To</label>
+              <input
+                type="date"
+                value={endDate}
+                max={TODAY}
+                min={startDate || undefined}
+                onChange={(e) => {
+                  setEndDate(e.target.value);
+                  setDownloadError(null);
+                }}
+                className={cn(
+                  'w-full px-3 py-2 border rounded-lg text-sm',
+                  'focus:outline-none focus:ring-2 focus:ring-gray-900',
+                  dateRangeError ? 'border-red-400' : 'border-gray-300',
+                )}
+              />
+            </div>
           </div>
+          {dateRangeError && (
+            <p className="mt-1.5 text-xs text-red-500 flex items-center gap-1">
+              <AlertCircle size={12} />
+              {dateRangeError}
+            </p>
+          )}
         </div>
 
-        <div className="space-y-6">
-          <ReportPreviewCard
-            preview={preview ?? null}
-            isLoading={isLoading}
-            startDate={startDate}
-            endDate={endDate}
-          />
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Format
+          </label>
+          <div className="grid grid-cols-2 gap-3">
+
+            <button
+              type="button"
+              onClick={() => setFormat('csv')}
+              className={cn(
+                'flex flex-col items-start gap-1 p-4 border-2 rounded-xl transition-all text-left',
+                format_ === 'csv'
+                  ? 'border-gray-900 bg-gray-50'
+                  : 'border-gray-200 hover:border-gray-300 bg-white',
+              )}
+            >
+              <div className="flex items-center gap-2">
+                <FileSpreadsheet
+                  size={18}
+                  className={format_ === 'csv' ? 'text-gray-900' : 'text-gray-400'}
+                />
+                <span className={cn(
+                  'text-sm font-semibold',
+                  format_ === 'csv' ? 'text-gray-900' : 'text-gray-600',
+                )}>
+                  CSV
+                </span>
+                {format_ === 'csv' && (
+                  <span className="ml-auto text-xs bg-gray-900 text-white px-1.5 py-0.5 rounded">
+                    Selected
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-gray-500">
+                Opens in Excel, Google Sheets, or any spreadsheet app
+              </p>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setFormat('pdf')}
+              className={cn(
+                'flex flex-col items-start gap-1 p-4 border-2 rounded-xl transition-all text-left',
+                format_ === 'pdf'
+                  ? 'border-gray-900 bg-gray-50'
+                  : 'border-gray-200 hover:border-gray-300 bg-white',
+              )}
+            >
+              <div className="flex items-center gap-2">
+                <FileText
+                  size={18}
+                  className={format_ === 'pdf' ? 'text-gray-900' : 'text-gray-400'}
+                />
+                <span className={cn(
+                  'text-sm font-semibold',
+                  format_ === 'pdf' ? 'text-gray-900' : 'text-gray-600',
+                )}>
+                  PDF
+                </span>
+                {format_ === 'pdf' && (
+                  <span className="ml-auto text-xs bg-gray-900 text-white px-1.5 py-0.5 rounded">
+                    Selected
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-gray-500">
+                Formatted report for printing or sharing
+              </p>
+            </button>
+
+          </div>
         </div>
       </div>
 
-      <DownloadHistory onRedownload={handleRedownload} />
+      <ReportPreviewCard
+        preview={preview}
+        isLoading={isPreviewLoading}
+        startDate={dateRangeError ? null : validStartDate}
+        endDate={dateRangeError ? null : validEndDate}
+      />
+
+      <div className="space-y-3">
+        <button
+          onClick={handleDownloadClick}
+          disabled={!canDownload}
+          className={cn(
+            'w-full flex items-center justify-center gap-2',
+            'py-3 px-6 rounded-xl text-sm font-semibold transition-all',
+            canDownload
+              ? 'bg-gray-900 text-white hover:bg-gray-800 active:scale-[0.99]'
+              : 'bg-gray-100 text-gray-400 cursor-not-allowed',
+          )}
+        >
+          {isDownloading ? (
+            <>
+              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              Generating {format_.toUpperCase()}...
+            </>
+          ) : (
+            <>
+              <Download size={16} />
+              Download {format_.toUpperCase()} Report
+            </>
+          )}
+        </button>
+
+        {downloadError && (
+          <div className="flex items-start justify-between gap-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <div className="flex items-start gap-2">
+              <AlertCircle size={15} className="text-red-500 mt-0.5 flex-shrink-0" />
+              <p className="text-sm text-red-700">{downloadError}</p>
+            </div>
+            <button
+              onClick={() => setDownloadError(null)}
+              className="text-red-400 hover:text-red-600 flex-shrink-0"
+            >
+              <X size={15} />
+            </button>
+          </div>
+        )}
+
+        {!canDownload && !isDownloading && (
+          <p className="text-xs text-center text-gray-400">
+            {!validStartDate || !validEndDate
+              ? 'Select a start and end date to download'
+              : dateRangeError
+                ? dateRangeError
+                : ''}
+          </p>
+        )}
+      </div>
+
+      <div className="bg-white border border-gray-200 rounded-xl p-6">
+        <DownloadHistoryList
+          history={history}
+          onRedownload={handleRedownload}
+          onClear={clearHistory}
+          isDownloading={isDownloading}
+        />
+      </div>
+
     </div>
   );
 }

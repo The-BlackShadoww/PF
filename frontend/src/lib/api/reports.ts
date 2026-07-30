@@ -1,40 +1,56 @@
-import { getAccessToken } from "./client";
+import { getAccessToken } from './client';
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001/api/v1";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
+export interface ReportDownloadParams {
+  startDate: string;
+  endDate: string;
+}
+
+async function downloadReportBlob(
+  endpoint: string,
+  params: ReportDownloadParams,
+): Promise<Blob> {
+  const token = getAccessToken();
+
+  const url = new URL(`${BASE_URL}${endpoint}`);
+  url.searchParams.set('startDate', params.startDate);
+  url.searchParams.set('endDate', params.endDate);
+
+  const response = await fetch(url.toString(), {
+    method: 'GET',
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    credentials: 'include',
+  });
+
+  if (response.status === 401) {
+    throw new Error('Your session has expired. Please refresh the page and try again.');
+  }
+
+  if (response.status === 429) {
+    throw new Error('Download limit reached. Please wait before downloading again.');
+  }
+
+  if (!response.ok) {
+    let message = `Download failed (${response.status})`;
+    try {
+      const errorBody = await response.json();
+      message = errorBody.message ?? message;
+    } catch {
+      // ignore
+    }
+    throw new Error(message);
+  }
+
+  return response.blob();
+}
 
 export const reportsApi = {
-  async downloadCsv(params: { startDate: string; endDate: string }): Promise<Blob> {
-    const url = new URL(`${API_BASE_URL}/reports/csv`);
-    url.searchParams.set("startDate", params.startDate);
-    url.searchParams.set("endDate", params.endDate);
+  downloadCsv: (params: ReportDownloadParams) =>
+    downloadReportBlob('/reports/csv', params),
 
-    const response = await fetch(url.toString(), {
-      headers: { Authorization: `Bearer ${getAccessToken()}` },
-      credentials: "include",
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to download CSV: ${response.statusText}`);
-    }
-
-    return response.blob();
-  },
-
-  async downloadPdf(params: { startDate: string; endDate: string }): Promise<Blob> {
-    const url = new URL(`${API_BASE_URL}/reports/pdf`);
-    url.searchParams.set("startDate", params.startDate);
-    url.searchParams.set("endDate", params.endDate);
-
-    const response = await fetch(url.toString(), {
-      headers: { Authorization: `Bearer ${getAccessToken()}` },
-      credentials: "include",
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to download PDF: ${response.statusText}`);
-    }
-
-    return response.blob();
-  },
+  downloadPdf: (params: ReportDownloadParams) =>
+    downloadReportBlob('/reports/pdf', params),
 };
