@@ -19,12 +19,15 @@ import {
   YAxis,
 } from "recharts";
 
+import { QuarterlyView } from "@/components/dashboard/QuarterlyView";
+import { YearlyView } from "@/components/dashboard/YearlyView";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { SummaryCard } from "@/components/shared/SummaryCard";
 import type { YearlySummary } from "@/lib/api/calculations";
 import { useCategoryBreakdown } from "@/lib/hooks/useCategoryBreakdown";
 import { useMonthlySummary } from "@/lib/hooks/useMonthlySummary";
 import { useYearlySummary } from "@/lib/hooks/useYearlySummary";
+import { cn } from "@/lib/utils/cn";
 
 const MONTH_LABELS = [
   "Jan",
@@ -59,8 +62,17 @@ type MonthPoint = {
   savingsRate: number;
 };
 
+type DashboardTab = "monthly" | "quarterly" | "yearly";
+
+const DASHBOARD_TABS: Array<{ id: DashboardTab; label: string }> = [
+  { id: "monthly", label: "Monthly" },
+  { id: "quarterly", label: "Quarterly" },
+  { id: "yearly", label: "Yearly" },
+];
+
 export default function DashboardPage() {
   const today = new Date();
+  const [activeTab, setActiveTab] = useState<DashboardTab>("monthly");
   const [selectedDate, setSelectedDate] = useState(
     () => new Date(today.getFullYear(), today.getMonth(), 1),
   );
@@ -130,164 +142,206 @@ export default function DashboardPage() {
           description="Track income, expenses, and savings momentum."
         />
 
-        <div className="inline-flex h-10 items-center rounded-md border border-slate-200 bg-white">
-          <button
-            type="button"
-            aria-label="Previous month"
-            className="inline-flex h-10 w-10 items-center justify-center text-slate-600 transition hover:bg-slate-100 hover:text-slate-950"
-            onClick={goToPreviousMonth}
-          >
-            <ChevronLeft aria-hidden="true" className="h-4 w-4" />
-          </button>
-          <div className="min-w-36 px-4 text-center text-sm font-semibold text-slate-950">
-            {formatMonthYear(selectedDate)}
+        {activeTab === "monthly" && (
+          <div className="inline-flex h-10 items-center rounded-md border border-slate-200 bg-white">
+            <button
+              type="button"
+              aria-label="Previous month"
+              className="inline-flex h-10 w-10 items-center justify-center text-slate-600 transition hover:bg-slate-100 hover:text-slate-950"
+              onClick={goToPreviousMonth}
+            >
+              <ChevronLeft aria-hidden="true" className="h-4 w-4" />
+            </button>
+            <div className="min-w-36 px-4 text-center text-sm font-semibold text-slate-950">
+              {formatMonthYear(selectedDate)}
+            </div>
+            <button
+              type="button"
+              aria-label="Next month"
+              className="inline-flex h-10 w-10 items-center justify-center text-slate-600 transition hover:bg-slate-100 hover:text-slate-950"
+              onClick={goToNextMonth}
+            >
+              <ChevronRight aria-hidden="true" className="h-4 w-4" />
+            </button>
           </div>
-          <button
-            type="button"
-            aria-label="Next month"
-            className="inline-flex h-10 w-10 items-center justify-center text-slate-600 transition hover:bg-slate-100 hover:text-slate-950"
-            onClick={goToNextMonth}
-          >
-            <ChevronRight aria-hidden="true" className="h-4 w-4" />
-          </button>
-        </div>
+        )}
       </div>
 
-      <section className="grid gap-4 md:grid-cols-3">
-        <SummaryCard
-          title="Total Income"
-          value={monthlySummary.data?.totalIncome ?? 0}
-          subtitle="This month"
-          tone="income"
-          isLoading={isMonthlyLoading}
-        />
-        <SummaryCard
-          title="Total Expenses"
-          value={monthlySummary.data?.totalExpense ?? 0}
-          subtitle="This month"
-          tone="expense"
-          isLoading={isMonthlyLoading}
-        />
-        <SummaryCard
-          title="Net Savings"
-          value={monthlySummary.data?.savings ?? 0}
-          subtitle={`${formatPercent(savingsRate)} savings rate`}
-          tone="savings"
-          isLoading={isMonthlyLoading}
-        />
-      </section>
+      <div className="mb-6 flex gap-1 border-b border-slate-200">
+        {DASHBOARD_TABS.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            onClick={() => setActiveTab(tab.id)}
+            className={cn(
+              "-mb-px px-4 py-2.5 text-sm font-medium transition-colors focus:outline-none",
+              activeTab === tab.id
+                ? "border-b-2 border-slate-950 text-slate-950"
+                : "text-slate-500 hover:text-slate-700",
+            )}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
 
-      <section className="grid gap-6 xl:grid-cols-2">
-        <ChartPanel
-          title="Monthly Income vs Expense"
-          isLoading={isYearlyLoading}
-        >
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={sixMonthData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-              <XAxis dataKey="label" tickLine={false} axisLine={false} />
-              <YAxis
-                tickLine={false}
-                axisLine={false}
-                tickFormatter={(value) => formatCompactAmount(Number(value))}
-              />
-              <Tooltip formatter={(value) => formatAmount(Number(value))} />
-              <Legend />
-              <Bar dataKey="income" name="Income" fill="#16a34a" radius={4} />
-              <Bar dataKey="expense" name="Expense" fill="#dc2626" radius={4} />
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartPanel>
+      {activeTab === "monthly" && (
+        <>
+          <section className="grid gap-4 md:grid-cols-3">
+            <SummaryCard
+              title="Total Income"
+              value={monthlySummary.data?.totalIncome ?? 0}
+              subtitle="This month"
+              tone="income"
+              isLoading={isMonthlyLoading}
+            />
+            <SummaryCard
+              title="Total Expenses"
+              value={monthlySummary.data?.totalExpense ?? 0}
+              subtitle="This month"
+              tone="expense"
+              isLoading={isMonthlyLoading}
+            />
+            <SummaryCard
+              title="Net Savings"
+              value={monthlySummary.data?.savings ?? 0}
+              subtitle={`${formatPercent(savingsRate)} savings rate`}
+              tone="savings"
+              isLoading={isMonthlyLoading}
+            />
+          </section>
 
-        <ChartPanel
-          title="Expense Category Breakdown"
-          isLoading={isCategoryLoading}
-        >
-          {expenseCategories.length === 0 ? (
-            <EmptyChartState message="No expenses this month" />
-          ) : (
-            <div className="grid h-full gap-4 lg:grid-cols-[minmax(0,1fr)_220px]">
+          <section className="grid gap-6 xl:grid-cols-2">
+            <ChartPanel
+              title="Monthly Income vs Expense"
+              isLoading={isYearlyLoading}
+            >
               <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={expenseCategories}
-                    dataKey="total"
-                    nameKey="name"
-                    innerRadius="52%"
-                    outerRadius="78%"
-                    paddingAngle={2}
-                  >
-                    {expenseCategories.map((category) => (
-                      <Cell key={category.name} fill={category.color} />
-                    ))}
-                  </Pie>
+                <BarChart data={sixMonthData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                  <XAxis dataKey="label" tickLine={false} axisLine={false} />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    tickFormatter={(value) =>
+                      formatCompactAmount(Number(value))
+                    }
+                  />
                   <Tooltip formatter={(value) => formatAmount(Number(value))} />
-                </PieChart>
+                  <Legend />
+                  <Bar
+                    dataKey="income"
+                    name="Income"
+                    fill="#16a34a"
+                    radius={4}
+                  />
+                  <Bar
+                    dataKey="expense"
+                    name="Expense"
+                    fill="#dc2626"
+                    radius={4}
+                  />
+                </BarChart>
               </ResponsiveContainer>
+            </ChartPanel>
 
-              <div className="flex flex-col justify-center gap-3">
-                {expenseCategories.map((category) => (
-                  <div
-                    key={category.name}
-                    className="flex items-center justify-between gap-3 text-sm"
-                  >
-                    <div className="flex min-w-0 items-center gap-2">
-                      <span
-                        aria-hidden="true"
-                        className="h-2.5 w-2.5 shrink-0 rounded-full"
-                        style={{ backgroundColor: category.color }}
+            <ChartPanel
+              title="Expense Category Breakdown"
+              isLoading={isCategoryLoading}
+            >
+              {expenseCategories.length === 0 ? (
+                <EmptyChartState message="No expenses this month" />
+              ) : (
+                <div className="grid h-full gap-4 lg:grid-cols-[minmax(0,1fr)_220px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={expenseCategories}
+                        dataKey="total"
+                        nameKey="name"
+                        innerRadius="52%"
+                        outerRadius="78%"
+                        paddingAngle={2}
+                      >
+                        {expenseCategories.map((category) => (
+                          <Cell key={category.name} fill={category.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        formatter={(value) => formatAmount(Number(value))}
                       />
-                      <span className="truncate text-slate-700">
-                        {category.name}
-                      </span>
-                    </div>
-                    <span className="font-semibold text-slate-950">
-                      {formatAmount(category.total)}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </ChartPanel>
+                    </PieChart>
+                  </ResponsiveContainer>
 
-        <ChartPanel title="Savings Rate Trend" isLoading={isYearlyLoading}>
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={sixMonthData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-              <XAxis dataKey="label" tickLine={false} axisLine={false} />
-              <YAxis
-                domain={[0, 100]}
-                tickLine={false}
-                axisLine={false}
-                tickFormatter={(value) => `${value}%`}
-              />
-              <Tooltip
-                formatter={(value) => formatPercent(Number(value))}
-              />
-              <ReferenceLine
-                y={20}
-                stroke="#0ea5e9"
-                strokeDasharray="4 4"
-                label={{
-                  value: "20%",
-                  position: "insideTopRight",
-                  fill: "#0369a1",
-                }}
-              />
-              <Line
-                type="monotone"
-                dataKey="savingsRate"
-                name="Savings rate"
-                stroke="#2563eb"
-                strokeWidth={3}
-                dot={{ r: 4 }}
-                activeDot={{ r: 6 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </ChartPanel>
-      </section>
+                  <div className="flex flex-col justify-center gap-3">
+                    {expenseCategories.map((category) => (
+                      <div
+                        key={category.name}
+                        className="flex items-center justify-between gap-3 text-sm"
+                      >
+                        <div className="flex min-w-0 items-center gap-2">
+                          <span
+                            aria-hidden="true"
+                            className="h-2.5 w-2.5 shrink-0 rounded-full"
+                            style={{ backgroundColor: category.color }}
+                          />
+                          <span className="truncate text-slate-700">
+                            {category.name}
+                          </span>
+                        </div>
+                        <span className="font-semibold text-slate-950">
+                          {formatAmount(category.total)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </ChartPanel>
+
+            <ChartPanel title="Savings Rate Trend" isLoading={isYearlyLoading}>
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={sixMonthData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                  <XAxis dataKey="label" tickLine={false} axisLine={false} />
+                  <YAxis
+                    domain={[0, 100]}
+                    tickLine={false}
+                    axisLine={false}
+                    tickFormatter={(value) => `${value}%`}
+                  />
+                  <Tooltip
+                    formatter={(value) => formatPercent(Number(value))}
+                  />
+                  <ReferenceLine
+                    y={20}
+                    stroke="#0ea5e9"
+                    strokeDasharray="4 4"
+                    label={{
+                      value: "20%",
+                      position: "insideTopRight",
+                      fill: "#0369a1",
+                    }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="savingsRate"
+                    name="Savings rate"
+                    stroke="#2563eb"
+                    strokeWidth={3}
+                    dot={{ r: 4 }}
+                    activeDot={{ r: 6 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </ChartPanel>
+          </section>
+        </>
+      )}
+
+      {activeTab === "quarterly" && <QuarterlyView />}
+
+      {activeTab === "yearly" && <YearlyView />}
     </div>
   );
 }
@@ -312,7 +366,9 @@ function ChartPanel({
 }
 
 function ChartSkeleton() {
-  return <div className="h-full w-full animate-pulse rounded-md bg-slate-200" />;
+  return (
+    <div className="h-full w-full animate-pulse rounded-md bg-slate-200" />
+  );
 }
 
 function EmptyChartState({ message }: { message: string }) {
@@ -350,7 +406,10 @@ function buildSixMonthData(
       label: MONTH_LABELS[month - 1],
       income,
       expense,
-      savingsRate: income > 0 ? Number((((income - expense) / income) * 100).toFixed(1)) : 0,
+      savingsRate:
+        income > 0
+          ? Number((((income - expense) / income) * 100).toFixed(1))
+          : 0,
     };
   });
 }

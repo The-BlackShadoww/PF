@@ -7,7 +7,7 @@ export class ChangePasswordDto {
     example: 'OldSecurePass123!',
   })
   @IsString()
-  currentPassword: string;
+  currentPassword!: string;
 
   @ApiProperty({
     description: 'The new password. Minimum 8 characters, maximum 72.',
@@ -18,5 +18,5 @@ export class ChangePasswordDto {
   @IsString()
   @MinLength(8)
   @MaxLength(72)
-  newPassword: string;
+  newPassword!: string;
 }

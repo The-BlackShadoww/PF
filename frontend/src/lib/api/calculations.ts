@@ -27,6 +27,18 @@ export type YearlySummary = PeriodSummary & {
   monthlyBreakdown: MonthlyBreakdownItem[];
 };
 
+export type QuarterlySummary = {
+  year: number;
+  quarter: number;
+  startMonth: number;
+  endMonth: number;
+  totalIncome: number;
+  totalExpense: number;
+  savings: number;
+  savingsRate: string;
+  monthlyBreakdown: MonthlyBreakdownItem[];
+};
+
 export type CategoryBreakdownItem = {
   name: string;
   color?: string | null;
@@ -40,6 +52,14 @@ export const calculationsApi = {
   async getMonthlySummary(year: number, month: number) {
     const response = await apiClient<ApiResponse<MonthlySummary>>(
       `/calculations/monthly?year=${year}&month=${month}`,
+    );
+
+    return response.data;
+  },
+
+  async getQuarterlySummary(year: number, quarter: number) {
+    const response = await apiClient<ApiResponse<QuarterlySummary>>(
+      `/calculations/quarterly?year=${year}&quarter=${quarter}`,
     );
 
     return response.data;
@@ -61,3 +81,11 @@ export const calculationsApi = {
     return response.data;
   },
 };
+
+export function getQuarterlySummary(year: number, quarter: number) {
+  return calculationsApi.getQuarterlySummary(year, quarter);
+}
+
+export function getYearlySummary(year: number) {
+  return calculationsApi.getYearlySummary(year);
+}

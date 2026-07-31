@@ -1,6 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { calculationsApi } from "@/lib/api/calculations";
+import { getYearlySummary } from "@/lib/api/calculations";
+
+export const yearlyKeys = {
+  all: ["yearly"] as const,
+  summary: (year: number) => [...yearlyKeys.all, year] as const,
+};
 
 type UseYearlySummaryOptions = {
   enabled?: boolean;
@@ -11,9 +16,9 @@ export function useYearlySummary(
   options: UseYearlySummaryOptions = {},
 ) {
   return useQuery({
-    queryKey: ["calculations", "yearly", year],
-    queryFn: () => calculationsApi.getYearlySummary(year),
-    staleTime: 60 * 1000,
+    queryKey: yearlyKeys.summary(year),
+    queryFn: () => getYearlySummary(year),
+    staleTime: 1000 * 60 * 5,
     enabled: options.enabled ?? true,
   });
 }
