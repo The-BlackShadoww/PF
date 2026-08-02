@@ -38,17 +38,24 @@ import { UsersModule } from './modules/users/users.module';
     ThrottlerModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
-        const redisClient = new Redis(
-          configService.get<string>('redis.url') ?? 'redis://localhost:6379',
-          {
-            lazyConnect: true,
-            maxRetriesPerRequest: 1,
-          },
-        );
+        const redisUrl = configService.get<string>('redis.url');
+        const redisClient = redisUrl
+          ? new Redis(redisUrl, {
+              lazyConnect: true,
+              maxRetriesPerRequest: 1,
+            })
+          : null;
+
+        redisClient?.on('error', () => {
+          // ioredis emits connection errors even when callers handle rejected
+          // commands. The storage layer falls back to an in-memory limiter.
+        });
 
         return {
           throttlers: [{ name: 'default', limit: 100, ttl: 60000 }],
-          storage: new ThrottlerStorageRedisService(redisClient),
+          ...(redisClient
+            ? { storage: new ThrottlerStorageRedisService(redisClient) }
+            : {}),
           getTracker: (request: Record<string, any>) =>
             request.user?.id ?? request.ip,
         };

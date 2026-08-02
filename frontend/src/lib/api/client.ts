@@ -61,7 +61,7 @@ export async function apiClient<T>(
     }
 
     clearAccessToken();
-    redirectToLogin();
+    await redirectToLogin();
     throw new ApiError("Unauthorized", 401);
   }
 
@@ -144,8 +144,23 @@ async function createApiError(response: Response) {
   return new ApiError(message, response.status);
 }
 
-function redirectToLogin() {
+async function redirectToLogin() {
   if (typeof window !== "undefined") {
+    await clearServerSession();
     window.location.assign("/login");
+  }
+}
+
+async function clearServerSession() {
+  try {
+    await fetch(buildUrl("/auth/logout"), {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+  } catch {
+    // The redirect still moves the user out of the protected screen.
   }
 }

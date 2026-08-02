@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState, type ReactNode } from "react";
 
 import { ToastProvider } from "@/components/ui/Toast";
+import { ApiError } from "@/lib/api/client";
 
 type ProvidersProps = {
   children: ReactNode;
@@ -17,6 +18,16 @@ export function Providers({ children }: ProvidersProps) {
         defaultOptions: {
           queries: {
             staleTime: 2 * 60 * 1000,
+            retry: (failureCount, error) => {
+              if (
+                error instanceof ApiError &&
+                (error.statusCode === 401 || error.statusCode === 403)
+              ) {
+                return false;
+              }
+
+              return failureCount < 1;
+            },
           },
         },
       }),

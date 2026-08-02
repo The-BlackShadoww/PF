@@ -8,7 +8,14 @@ type ThrottlerStorageRecord = {
   timeToBlockExpire: number;
 };
 
+type MemoryRecord = {
+  hits: number[];
+  blockedUntil: number;
+};
+
 export class ThrottlerStorageRedisService implements ThrottlerStorage {
+  private readonly fallbackRecords = new Map<string, MemoryRecord>();
+
   constructor(private readonly redisClient: Redis) {}
 
   async increment(
@@ -23,8 +30,9 @@ export class ThrottlerStorageRedisService implements ThrottlerStorage {
     const blockKey = this.getBlockKey(key, throttlerName);
     const member = `${now}:${Math.random()}`;
 
-    const result = (await this.redisClient.eval(
-      `
+    try {
+      const result = (await this.redisClient.eval(
+        `
       local hitKey = KEYS[1]
       local blockKey = KEYS[2]
       local now = tonumber(ARGV[1])
@@ -57,23 +65,71 @@ export class ThrottlerStorageRedisService implements ThrottlerStorage {
 
       return { totalHits, hitTtl, 0, 0 }
       `,
-      2,
-      hitKey,
-      blockKey,
-      now,
-      ttl,
-      limit,
-      blockDuration,
-      member,
-    )) as [number, number, number, number];
+        2,
+        hitKey,
+        blockKey,
+        now,
+        ttl,
+        limit,
+        blockDuration,
+        member,
+      )) as [number, number, number, number];
 
-    const [totalHits, timeToExpire, isBlocked, timeToBlockExpire] = result;
+      const [totalHits, timeToExpire, isBlocked, timeToBlockExpire] = result;
+
+      return {
+        totalHits,
+        timeToExpire: this.millisecondsToSeconds(timeToExpire),
+        isBlocked: isBlocked === 1,
+        timeToBlockExpire: this.millisecondsToSeconds(timeToBlockExpire),
+      };
+    } catch {
+      return this.incrementFallback(key, ttl, limit, blockDuration);
+    }
+  }
+
+  private incrementFallback(
+    key: string,
+    ttl: number,
+    limit: number,
+    blockDuration: number,
+  ): ThrottlerStorageRecord {
+    const now = Date.now();
+    const record = this.fallbackRecords.get(key) ?? {
+      hits: [],
+      blockedUntil: 0,
+    };
+
+    if (record.blockedUntil > now) {
+      return {
+        totalHits: record.hits.length,
+        timeToExpire: this.millisecondsToSeconds(
+          this.getFallbackTimeToExpire(record.hits, ttl, now),
+        ),
+        isBlocked: true,
+        timeToBlockExpire: this.millisecondsToSeconds(
+          record.blockedUntil - now,
+        ),
+      };
+    }
+
+    const hits = record.hits.filter((hit) => hit > now - ttl);
+    hits.push(now);
+
+    const isBlocked = hits.length > limit;
+    record.hits = hits;
+    record.blockedUntil = isBlocked ? now + blockDuration : 0;
+    this.fallbackRecords.set(key, record);
 
     return {
-      totalHits,
-      timeToExpire: this.millisecondsToSeconds(timeToExpire),
-      isBlocked: isBlocked === 1,
-      timeToBlockExpire: this.millisecondsToSeconds(timeToBlockExpire),
+      totalHits: hits.length,
+      timeToExpire: this.millisecondsToSeconds(
+        this.getFallbackTimeToExpire(hits, ttl, now),
+      ),
+      isBlocked,
+      timeToBlockExpire: this.millisecondsToSeconds(
+        Math.max(record.blockedUntil - now, 0),
+      ),
     };
   }
 
@@ -91,5 +147,19 @@ export class ThrottlerStorageRedisService implements ThrottlerStorage {
     }
 
     return Math.ceil(milliseconds / 1000);
+  }
+
+  private getFallbackTimeToExpire(
+    hits: number[],
+    ttl: number,
+    now: number,
+  ): number {
+    const oldestHit = hits[0];
+
+    if (!oldestHit) {
+      return 0;
+    }
+
+    return Math.max(oldestHit + ttl - now, 0);
   }
 }
