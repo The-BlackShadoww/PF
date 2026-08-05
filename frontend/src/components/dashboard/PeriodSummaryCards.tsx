@@ -15,10 +15,10 @@ interface PeriodSummaryCardsProps {
 
 function SkeletonCard() {
   return (
-    <div className="space-y-3 rounded-md border border-slate-200 bg-white p-5">
-      <div className="h-3 w-1/2 animate-pulse rounded bg-slate-200" />
-      <div className="h-7 w-2/3 animate-pulse rounded bg-slate-200" />
-      <div className="h-2 w-1/3 animate-pulse rounded bg-slate-200" />
+    <div className="space-y-3 rounded-3xl bg-white p-5">
+      <div className="h-3 w-1/2 animate-pulse rounded bg-[#e8ebe6]" />
+      <div className="h-7 w-2/3 animate-pulse rounded bg-[#e8ebe6]" />
+      <div className="h-2 w-1/3 animate-pulse rounded bg-[#e8ebe6]" />
     </div>
   );
 }
@@ -45,36 +45,33 @@ export function PeriodSummaryCards({
       label: "Total Income",
       value: formatDollar(totalIncome),
       icon: TrendingUp,
-      iconColor: "text-green-500",
-      valueColor: "text-green-700",
-      bg: "bg-green-50 border-green-100",
+      iconColor: "text-[#2ead4b]",
+      valueColor: "text-[#054d28]",
+      bg: "bg-[#e2f6d5]",
     },
     {
       label: "Total Expenses",
       value: formatDollar(totalExpense),
       icon: TrendingDown,
-      iconColor: "text-red-500",
-      valueColor: "text-red-700",
-      bg: "bg-red-50 border-red-100",
+      iconColor: "text-[#d03238]",
+      valueColor: "text-[#a7000d]",
+      bg: "bg-white",
     },
     {
       label: "Net Savings",
       value: (savings < 0 ? "-" : "") + formatDollar(savings),
       icon: Wallet,
-      iconColor: savings >= 0 ? "text-blue-500" : "text-orange-500",
-      valueColor: savings >= 0 ? "text-blue-700" : "text-orange-700",
-      bg:
-        savings >= 0
-          ? "bg-blue-50 border-blue-100"
-          : "bg-orange-50 border-orange-100",
+      iconColor: savings >= 0 ? "text-[#163300]" : "text-[#b86700]",
+      valueColor: savings >= 0 ? "text-[#163300]" : "text-[#4a3b1c]",
+      bg: savings >= 0 ? "bg-[#ffc091]" : "bg-[#ffd11a]",
     },
     {
       label: "Savings Rate",
       value: `${savingsRate}%`,
       icon: Percent,
-      iconColor: "text-purple-500",
-      valueColor: "text-purple-700",
-      bg: "bg-purple-50 border-purple-100",
+      iconColor: "text-[#0e0f0c]",
+      valueColor: "text-[#0e0f0c]",
+      bg: "bg-white",
     },
   ];
 
@@ -86,15 +83,15 @@ export function PeriodSummaryCards({
         return (
           <div
             key={card.label}
-            className={cn("space-y-2 rounded-md border p-5", card.bg)}
+            className={cn("space-y-2 rounded-3xl p-5", card.bg)}
           >
             <div className="flex items-center gap-2">
               <Icon aria-hidden="true" className={card.iconColor} size={15} />
-              <span className="text-xs font-medium text-slate-500">
+              <span className="text-xs font-semibold text-[#454745]">
                 {card.label}
               </span>
             </div>
-            <p className={cn("text-xl font-bold", card.valueColor)}>
+            <p className={cn("text-2xl font-black", card.valueColor)}>
               {card.value}
             </p>
           </div>

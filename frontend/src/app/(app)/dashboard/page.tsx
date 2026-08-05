@@ -45,12 +45,12 @@ const MONTH_LABELS = [
 ];
 
 const DEFAULT_CATEGORY_COLORS = [
-  "#ef4444",
-  "#f97316",
-  "#eab308",
-  "#14b8a6",
-  "#6366f1",
-  "#a855f7",
+  "#d03238",
+  "#ffc091",
+  "#ffd11a",
+  "#2ead4b",
+  "#38c8ff",
+  "#163300",
 ];
 
 type MonthPoint = {
@@ -143,22 +143,22 @@ export default function DashboardPage() {
         />
 
         {activeTab === "monthly" && (
-          <div className="inline-flex h-10 items-center rounded-md border border-slate-200 bg-white">
+          <div className="inline-flex h-11 items-center rounded-full bg-white">
             <button
               type="button"
               aria-label="Previous month"
-              className="inline-flex h-10 w-10 items-center justify-center text-slate-600 transition hover:bg-slate-100 hover:text-slate-950"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full text-[#454745] transition hover:bg-[#e8ebe6] hover:text-[#0e0f0c]"
               onClick={goToPreviousMonth}
             >
               <ChevronLeft aria-hidden="true" className="h-4 w-4" />
             </button>
-            <div className="min-w-36 px-4 text-center text-sm font-semibold text-slate-950">
+            <div className="min-w-36 px-4 text-center text-sm font-semibold text-[#0e0f0c]">
               {formatMonthYear(selectedDate)}
             </div>
             <button
               type="button"
               aria-label="Next month"
-              className="inline-flex h-10 w-10 items-center justify-center text-slate-600 transition hover:bg-slate-100 hover:text-slate-950"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full text-[#454745] transition hover:bg-[#e8ebe6] hover:text-[#0e0f0c]"
               onClick={goToNextMonth}
             >
               <ChevronRight aria-hidden="true" className="h-4 w-4" />
@@ -167,17 +167,17 @@ export default function DashboardPage() {
         )}
       </div>
 
-      <div className="mb-6 flex gap-1 border-b border-slate-200">
+      <div className="mb-6 flex gap-1 overflow-x-auto rounded-full bg-white p-1">
         {DASHBOARD_TABS.map((tab) => (
           <button
             key={tab.id}
             type="button"
             onClick={() => setActiveTab(tab.id)}
             className={cn(
-              "-mb-px px-4 py-2.5 text-sm font-medium transition-colors focus:outline-none",
+              "rounded-full px-4 py-2.5 text-sm font-semibold transition-colors focus:outline-none",
               activeTab === tab.id
-                ? "border-b-2 border-slate-950 text-slate-950"
-                : "text-slate-500 hover:text-slate-700",
+                ? "bg-[#9fe870] text-[#0e0f0c]"
+                : "text-[#454745] hover:bg-[#e8ebe6] hover:text-[#0e0f0c]",
             )}
           >
             {tab.label}
@@ -218,7 +218,7 @@ export default function DashboardPage() {
             >
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={sixMonthData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e8ebe6" />
                   <XAxis dataKey="label" tickLine={false} axisLine={false} />
                   <YAxis
                     tickLine={false}
@@ -232,14 +232,14 @@ export default function DashboardPage() {
                   <Bar
                     dataKey="income"
                     name="Income"
-                    fill="#16a34a"
-                    radius={4}
+                    fill="#2ead4b"
+                    radius={8}
                   />
                   <Bar
                     dataKey="expense"
                     name="Expense"
-                    fill="#dc2626"
-                    radius={4}
+                    fill="#d03238"
+                    radius={8}
                   />
                 </BarChart>
               </ResponsiveContainer>
@@ -285,11 +285,11 @@ export default function DashboardPage() {
                             className="h-2.5 w-2.5 shrink-0 rounded-full"
                             style={{ backgroundColor: category.color }}
                           />
-                          <span className="truncate text-slate-700">
+                          <span className="truncate text-[#454745]">
                             {category.name}
                           </span>
                         </div>
-                        <span className="font-semibold text-slate-950">
+                        <span className="font-semibold text-[#0e0f0c]">
                           {formatAmount(category.total)}
                         </span>
                       </div>
@@ -302,7 +302,7 @@ export default function DashboardPage() {
             <ChartPanel title="Savings Rate Trend" isLoading={isYearlyLoading}>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={sixMonthData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e8ebe6" />
                   <XAxis dataKey="label" tickLine={false} axisLine={false} />
                   <YAxis
                     domain={[0, 100]}
@@ -315,19 +315,19 @@ export default function DashboardPage() {
                   />
                   <ReferenceLine
                     y={20}
-                    stroke="#0ea5e9"
+                    stroke="#38c8ff"
                     strokeDasharray="4 4"
                     label={{
                       value: "20%",
                       position: "insideTopRight",
-                      fill: "#0369a1",
+                      fill: "#163300",
                     }}
                   />
                   <Line
                     type="monotone"
                     dataKey="savingsRate"
                     name="Savings rate"
-                    stroke="#2563eb"
+                    stroke="#163300"
                     strokeWidth={3}
                     dot={{ r: 4 }}
                     activeDot={{ r: 6 }}
@@ -356,8 +356,8 @@ function ChartPanel({
   children: React.ReactNode;
 }) {
   return (
-    <article className="rounded-md border border-slate-200 bg-white p-5">
-      <h2 className="text-base font-semibold text-slate-950">{title}</h2>
+    <article className="rounded-3xl bg-white p-6">
+      <h2 className="text-base font-black text-[#0e0f0c]">{title}</h2>
       <div className="mt-4 h-80">
         {isLoading ? <ChartSkeleton /> : children}
       </div>
@@ -367,13 +367,13 @@ function ChartPanel({
 
 function ChartSkeleton() {
   return (
-    <div className="h-full w-full animate-pulse rounded-md bg-slate-200" />
+    <div className="h-full w-full animate-pulse rounded-3xl bg-[#e8ebe6]" />
   );
 }
 
 function EmptyChartState({ message }: { message: string }) {
   return (
-    <div className="flex h-full items-center justify-center rounded-md border border-dashed border-slate-300 bg-slate-50 px-6 text-center text-sm font-medium text-slate-500">
+    <div className="flex h-full items-center justify-center rounded-3xl border border-dashed border-[#868685] bg-[#e8ebe6] px-6 text-center text-sm font-semibold text-[#454745]">
       {message}
     </div>
   );

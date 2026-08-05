@@ -140,17 +140,17 @@ export function TransactionForm({
   return (
     <form className="space-y-5" onSubmit={handleSubmit(submit)}>
       <div className="space-y-2">
-        <span className="text-sm font-medium text-slate-700">Type</span>
+        <span className="text-sm font-semibold text-[#454745]">Type</span>
         <div className="grid grid-cols-2 gap-2">
           {(["income", "expense"] as const).map((transactionType) => (
             <button
               key={transactionType}
               type="button"
               className={cn(
-                "h-10 rounded-md border text-sm font-semibold capitalize transition",
+                "h-11 rounded-3xl text-sm font-semibold capitalize transition",
                 selectedType === transactionType
-                  ? "border-slate-950 bg-slate-950 text-white"
-                  : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50",
+                  ? "bg-[#9fe870] text-[#0e0f0c]"
+                  : "border border-[#0e0f0c] bg-white text-[#0e0f0c] hover:bg-[#e8ebe6]",
               )}
               onClick={() => handleTypeChange(transactionType)}
             >
@@ -163,9 +163,9 @@ export function TransactionForm({
       </div>
 
       <label className="block space-y-1.5">
-        <span className="text-sm font-medium text-slate-700">Category</span>
+        <span className="text-sm font-semibold text-[#454745]">Category</span>
         <select
-          className="h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+          className="h-11 w-full rounded-xl border border-[#0e0f0c] bg-white px-4 text-sm text-[#0e0f0c] outline-none transition focus:ring-2 focus:ring-[#9fe870]"
           disabled={categoriesLoading}
           {...register("categoryId")}
         >
@@ -184,12 +184,12 @@ export function TransactionForm({
       </label>
 
       <label className="block space-y-1.5">
-        <span className="text-sm font-medium text-slate-700">Amount</span>
+        <span className="text-sm font-semibold text-[#454745]">Amount</span>
         <input
           type="text"
           inputMode="decimal"
           value={amountDisplay}
-          className="h-10 w-full rounded-md border border-slate-300 px-3 text-sm text-slate-950 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+          className="h-11 w-full rounded-xl border border-[#0e0f0c] px-4 text-sm text-[#0e0f0c] outline-none transition focus:ring-2 focus:ring-[#9fe870]"
           placeholder="$0.00"
           onChange={(event) => handleAmountChange(event.target.value)}
         />
@@ -198,14 +198,14 @@ export function TransactionForm({
       </label>
 
       <label className="block space-y-1.5">
-        <span className="text-sm font-medium text-slate-700">Date</span>
+        <span className="text-sm font-semibold text-[#454745]">Date</span>
         <input
           type="date"
-          className="h-10 w-full rounded-md border border-slate-300 px-3 text-sm text-slate-950 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+          className="h-11 w-full rounded-xl border border-[#0e0f0c] px-4 text-sm text-[#0e0f0c] outline-none transition focus:ring-2 focus:ring-[#9fe870]"
           {...register("date")}
         />
         {futureDateWarning ? (
-          <p className="flex items-center gap-2 text-xs font-medium text-amber-700">
+          <p className="flex items-center gap-2 text-xs font-semibold text-[#4a3b1c]">
             <AlertTriangle aria-hidden="true" className="h-3.5 w-3.5" />
             This date is in the future.
           </p>
@@ -214,24 +214,24 @@ export function TransactionForm({
       </label>
 
       <label className="block space-y-1.5">
-        <span className="text-sm font-medium text-slate-700">Note</span>
+        <span className="text-sm font-semibold text-[#454745]">Note</span>
         <textarea
           rows={4}
           maxLength={500}
-          className="w-full resize-none rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-950 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+          className="w-full resize-none rounded-xl border border-[#0e0f0c] px-4 py-3 text-sm text-[#0e0f0c] outline-none transition focus:ring-2 focus:ring-[#9fe870]"
           placeholder="Optional"
           {...register("note")}
         />
         <div className="flex items-center justify-between gap-3">
           {errors.note ? <FieldError message={errors.note.message} /> : <span />}
-          <span className="text-xs text-slate-500">{note.length}/500</span>
+          <span className="text-xs text-[#868685]">{note.length}/500</span>
         </div>
       </label>
 
-      <div className="flex justify-end gap-2 border-t border-slate-200 pt-5">
+      <div className="flex justify-end gap-2 border-t border-[#e8ebe6] pt-5">
         <button
           type="button"
-          className="inline-flex h-10 items-center justify-center rounded-md border border-slate-300 px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+          className="inline-flex h-11 items-center justify-center rounded-3xl border border-[#0e0f0c] px-5 text-sm font-semibold text-[#0e0f0c] transition hover:bg-[#e8ebe6]"
           onClick={onCancel}
           disabled={submitting}
         >
@@ -239,7 +239,7 @@ export function TransactionForm({
         </button>
         <button
           type="submit"
-          className="inline-flex h-10 items-center justify-center rounded-md bg-slate-950 px-4 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex h-11 items-center justify-center rounded-3xl bg-[#9fe870] px-5 text-sm font-semibold text-[#0e0f0c] transition hover:bg-[#cdffad] disabled:cursor-not-allowed disabled:opacity-60"
           disabled={submitting}
         >
           {submitting
@@ -258,7 +258,7 @@ function FieldError({ message }: { message?: string }) {
     return null;
   }
 
-  return <p className="text-xs font-medium text-red-600">{message}</p>;
+  return <p className="text-xs font-semibold text-[#a7000d]">{message}</p>;
 }
 
 function formatAmount(amount: number) {

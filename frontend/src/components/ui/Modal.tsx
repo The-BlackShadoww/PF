@@ -86,26 +86,26 @@ export function Modal({ open, title, children, onClose }: ModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/35 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#0e0f0c]/40 p-4"
       onClick={handleBackdropClick}
       onKeyDown={handleKeyDown}
       role="presentation"
     >
       <div
         ref={panelRef}
-        className="max-h-[calc(100vh-2rem)] w-full max-w-lg overflow-y-auto rounded-md bg-white shadow-xl"
+        className="max-h-[calc(100vh-2rem)] w-full max-w-lg overflow-y-auto rounded-3xl bg-white shadow-xl"
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
       >
-        <div className="flex items-center justify-between gap-4 border-b border-slate-200 px-6 py-4">
-          <h2 id="modal-title" className="text-lg font-semibold text-slate-950">
+        <div className="flex items-center justify-between gap-4 border-b border-[#e8ebe6] px-6 py-4">
+          <h2 id="modal-title" className="text-xl font-black text-[#0e0f0c]">
             {title}
           </h2>
           <button
             type="button"
             aria-label="Close modal"
-            className="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-500 transition hover:bg-slate-100 hover:text-slate-950"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full text-[#454745] transition hover:bg-[#e8ebe6] hover:text-[#0e0f0c]"
             onClick={onClose}
           >
             <X aria-hidden="true" className="h-4 w-4" />

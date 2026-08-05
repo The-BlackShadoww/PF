@@ -29,16 +29,16 @@ function YearlyChartTooltip({
   if (!active || !payload || payload.length === 0) return null;
 
   return (
-    <div className="rounded-md border border-slate-200 bg-white p-3 text-xs shadow-lg">
-      <p className="mb-2 font-semibold text-slate-700">{label}</p>
+    <div className="rounded-2xl bg-white p-3 text-xs shadow-lg">
+      <p className="mb-2 font-semibold text-[#454745]">{label}</p>
       {payload.map((entry) => (
         <div key={entry.dataKey} className="mb-1 flex items-center gap-2">
           <span
             className="h-2 w-2 shrink-0 rounded-full"
             style={{ backgroundColor: entry.color }}
           />
-          <span className="text-slate-600">{entry.name}:</span>
-          <span className="font-medium text-slate-950">
+          <span className="text-[#454745]">{entry.name}:</span>
+          <span className="font-semibold text-[#0e0f0c]">
             {formatDollar(Number(entry.value ?? 0))}
           </span>
         </div>
@@ -84,7 +84,7 @@ export function YearlyView() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-base font-semibold text-slate-950">
+        <h3 className="text-base font-black text-[#0e0f0c]">
           {selectedYear} Overview
         </h3>
 
@@ -92,13 +92,13 @@ export function YearlyView() {
           <button
             type="button"
             onClick={goToPreviousYear}
-            className="rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800"
+            className="rounded-full p-1.5 text-[#454745] transition-colors hover:bg-white hover:text-[#0e0f0c]"
             title="Previous year"
           >
             <ChevronLeft aria-hidden="true" size={16} />
           </button>
 
-          <span className="min-w-10 text-center text-sm font-semibold text-slate-950">
+          <span className="min-w-10 text-center text-sm font-semibold text-[#0e0f0c]">
             {selectedYear}
           </span>
 
@@ -109,8 +109,8 @@ export function YearlyView() {
             className={cn(
               "rounded-lg p-1.5 transition-colors",
               selectedYear >= currentYear
-                ? "cursor-not-allowed text-slate-200"
-                : "text-slate-500 hover:bg-slate-100 hover:text-slate-800",
+                ? "cursor-not-allowed text-[#868685] opacity-40"
+                : "text-[#454745] hover:bg-white hover:text-[#0e0f0c]",
             )}
             title={
               selectedYear >= currentYear
@@ -124,7 +124,7 @@ export function YearlyView() {
       </div>
 
       {error && (
-        <div className="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <div className="rounded-3xl bg-[#320707] p-4 text-sm font-semibold text-white">
           Failed to load yearly data. Please try again.
         </div>
       )}
@@ -142,8 +142,8 @@ export function YearlyView() {
         hasPriorYear &&
         priorSummary &&
         summary && (
-          <div className="flex flex-wrap gap-4 rounded-md border border-slate-200 bg-slate-50 p-4 text-sm">
-            <span className="w-full text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <div className="flex flex-wrap gap-4 rounded-3xl bg-white p-4 text-sm">
+            <span className="w-full text-xs font-semibold uppercase tracking-normal text-[#454745]">
               Compared to {selectedYear - 1}
             </span>
             <ComparisonPill
@@ -166,10 +166,10 @@ export function YearlyView() {
 
       {!isLoading && chartData.length > 0 && (
         <div>
-          <h4 className="mb-3 text-sm font-semibold text-slate-700">
+          <h4 className="mb-3 text-sm font-semibold text-[#454745]">
             Income vs Expenses - {selectedYear}
           </h4>
-          <div className="rounded-md border border-slate-200 bg-white p-5">
+          <div className="rounded-3xl bg-white p-5">
             <ResponsiveContainer width="100%" height={260}>
               <BarChart
                 data={chartData}
@@ -178,18 +178,18 @@ export function YearlyView() {
                 barSize={16}
               >
                 <CartesianGrid
-                  stroke="#f1f5f9"
+                  stroke="#e8ebe6"
                   strokeDasharray="3 3"
                   vertical={false}
                 />
                 <XAxis
                   dataKey="month"
-                  tick={{ fontSize: 11, fill: "#94a3b8" }}
+                  tick={{ fontSize: 11, fill: "#868685" }}
                   axisLine={false}
                   tickLine={false}
                 />
                 <YAxis
-                  tick={{ fontSize: 11, fill: "#94a3b8" }}
+                  tick={{ fontSize: 11, fill: "#868685" }}
                   axisLine={false}
                   tickLine={false}
                   tickFormatter={(value) =>
@@ -200,8 +200,8 @@ export function YearlyView() {
                 <Legend
                   wrapperStyle={{ fontSize: "12px", paddingTop: "16px" }}
                 />
-                <Bar dataKey="Income" fill="#16a34a" radius={[3, 3, 0, 0]} />
-                <Bar dataKey="Expenses" fill="#dc2626" radius={[3, 3, 0, 0]} />
+                <Bar dataKey="Income" fill="#2ead4b" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="Expenses" fill="#d03238" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -210,11 +210,11 @@ export function YearlyView() {
 
       <div>
         <div className="mb-3 flex items-center justify-between gap-4">
-          <h4 className="text-sm font-semibold text-slate-700">
+          <h4 className="text-sm font-semibold text-[#454745]">
             Monthly Breakdown
           </h4>
           {hasPriorYear && (
-            <span className="text-xs text-slate-400">
+            <span className="text-xs text-[#868685]">
               Savings vs {selectedYear - 1} shown in last column
             </span>
           )}
@@ -231,7 +231,7 @@ export function YearlyView() {
       </div>
 
       {!isLoading && summary && (
-        <p className="text-right text-xs text-slate-400">
+        <p className="text-right text-xs text-[#868685]">
           {summary.transactionCount?.toLocaleString() ?? 0} transactions in{" "}
           {selectedYear}
         </p>
@@ -253,11 +253,11 @@ function ComparisonPill({
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-xs text-slate-500">{label}</span>
+      <span className="text-xs text-[#454745]">{label}</span>
       <span
         className={cn(
           "text-xs font-semibold",
-          isBetter ? "text-green-600" : "text-red-500",
+          isBetter ? "text-[#054d28]" : "text-[#a7000d]",
         )}
       >
         {diff >= 0 ? "Up" : "Down"} {formatDollar(Math.abs(diff))}

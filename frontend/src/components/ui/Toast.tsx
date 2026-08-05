@@ -57,10 +57,10 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           <div
             key={toast.id}
             className={cn(
-              "rounded-md border bg-white px-4 py-3 text-sm font-medium shadow-lg",
+              "rounded-3xl bg-white px-4 py-3 text-sm font-semibold shadow-lg",
               toast.variant === "success"
-                ? "border-emerald-200 text-emerald-700"
-                : "border-red-200 text-red-700",
+                ? "text-[#054d28] ring-1 ring-[#9fe870]"
+                : "bg-[#320707] text-white",
             )}
             role="status"
           >

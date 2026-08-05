@@ -12,7 +12,7 @@ export function Table({
   ...props
 }: TableHTMLAttributes<HTMLTableElement>) {
   return (
-    <div className="w-full overflow-x-auto rounded-md border border-slate-200 bg-white">
+    <div className="w-full overflow-x-auto rounded-3xl bg-white">
       <table
         className={cn("w-full min-w-[760px] border-collapse text-sm", className)}
         {...props}
@@ -25,7 +25,7 @@ export function TableHeader({
   className,
   ...props
 }: HTMLAttributes<HTMLTableSectionElement>) {
-  return <thead className={cn("bg-slate-50", className)} {...props} />;
+  return <thead className={cn("bg-[#e8ebe6]", className)} {...props} />;
 }
 
 export function TableBody({
@@ -34,7 +34,7 @@ export function TableBody({
 }: HTMLAttributes<HTMLTableSectionElement>) {
   return (
     <tbody
-      className={cn("divide-y divide-slate-100 bg-white", className)}
+      className={cn("divide-y divide-[#e8ebe6] bg-white", className)}
       {...props}
     />
   );
@@ -46,7 +46,7 @@ export function TableRow({
 }: HTMLAttributes<HTMLTableRowElement>) {
   return (
     <tr
-      className={cn("transition hover:bg-slate-50/80", className)}
+      className={cn("transition hover:bg-[#e2f6d5]/45", className)}
       {...props}
     />
   );
@@ -59,7 +59,7 @@ export function TableHead({
   return (
     <th
       className={cn(
-        "h-11 whitespace-nowrap px-4 text-left text-xs font-semibold uppercase tracking-normal text-slate-500",
+        "h-12 whitespace-nowrap px-4 text-left text-xs font-semibold uppercase tracking-normal text-[#454745]",
         className,
       )}
       {...props}
@@ -74,7 +74,7 @@ export function TableCell({
   return (
     <td
       className={cn(
-        "whitespace-nowrap px-4 py-3 align-middle text-slate-700",
+        "whitespace-nowrap px-4 py-3 align-middle text-[#454745]",
         className,
       )}
       {...props}

@@ -77,15 +77,17 @@ function LoginForm({ registered }: LoginFormProps) {
   return (
     <div className="space-y-6">
       <div className="space-y-2 text-center">
-        <h1 className="text-2xl font-semibold text-slate-950">Log in</h1>
-        <p className="text-sm text-slate-600">
+        <h1 className="text-4xl font-black leading-none text-[#0e0f0c]">
+          Log in
+        </h1>
+        <p className="text-sm text-[#454745]">
           Access your personal finance dashboard.
         </p>
       </div>
 
       {registered ? (
         <p
-          className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700"
+          className="rounded-2xl bg-[#e2f6d5] px-4 py-3 text-sm font-semibold text-[#054d28]"
           role="status"
         >
           Registered successfully. Please log in.
@@ -95,7 +97,7 @@ function LoginForm({ registered }: LoginFormProps) {
       <form className="space-y-4" onSubmit={handleSubmit(onSubmit)} noValidate>
         {formError ? (
           <p
-            className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
+            className="rounded-2xl bg-[#320707] px-4 py-3 text-sm font-semibold text-white"
             role="alert"
           >
             {formError}
@@ -104,7 +106,7 @@ function LoginForm({ registered }: LoginFormProps) {
 
         <div className="space-y-1.5">
           <label
-            className="block text-sm font-medium text-slate-800"
+            className="block text-sm font-semibold text-[#454745]"
             htmlFor="email"
           >
             Email
@@ -115,11 +117,11 @@ function LoginForm({ registered }: LoginFormProps) {
             autoComplete="email"
             aria-invalid={errors.email ? "true" : "false"}
             aria-describedby={errors.email ? "email-error" : undefined}
-            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-950 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+            className="w-full rounded-xl border border-[#0e0f0c] px-4 py-3 text-sm text-[#0e0f0c] outline-none transition focus:ring-2 focus:ring-[#9fe870]"
             {...register("email")}
           />
           {errors.email ? (
-            <p className="text-sm text-red-600" id="email-error" role="alert">
+            <p className="text-sm text-[#a7000d]" id="email-error" role="alert">
               {errors.email.message}
             </p>
           ) : null}
@@ -127,7 +129,7 @@ function LoginForm({ registered }: LoginFormProps) {
 
         <div className="space-y-1.5">
           <label
-            className="block text-sm font-medium text-slate-800"
+            className="block text-sm font-semibold text-[#454745]"
             htmlFor="password"
           >
             Password
@@ -138,12 +140,12 @@ function LoginForm({ registered }: LoginFormProps) {
             autoComplete="current-password"
             aria-invalid={errors.password ? "true" : "false"}
             aria-describedby={errors.password ? "password-error" : undefined}
-            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-950 shadow-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+            className="w-full rounded-xl border border-[#0e0f0c] px-4 py-3 text-sm text-[#0e0f0c] outline-none transition focus:ring-2 focus:ring-[#9fe870]"
             {...register("password")}
           />
           {errors.password ? (
             <p
-              className="text-sm text-red-600"
+              className="text-sm text-[#a7000d]"
               id="password-error"
               role="alert"
             >
@@ -155,16 +157,16 @@ function LoginForm({ registered }: LoginFormProps) {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="flex w-full items-center justify-center gap-2 rounded-md bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
+          className="flex w-full items-center justify-center gap-2 rounded-3xl bg-[#9fe870] px-4 py-3 text-sm font-semibold text-[#0e0f0c] transition hover:bg-[#cdffad] disabled:cursor-not-allowed disabled:opacity-70"
         >
           {isSubmitting ? <Spinner /> : null}
           {isSubmitting ? "Logging in..." : "Log in"}
         </button>
       </form>
 
-      <p className="text-center text-sm text-slate-600">
+      <p className="text-center text-sm text-[#454745]">
         New here?{" "}
-        <Link className="font-medium text-slate-950 underline" href="/register">
+        <Link className="font-semibold text-[#0e0f0c] underline" href="/register">
           Create an account
         </Link>
       </p>

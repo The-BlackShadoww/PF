@@ -1,12 +1,23 @@
-'use client';
+"use client";
 
-import { FileText, TrendingUp, TrendingDown, Wallet, Hash, Calendar } from 'lucide-react';
-import { format, parseISO } from 'date-fns';
-import { ReportPreviewData } from '../../../lib/hooks/useReportPreview';
+import { format, parseISO } from "date-fns";
+import {
+  Calendar,
+  FileText,
+  Hash,
+  TrendingDown,
+  TrendingUp,
+  Wallet,
+} from "lucide-react";
+
+import type { ReportPreviewData } from "@/lib/hooks/useReportPreview";
 
 function formatDollar(amount: number): string {
   const abs = Math.abs(amount);
-  return `$${abs.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  return `$${abs.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
 }
 
 interface ReportPreviewCardProps {
@@ -22,16 +33,15 @@ export function ReportPreviewCard({
   startDate,
   endDate,
 }: ReportPreviewCardProps) {
-
   if (!startDate || !endDate) {
     return (
-      <div className="flex flex-col items-center justify-center p-8 bg-gray-50 border border-dashed border-gray-300 rounded-xl text-center">
-        <FileText size={32} className="text-gray-300 mb-3" />
-        <p className="text-sm font-medium text-gray-500">
+      <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-[#868685] bg-[#e8ebe6] p-8 text-center">
+        <FileText size={32} className="mb-3 text-[#868685]" />
+        <p className="text-sm font-semibold text-[#454745]">
           Select a date range to preview your report
         </p>
-        <p className="text-xs text-gray-400 mt-1">
-          You'll see a summary of what the report will include before downloading
+        <p className="mt-1 text-xs text-[#868685]">
+          You will see a summary of what the report includes before downloading.
         </p>
       </div>
     );
@@ -39,97 +49,115 @@ export function ReportPreviewCard({
 
   if (isLoading) {
     return (
-      <div className="p-5 bg-white border border-gray-200 rounded-xl space-y-3">
-        <div className="h-4 bg-gray-100 rounded animate-pulse w-1/3" />
+      <div className="space-y-3 rounded-3xl bg-white p-5">
+        <div className="h-4 w-1/3 animate-pulse rounded bg-[#e8ebe6]" />
         <div className="grid grid-cols-2 gap-3">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-16 bg-gray-100 rounded-lg animate-pulse" />
+          {Array.from({ length: 4 }).map((_, index) => (
+            <div
+              key={index}
+              className="h-16 animate-pulse rounded-2xl bg-[#e8ebe6]"
+            />
           ))}
         </div>
-        <div className="h-3 bg-gray-100 rounded animate-pulse w-1/2" />
+        <div className="h-3 w-1/2 animate-pulse rounded bg-[#e8ebe6]" />
       </div>
     );
   }
 
   if (preview) {
-    const startLabel = format(parseISO(startDate), 'MMM yyyy');
-    const endLabel = format(parseISO(endDate), 'MMM yyyy');
-    const periodLabel = startLabel === endLabel
-      ? startLabel
-      : `${startLabel} – ${endLabel}`;
+    const startLabel = format(parseISO(startDate), "MMM yyyy");
+    const endLabel = format(parseISO(endDate), "MMM yyyy");
+    const periodLabel =
+      startLabel === endLabel ? startLabel : `${startLabel} to ${endLabel}`;
 
     return (
-      <div className="p-5 bg-white border border-gray-200 rounded-xl">
-        <div className="flex items-center justify-between mb-4">
+      <div className="rounded-3xl bg-white p-6">
+        <div className="mb-4 flex items-center justify-between">
           <div>
-            <p className="text-sm font-semibold text-gray-900">Report Preview</p>
-            <p className="text-xs text-gray-500 mt-0.5">{periodLabel}</p>
+            <p className="text-base font-black text-[#0e0f0c]">
+              Report preview
+            </p>
+            <p className="mt-0.5 text-xs text-[#868685]">{periodLabel}</p>
           </div>
-          <div className="flex items-center gap-1.5 text-xs text-gray-500">
+          <div className="flex items-center gap-1.5 rounded-full bg-[#e8ebe6] px-3 py-1 text-xs font-semibold text-[#454745]">
             <Calendar size={13} />
-            <span>{preview.monthsIncluded} month{preview.monthsIncluded !== 1 ? 's' : ''}</span>
+            <span>
+              {preview.monthsIncluded} month
+              {preview.monthsIncluded !== 1 ? "s" : ""}
+            </span>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 mb-4">
-          <div className="p-3 bg-green-50 border border-green-100 rounded-lg">
-            <div className="flex items-center gap-1.5 mb-1">
-              <TrendingUp size={13} className="text-green-600" />
-              <span className="text-xs text-green-700 font-medium">Total Income</span>
-            </div>
-            <p className="text-base font-bold text-green-700">
-              {formatDollar(preview.totalIncome)}
-            </p>
-          </div>
-
-          <div className="p-3 bg-red-50 border border-red-100 rounded-lg">
-            <div className="flex items-center gap-1.5 mb-1">
-              <TrendingDown size={13} className="text-red-600" />
-              <span className="text-xs text-red-700 font-medium">Total Expenses</span>
-            </div>
-            <p className="text-base font-bold text-red-700">
-              {formatDollar(preview.totalExpense)}
-            </p>
-          </div>
-
-          <div className={`p-3 border rounded-lg ${
-            preview.savings >= 0
-              ? 'bg-blue-50 border-blue-100'
-              : 'bg-orange-50 border-orange-100'
-          }`}>
-            <div className="flex items-center gap-1.5 mb-1">
-              <Wallet size={13} className={preview.savings >= 0 ? 'text-blue-600' : 'text-orange-600'} />
-              <span className={`text-xs font-medium ${preview.savings >= 0 ? 'text-blue-700' : 'text-orange-700'}`}>
-                Net Savings
-              </span>
-            </div>
-            <p className={`text-base font-bold ${preview.savings >= 0 ? 'text-blue-700' : 'text-orange-700'}`}>
-              {preview.savings < 0 ? '-' : ''}{formatDollar(preview.savings)}
-            </p>
-          </div>
-
-          <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg">
-            <div className="flex items-center gap-1.5 mb-1">
-              <Hash size={13} className="text-gray-500" />
-              <span className="text-xs text-gray-600 font-medium">Transactions</span>
-            </div>
-            <p className="text-base font-bold text-gray-800">
-              {preview.transactionCount.toLocaleString()}
-            </p>
-          </div>
+        <div className="mb-4 grid grid-cols-2 gap-3">
+          <MetricCard
+            icon={TrendingUp}
+            label="Total Income"
+            value={formatDollar(preview.totalIncome)}
+            className="bg-[#e2f6d5] text-[#054d28]"
+          />
+          <MetricCard
+            icon={TrendingDown}
+            label="Total Expenses"
+            value={formatDollar(preview.totalExpense)}
+            className="bg-[#e8ebe6] text-[#a7000d]"
+          />
+          <MetricCard
+            icon={Wallet}
+            label="Net Savings"
+            value={`${preview.savings < 0 ? "-" : ""}${formatDollar(
+              preview.savings,
+            )}`}
+            className={
+              preview.savings >= 0
+                ? "bg-[#ffc091] text-[#0e0f0c]"
+                : "bg-[#ffd11a] text-[#4a3b1c]"
+            }
+          />
+          <MetricCard
+            icon={Hash}
+            label="Transactions"
+            value={preview.transactionCount.toLocaleString()}
+            className="bg-[#0e0f0c] text-[#9fe870]"
+          />
         </div>
 
-        <p className="text-xs text-gray-400">
-          Your downloaded report will contain all {preview.transactionCount} transaction{preview.transactionCount !== 1 ? 's' : ''} from this period.
+        <p className="text-xs text-[#868685]">
+          Your downloaded report will contain all{" "}
+          {preview.transactionCount.toLocaleString()} transaction
+          {preview.transactionCount !== 1 ? "s" : ""} from this period.
         </p>
       </div>
     );
   }
 
   return (
-    <div className="p-5 bg-white border border-gray-200 rounded-xl text-center">
-      <p className="text-sm text-gray-500">No data found for the selected period.</p>
-      <p className="text-xs text-gray-400 mt-1">Try a wider date range.</p>
+    <div className="rounded-3xl bg-white p-6 text-center">
+      <p className="text-sm font-semibold text-[#454745]">
+        No data found for the selected period.
+      </p>
+      <p className="mt-1 text-xs text-[#868685]">Try a wider date range.</p>
+    </div>
+  );
+}
+
+function MetricCard({
+  icon: Icon,
+  label,
+  value,
+  className,
+}: {
+  icon: typeof FileText;
+  label: string;
+  value: string;
+  className: string;
+}) {
+  return (
+    <div className={`rounded-2xl p-4 ${className}`}>
+      <div className="mb-1 flex items-center gap-1.5">
+        <Icon size={13} />
+        <span className="text-xs font-semibold">{label}</span>
+      </div>
+      <p className="text-lg font-black">{value}</p>
     </div>
   );
 }

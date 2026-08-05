@@ -103,7 +103,7 @@ export default function TransactionsPage() {
         />
         <button
           type="button"
-          className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-slate-950 px-4 text-sm font-semibold text-white transition hover:bg-slate-800"
+          className="inline-flex h-12 items-center justify-center gap-2 rounded-3xl bg-[#9fe870] px-5 text-sm font-semibold text-[#0e0f0c] transition hover:bg-[#cdffad]"
           onClick={openAddModal}
         >
           <Plus aria-hidden="true" className="h-4 w-4" />
@@ -111,35 +111,35 @@ export default function TransactionsPage() {
         </button>
       </div>
 
-      <section className="rounded-md border border-slate-200 bg-white p-4">
+      <section className="rounded-3xl bg-white p-5">
         <div className="grid gap-4 md:grid-cols-4">
           <label className="space-y-1.5">
-            <span className="text-sm font-medium text-slate-700">
+            <span className="text-sm font-semibold text-[#454745]">
               Start date
             </span>
             <input
               type="date"
               value={startDate}
-              className="h-10 w-full rounded-md border border-slate-300 px-3 text-sm text-slate-950 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+              className="h-11 w-full rounded-xl border border-[#0e0f0c] px-4 text-sm text-[#0e0f0c] outline-none transition focus:ring-2 focus:ring-[#9fe870]"
               onChange={(event) => resetPage(setStartDate, event.target.value)}
             />
           </label>
 
           <label className="space-y-1.5">
-            <span className="text-sm font-medium text-slate-700">End date</span>
+            <span className="text-sm font-semibold text-[#454745]">End date</span>
             <input
               type="date"
               value={endDate}
-              className="h-10 w-full rounded-md border border-slate-300 px-3 text-sm text-slate-950 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+              className="h-11 w-full rounded-xl border border-[#0e0f0c] px-4 text-sm text-[#0e0f0c] outline-none transition focus:ring-2 focus:ring-[#9fe870]"
               onChange={(event) => resetPage(setEndDate, event.target.value)}
             />
           </label>
 
           <label className="space-y-1.5">
-            <span className="text-sm font-medium text-slate-700">Type</span>
+            <span className="text-sm font-semibold text-[#454745]">Type</span>
             <select
               value={type}
-              className="h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+              className="h-11 w-full rounded-xl border border-[#0e0f0c] bg-white px-4 text-sm text-[#0e0f0c] outline-none transition focus:ring-2 focus:ring-[#9fe870]"
               onChange={(event) =>
                 resetPage(
                   setType,
@@ -154,10 +154,10 @@ export default function TransactionsPage() {
           </label>
 
           <label className="space-y-1.5">
-            <span className="text-sm font-medium text-slate-700">Category</span>
+            <span className="text-sm font-semibold text-[#454745]">Category</span>
             <select
               value={categoryId}
-              className="h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+              className="h-11 w-full rounded-xl border border-[#0e0f0c] bg-white px-4 text-sm text-[#0e0f0c] outline-none transition focus:ring-2 focus:ring-[#9fe870]"
               onChange={(event) => resetPage(setCategoryId, event.target.value)}
             >
               <option value="">All categories</option>
@@ -197,10 +197,10 @@ export default function TransactionsPage() {
                       aria-hidden="true"
                       className="h-2.5 w-2.5 rounded-full"
                       style={{
-                        backgroundColor: transaction.category.color ?? "#64748b",
+                      backgroundColor: transaction.category.color ?? "#868685",
                       }}
                     />
-                    <span className="font-medium text-slate-900">
+                    <span className="font-semibold text-[#0e0f0c]">
                       {transaction.category.name}
                     </span>
                   </div>
@@ -211,15 +211,15 @@ export default function TransactionsPage() {
                 <TableCell
                   className={
                     transaction.type === "income"
-                      ? "text-right font-semibold text-emerald-600"
-                      : "text-right font-semibold text-red-600"
+                      ? "text-right font-semibold text-[#054d28]"
+                      : "text-right font-semibold text-[#a7000d]"
                   }
                 >
                   {transaction.type === "income" ? "+" : "-"}
                   {formatCurrency(transaction.amountCents)}
                 </TableCell>
                 <TableCell>
-                  <span className="rounded-md bg-slate-100 px-2 py-1 text-xs font-medium capitalize text-slate-700">
+                  <span className="rounded-full bg-[#e8ebe6] px-3 py-1 text-xs font-semibold capitalize text-[#454745]">
                     {transaction.type}
                   </span>
                 </TableCell>
@@ -228,7 +228,7 @@ export default function TransactionsPage() {
                     <button
                       type="button"
                       aria-label="Edit transaction"
-                      className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-600 transition hover:bg-slate-100 hover:text-slate-950"
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-full text-[#454745] transition hover:bg-[#e8ebe6] hover:text-[#0e0f0c]"
                       onClick={() => openEditModal(transaction)}
                     >
                       <Pencil aria-hidden="true" className="h-4 w-4" />
@@ -236,7 +236,7 @@ export default function TransactionsPage() {
                     <button
                       type="button"
                       aria-label="Delete transaction"
-                      className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-600 transition hover:bg-red-50 hover:text-red-600"
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-full text-[#454745] transition hover:bg-[#320707] hover:text-white"
                     >
                       <Trash2 aria-hidden="true" className="h-4 w-4" />
                     </button>
@@ -248,15 +248,15 @@ export default function TransactionsPage() {
         </Table>
       )}
 
-      <div className="flex flex-col gap-3 rounded-md border border-slate-200 bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-slate-600">
+      <div className="flex flex-col gap-3 rounded-3xl bg-white px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-sm text-[#454745]">
           Page {page} of {totalPages} · {total} total transactions
         </p>
         <div className="flex gap-2">
           <button
             type="button"
             disabled={!canGoPrevious}
-            className="inline-flex h-9 items-center gap-2 rounded-md border border-slate-300 px-3 text-sm font-medium text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex h-10 items-center gap-2 rounded-3xl border border-[#0e0f0c] px-4 text-sm font-semibold text-[#0e0f0c] transition hover:bg-[#e8ebe6] disabled:cursor-not-allowed disabled:opacity-50"
             onClick={() => setPage((current) => Math.max(1, current - 1))}
           >
             <ChevronLeft aria-hidden="true" className="h-4 w-4" />
@@ -265,7 +265,7 @@ export default function TransactionsPage() {
           <button
             type="button"
             disabled={!canGoNext}
-            className="inline-flex h-9 items-center gap-2 rounded-md border border-slate-300 px-3 text-sm font-medium text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex h-10 items-center gap-2 rounded-3xl border border-[#0e0f0c] px-4 text-sm font-semibold text-[#0e0f0c] transition hover:bg-[#e8ebe6] disabled:cursor-not-allowed disabled:opacity-50"
             onClick={() => setPage((current) => current + 1)}
           >
             Next
@@ -306,7 +306,7 @@ function TransactionTableSkeleton() {
           <TableRow key={index}>
             {Array.from({ length: 6 }).map((__, cellIndex) => (
               <TableCell key={cellIndex}>
-                <div className="h-4 animate-pulse rounded bg-slate-200" />
+                <div className="h-4 animate-pulse rounded bg-[#e8ebe6]" />
               </TableCell>
             ))}
           </TableRow>
@@ -318,11 +318,11 @@ function TransactionTableSkeleton() {
 
 function EmptyState() {
   return (
-    <div className="rounded-md border border-dashed border-slate-300 bg-white px-6 py-12 text-center">
-      <h2 className="text-base font-semibold text-slate-950">
+    <div className="rounded-3xl border border-dashed border-[#868685] bg-white px-6 py-12 text-center">
+      <h2 className="text-base font-black text-[#0e0f0c]">
         No transactions found
       </h2>
-      <p className="mt-2 text-sm text-slate-600">
+      <p className="mt-2 text-sm text-[#454745]">
         Adjust the filters or add a new transaction to start tracking activity.
       </p>
     </div>

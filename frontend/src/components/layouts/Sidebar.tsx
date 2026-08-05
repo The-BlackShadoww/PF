@@ -67,15 +67,15 @@ export function Sidebar() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 px-4 py-3 backdrop-blur md:hidden">
+      <header className="sticky top-0 z-40 border-b border-[#cfd4ca] bg-white/95 px-4 py-3 backdrop-blur md:hidden">
         <div className="flex items-center justify-between">
-          <Link href="/dashboard" className="font-semibold text-slate-950">
+          <Link href="/dashboard" className="font-black text-[#0e0f0c]">
             Personal Finance
           </Link>
           <button
             type="button"
             aria-label={isOpen ? "Close navigation" : "Open navigation"}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 text-slate-700"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#0e0f0c] bg-white text-[#0e0f0c] transition hover:bg-[#e8ebe6]"
             onClick={() => setIsOpen((current) => !current)}
           >
             {isOpen ? (
@@ -91,24 +91,26 @@ export function Sidebar() {
         <button
           type="button"
           aria-label="Close navigation"
-          className="fixed inset-0 z-40 bg-slate-950/20 md:hidden"
+          className="fixed inset-0 z-40 bg-[#0e0f0c]/30 md:hidden"
           onClick={() => setIsOpen(false)}
         />
       ) : null}
 
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex w-64 -translate-x-full flex-col border-r border-slate-200 bg-white transition-transform md:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 flex w-64 -translate-x-full flex-col border-r border-[#cfd4ca] bg-white transition-transform md:translate-x-0",
           isOpen && "translate-x-0",
         )}
       >
         <div className="flex h-full flex-col px-4 py-5">
           <Link
             href="/dashboard"
-            className="flex items-center gap-2 text-lg font-semibold text-slate-950"
+            className="flex items-center gap-2 text-lg font-black text-[#0e0f0c]"
             onClick={() => setIsOpen(false)}
           >
-            <LayoutDashboard aria-hidden="true" className="h-5 w-5" />
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#9fe870] text-[#0e0f0c]">
+              <LayoutDashboard aria-hidden="true" className="h-5 w-5" />
+            </span>
             Personal Finance
           </Link>
 
@@ -122,9 +124,9 @@ export function Sidebar() {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "inline-flex min-h-10 items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-950",
+                    "inline-flex min-h-11 items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold text-[#454745] transition hover:bg-[#e8ebe6] hover:text-[#0e0f0c]",
                     active &&
-                      "bg-slate-950 text-white hover:bg-slate-900 hover:text-white",
+                      "bg-[#e2f6d5] text-[#0e0f0c] ring-1 ring-inset ring-[#9fe870] hover:bg-[#e2f6d5] hover:text-[#0e0f0c]",
                   )}
                   onClick={() => setIsOpen(false)}
                 >
@@ -138,7 +140,7 @@ export function Sidebar() {
           <button
             type="button"
             disabled={isLoggingOut}
-            className="mt-auto inline-flex min-h-10 items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-950 disabled:cursor-not-allowed disabled:opacity-70"
+            className="mt-auto inline-flex min-h-11 items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold text-[#454745] transition hover:bg-[#e8ebe6] hover:text-[#0e0f0c] disabled:cursor-not-allowed disabled:opacity-70"
             onClick={handleLogout}
           >
             <LogOut aria-hidden="true" className="h-4 w-4 shrink-0" />
