@@ -5,8 +5,14 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Eye, EyeOff, Shield, ShieldCheck, ShieldOff, CheckCircle2, KeyRound } from 'lucide-react';
-import { useProfile, useChangePassword, useSetup2fa, useEnable2fa, useDisable2fa } from '../../../lib/hooks/useProfile';
-import { cn } from '../../../lib/utils/cn';
+import {
+  useProfile,
+  useChangePassword,
+  useSetup2fa,
+  useEnable2fa,
+  useDisable2fa,
+} from '@/lib/hooks/useProfile';
+import { cn } from '@/lib/utils/cn';
 
 // ─── Change Password form schema ─────────────────────────────────────────────
 

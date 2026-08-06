@@ -5,8 +5,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { User, Mail, Image, CheckCircle2 } from 'lucide-react';
-import { useProfile, useUpdateProfile } from '../../../lib/hooks/useProfile';
-import { cn } from '../../../lib/utils/cn';
+import { useProfile, useUpdateProfile } from '@/lib/hooks/useProfile';
+import { cn } from '@/lib/utils/cn';
 
 const profileSchema = z.object({
   name: z

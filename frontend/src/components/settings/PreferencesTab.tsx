@@ -5,8 +5,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Globe, CheckCircle2 } from 'lucide-react';
-import { useProfile, useUpdateProfile } from '../../../lib/hooks/useProfile';
-import { cn } from '../../../lib/utils/cn';
+import { useProfile, useUpdateProfile } from '@/lib/hooks/useProfile';
+import { cn } from '@/lib/utils/cn';
 
 // The IANA timezone database contains ~600 timezones.
 // We expose a curated list of the most common ones grouped by region.
