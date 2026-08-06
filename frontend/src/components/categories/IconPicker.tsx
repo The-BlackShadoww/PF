@@ -1,6 +1,5 @@
 'use client';
 
-import { Check } from 'lucide-react';
 import * as Icons from 'lucide-react';
 import { cn } from '../../lib/utils/cn';
 
@@ -31,7 +30,7 @@ function toPascalCase(name: string): string {
 // We look it up from the imported Icons namespace.
 function LucideIcon({ name, size = 18 }: { name: string; size?: number }) {
   const pascalName = toPascalCase(name);
-  const IconComponent = (Icons as Record<string, React.ComponentType<{ size?: number }>>)[pascalName];
+  const IconComponent = (Icons as unknown as Record<string, React.ComponentType<{ size?: number }>>)[pascalName];
   if (!IconComponent) return <span style={{ width: size, height: size }} />;
   return <IconComponent size={size} />;
 }

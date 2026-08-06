@@ -9,6 +9,7 @@ import {
   isValid,
 } from 'date-fns';
 import { apiClient } from '../api/client';
+import type { ApiResponse } from '@/types/api';
 
 export interface ReportPreviewData {
   totalIncome: number;        // in dollars
@@ -25,12 +26,19 @@ interface MonthlySummary {
   transactionCount: number;
 }
 
+function unwrapApiResponse<T>(payload: T | ApiResponse<T>): T {
+  if (typeof payload === 'object' && payload !== null && 'data' in payload) {
+    return payload.data;
+  }
+
+  return payload;
+}
+
 async function fetchMonthlySummary(year: number, month: number): Promise<MonthlySummary> {
-  const response = await apiClient<{ data: MonthlySummary } | MonthlySummary>(
+  const response = await apiClient<ApiResponse<MonthlySummary> | MonthlySummary>(
     `/calculations/monthly?year=${year}&month=${month}`
   );
-  const summary = (response as any).data ?? response;
-  return summary as MonthlySummary;
+  return unwrapApiResponse(response);
 }
 
 export function useReportPreview(

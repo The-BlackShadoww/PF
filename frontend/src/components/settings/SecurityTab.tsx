@@ -13,6 +13,8 @@ import {
   useDisable2fa,
 } from '@/lib/hooks/useProfile';
 import { cn } from '@/lib/utils/cn';
+import type { ApiResponse } from '@/types/api';
+import type { TwoFactorSetupResponse } from '@/lib/api/users';
 
 // ─── Change Password form schema ─────────────────────────────────────────────
 
@@ -50,6 +52,20 @@ type TwoFactorUIState =
 // ─── PasswordField ───────────────────────────────────────────────────────────
 // Reusable password input with show/hide toggle.
 // Extracted as a local component — only used inside SecurityTab.
+type MaybeApiResponse<T> = T | ApiResponse<T>;
+
+function unwrapApiResponse<T>(payload: MaybeApiResponse<T>): T {
+  if (typeof payload === 'object' && payload !== null && 'data' in payload) {
+    return payload.data;
+  }
+
+  return payload;
+}
+
+function getErrorMessage(err: unknown, fallback: string) {
+  return err instanceof Error ? err.message : fallback;
+}
+
 function PasswordField({
   label,
   registration,
@@ -142,11 +158,13 @@ export function SecurityTab() {
       const result = await setup2faMutation.mutateAsync();
       // apiClient returns the raw response body.
       // The backend wraps in { data, meta }, so unwrap accordingly.
-      const response = result as any;
-      setQrCodeDataUrl(response.qrCodeDataUrl ?? response.data?.qrCodeDataUrl);
+      const response = unwrapApiResponse(
+        result as MaybeApiResponse<TwoFactorSetupResponse>,
+      );
+      setQrCodeDataUrl(response.qrCodeDataUrl);
       setTwoFactorState('show-qr');
-    } catch (err: any) {
-      setTwoFactorError(err?.message ?? 'Failed to generate QR code');
+    } catch (err: unknown) {
+      setTwoFactorError(getErrorMessage(err, 'Failed to generate QR code'));
       setTwoFactorState('idle');
     }
   }
@@ -164,8 +182,8 @@ export function SecurityTab() {
       setQrCodeDataUrl(null);
       setTwoFactorState('enabled-success');
       setTimeout(() => setTwoFactorState('idle'), 3000);
-    } catch (err: any) {
-      setTwoFactorError(err?.message ?? 'Invalid code. Please try again.');
+    } catch (err: unknown) {
+      setTwoFactorError(getErrorMessage(err, 'Invalid code. Please try again.'));
       setTwoFactorState('show-qr');
       // Stay on show-qr so the user can try again without re-scanning
     }
@@ -182,8 +200,8 @@ export function SecurityTab() {
       await disable2faMutation.mutateAsync(totpCode);
       setTotpCode('');
       setTwoFactorState('idle');
-    } catch (err: any) {
-      setTwoFactorError(err?.message ?? 'Invalid code. 2FA was not disabled.');
+    } catch (err: unknown) {
+      setTwoFactorError(getErrorMessage(err, 'Invalid code. 2FA was not disabled.'));
       setTwoFactorState('confirm-disable');
     }
   }
