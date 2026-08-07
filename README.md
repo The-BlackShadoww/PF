@@ -41,7 +41,8 @@ A modern, full-stack personal finance application designed for tracking income a
 - Security: Helmet, CORS, bcrypt
 
 **Infrastructure**
-- **Docker Compose** (Postgres & Redis)
+- **Local**: Docker Compose (Postgres & Redis)
+- **Production**: Frontend on **Vercel**, backend on **Render**, database on **Neon** (PostgreSQL)
 
 ---
 
@@ -83,6 +84,23 @@ npm install
 npm run dev
 ```
 The UI will be available at `http://localhost:3000` (or `5173`).
+
+---
+
+## 🌐 Deployment
+
+The production environment is split across three managed services:
+
+| Component | Platform | Description |
+|-----------|----------|-------------|
+| **Frontend** | [Vercel](https://vercel.com) | Next.js app — automatic builds and deploys from the `frontend/` directory |
+| **Backend** | [Render](https://render.com) | NestJS API — hosted as a web service with environment variables for secrets and DB connection |
+| **Database** | [Neon](https://neon.tech) | Serverless PostgreSQL — production database; connection string is provided to the Render backend |
+
+**Notes**
+- Local development uses Docker Compose for Postgres and Redis; production uses Neon instead of a self-hosted database.
+- Set the backend `DATABASE_URL` on Render to your Neon connection string.
+- Point the frontend API base URL (e.g. `NEXT_PUBLIC_API_URL`) at the Render backend URL.
 
 ---
 
