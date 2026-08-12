@@ -101,6 +101,7 @@ The production environment is split across three managed services:
 - Local development uses Docker Compose for Postgres and Redis; production uses Neon instead of a self-hosted database.
 - Set the backend `DATABASE_URL` on Render to your Neon connection string.
 - Point the frontend API base URL (e.g. `NEXT_PUBLIC_API_URL`) at the Render backend URL.
+- There is an issue about deployed app. It needs to be fixed.
 
 ---
 
