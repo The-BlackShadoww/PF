@@ -34,8 +34,10 @@ export default function SettingsPage() {
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const { data: categoriesResponse, isLoading } = useCategories();
-  const categories = categoriesResponse ?? [];
+  const { data: categoriesResponse, isLoading } = useCategories(
+    activeTab === "categories",
+  );
+  const categories = Array.isArray(categoriesResponse) ? categoriesResponse : [];
   const createMutation = useCreateCategory();
   const updateMutation = useUpdateCategory();
   const deleteMutation = useDeleteCategory();

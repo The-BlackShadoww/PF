@@ -6,10 +6,11 @@ export const categoryKeys = {
   lists: () => [...categoryKeys.all, 'list'] as const,
 };
 
-export function useCategories() {
+export function useCategories(enabled = true) {
   return useQuery({
     queryKey: categoryKeys.lists(),
     queryFn: categoriesApi.getAll,
+    enabled,
     staleTime: 1000 * 60 * 10,   // 10 minutes — categories rarely change
   });
 }

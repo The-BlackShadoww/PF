@@ -1,4 +1,6 @@
-import { apiClient } from './client';
+import type { ApiResponse } from "@/types/api";
+
+import { apiClient } from "./client";
 
 export interface UserProfile {
   id: string;
@@ -26,33 +28,69 @@ export interface TwoFactorSetupResponse {
 }
 
 export const usersApi = {
-  getProfile: () =>
-    apiClient<UserProfile>('/auth/me'),
+  async getProfile(): Promise<UserProfile> {
+    const response = await apiClient<ApiResponse<UserProfile>>("/auth/me");
 
-  updateProfile: (data: UpdateProfilePayload) =>
-    apiClient<UserProfile>('/users/profile', {
-      method: 'PATCH',
+    return response.data;
+  },
+
+  async updateProfile(data: UpdateProfilePayload): Promise<UserProfile> {
+    const response = await apiClient<ApiResponse<UserProfile>>("/users/profile", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
-    }),
+    });
 
-  changePassword: (data: ChangePasswordPayload) =>
-    apiClient<{ success: boolean }>('/users/change-password', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
+    return response.data;
+  },
 
-  setup2fa: () =>
-    apiClient<TwoFactorSetupResponse>('/auth/2fa/setup', { method: 'POST' }),
+  async changePassword(
+    data: ChangePasswordPayload,
+  ): Promise<{ success: boolean }> {
+    const response = await apiClient<ApiResponse<{ success: boolean }>>(
+      "/users/change-password",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      },
+    );
 
-  enable2fa: (code: string) =>
-    apiClient<{ success: boolean }>('/auth/2fa/enable', {
-      method: 'POST',
-      body: JSON.stringify({ code }),
-    }),
+    return response.data;
+  },
 
-  disable2fa: (code: string) =>
-    apiClient<{ success: boolean }>('/auth/2fa/disable', {
-      method: 'POST',
-      body: JSON.stringify({ code }),
-    }),
+  async setup2fa(): Promise<TwoFactorSetupResponse> {
+    const response = await apiClient<ApiResponse<TwoFactorSetupResponse>>(
+      "/auth/2fa/setup",
+      { method: "POST" },
+    );
+
+    return response.data;
+  },
+
+  async enable2fa(code: string): Promise<{ success: boolean }> {
+    const response = await apiClient<ApiResponse<{ success: boolean }>>(
+      "/auth/2fa/enable",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code }),
+      },
+    );
+
+    return response.data;
+  },
+
+  async disable2fa(code: string): Promise<{ success: boolean }> {
+    const response = await apiClient<ApiResponse<{ success: boolean }>>(
+      "/auth/2fa/disable",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code }),
+      },
+    );
+
+    return response.data;
+  },
 };

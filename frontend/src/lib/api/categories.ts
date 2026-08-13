@@ -1,4 +1,6 @@
-import { apiClient } from './client';
+import type { ApiResponse } from "@/types/api";
+
+import { apiClient } from "./client";
 
 export type CategoryType = 'income' | 'expense';
 
@@ -30,23 +32,41 @@ export interface UpdateCategoryPayload {
 }
 
 export const categoriesApi = {
-  getAll: () =>
-    apiClient<Category[]>('/categories'),
+  async getAll(): Promise<Category[]> {
+    const response = await apiClient<ApiResponse<Category[]>>("/categories");
 
-  create: (data: CreateCategoryPayload) =>
-    apiClient<Category>('/categories', {
-      method: 'POST',
+    return response.data;
+  },
+
+  async create(data: CreateCategoryPayload): Promise<Category> {
+    const response = await apiClient<ApiResponse<Category>>("/categories", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
-    }),
+    });
 
-  update: (id: string, data: UpdateCategoryPayload) =>
-    apiClient<Category>(`/categories/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify(data),
-    }),
+    return response.data;
+  },
 
-  delete: (id: string) =>
-    apiClient<{ success: boolean }>(`/categories/${id}`, {
-      method: 'DELETE',
-    }),
+  async update(id: string, data: UpdateCategoryPayload): Promise<Category> {
+    const response = await apiClient<ApiResponse<Category>>(
+      `/categories/${id}`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      },
+    );
+
+    return response.data;
+  },
+
+  async delete(id: string): Promise<{ success: boolean }> {
+    const response = await apiClient<ApiResponse<{ success: boolean }>>(
+      `/categories/${id}`,
+      { method: "DELETE" },
+    );
+
+    return response.data;
+  },
 };
