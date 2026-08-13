@@ -100,7 +100,11 @@ The production environment is split across three managed services:
 **Notes**
 - Local development uses Docker Compose for Postgres and Redis; production uses Neon instead of a self-hosted database.
 - Set the backend `DATABASE_URL` on Render to your Neon connection string.
-- Point the frontend API base URL (e.g. `NEXT_PUBLIC_API_URL`) at the Render backend URL.
+- Route browser API calls through the frontend origin so the `refresh_token` is a
+  first-party cookie that Next.js middleware can read. In Vercel, set
+  `NEXT_PUBLIC_API_URL=/api/v1` and set the server-only
+  `API_PROXY_TARGET=https://<your-render-service>.onrender.com/api/v1`. Do not
+  point `NEXT_PUBLIC_API_URL` directly at Render.
 
 ---
 
