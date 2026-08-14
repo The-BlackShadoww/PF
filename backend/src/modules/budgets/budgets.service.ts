@@ -1,7 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { and, eq, isNull, sql } from 'drizzle-orm';
 import { DB_TOKEN, type DrizzleDB } from '../../db/db.constants';
-import { budgets, categories, transactions, users } from '../../db/schema';
+import { budgets, categories, transactions } from '../../db/schema';
 import { CalculationsService } from '../calculations/calculations.service';
 import { UpsertBudgetDto } from './dto/upsert-budget.dto';
 
@@ -123,23 +123,14 @@ export class BudgetsService {
     year: number,
     month: number,
   ) {
-    const [user] = await this.db
-      .select({ timezone: users.timezone })
-      .from(users)
-      .where(and(eq(users.id, userId), isNull(users.deletedAt)))
-      .limit(1);
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
     const rows = await this.db.execute<CategoryExpenseRow>(sql`
       SELECT category_id, SUM(amount_cents) as total_cents
       FROM ${transactions}
       WHERE user_id = ${userId}
         AND type = 'expense'
-        AND EXTRACT(YEAR FROM date AT TIME ZONE ${user.timezone}) = ${year}
-        AND EXTRACT(MONTH FROM date AT TIME ZONE ${user.timezone}) = ${month}
+        AND transaction_year = ${year}
+        AND transaction_month = ${month}
+        AND transaction_year > 0 AND transaction_month > 0
         AND deleted_at IS NULL
       GROUP BY category_id
     `);

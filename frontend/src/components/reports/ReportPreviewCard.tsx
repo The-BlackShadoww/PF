@@ -1,6 +1,6 @@
 "use client";
 
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
 import {
   Calendar,
   FileText,
@@ -23,17 +23,21 @@ function formatDollar(amount: number): string {
 interface ReportPreviewCardProps {
   preview: ReportPreviewData | undefined;
   isLoading: boolean;
-  startDate: string | null;
-  endDate: string | null;
+  startYear: number | null;
+  startMonth: number | null;
+  endYear: number | null;
+  endMonth: number | null;
 }
 
 export function ReportPreviewCard({
   preview,
   isLoading,
-  startDate,
-  endDate,
+  startYear,
+  startMonth,
+  endYear,
+  endMonth,
 }: ReportPreviewCardProps) {
-  if (!startDate || !endDate) {
+  if (!startYear || !startMonth || !endYear || !endMonth) {
     return (
       <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-[#868685] bg-[#e8ebe6] p-8 text-center">
         <FileText size={32} className="mb-3 text-[#868685]" />
@@ -65,8 +69,8 @@ export function ReportPreviewCard({
   }
 
   if (preview) {
-    const startLabel = format(parseISO(startDate), "MMM yyyy");
-    const endLabel = format(parseISO(endDate), "MMM yyyy");
+    const startLabel = format(new Date(startYear, startMonth - 1, 1), "MMM yyyy");
+    const endLabel = format(new Date(endYear, endMonth - 1, 1), "MMM yyyy");
     const periodLabel =
       startLabel === endLabel ? startLabel : `${startLabel} to ${endLabel}`;
 

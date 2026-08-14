@@ -13,7 +13,7 @@ import { TransactionType } from './create-transaction.dto';
 
 export class TransactionFiltersDto {
   @ApiPropertyOptional({
-    description: 'Filter transactions on or after this date (ISO 8601)',
+    description: 'Filter by physical handover date (on or after). Filters the date field, not the billing period.',
     example: '2025-01-01',
   })
   @IsOptional()
@@ -21,12 +21,32 @@ export class TransactionFiltersDto {
   startDate?: string;
 
   @ApiPropertyOptional({
-    description: 'Filter transactions on or before this date (ISO 8601)',
+    description: 'Filter by physical handover date (on or before). Filters the date field, not the billing period.',
     example: '2025-01-31',
   })
   @IsOptional()
   @IsDateString()
   endDate?: string;
+
+  @ApiPropertyOptional({
+    description: 'Filter by billing period year. Use with month for specific month filtering.',
+    example: 2026,
+  })
+  @IsOptional()
+  @IsInt()
+  @Type(() => Number)
+  year?: number;
+
+  @ApiPropertyOptional({
+    description: 'Filter by billing period month (1-12). Must be used with year.',
+    example: 7,
+  })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(12)
+  @Type(() => Number)
+  month?: number;
 
   @ApiPropertyOptional({
     description: 'Filter by transaction type',

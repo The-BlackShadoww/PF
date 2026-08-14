@@ -4,7 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { and, count, desc, eq, gte, isNull, lte } from 'drizzle-orm';
+import { and, asc, count, desc, eq, gt, gte, isNull, lt, lte, or } from 'drizzle-orm';
 import { DB_TOKEN, type DrizzleDB } from '../../db/db.constants';
 import { categories, transactions } from '../../db/schema';
 import {
@@ -33,6 +33,8 @@ export class TransactionsService {
           type: transactions.type,
           amountCents: transactions.amountCents,
           date: transactions.date,
+          transactionMonth: transactions.transactionMonth,
+          transactionYear: transactions.transactionYear,
           note: transactions.note,
           createdAt: transactions.createdAt,
           updatedAt: transactions.updatedAt,
@@ -98,6 +100,8 @@ export class TransactionsService {
         type: dto.type,
         amountCents: Math.round(dto.amount * 100),
         date: new Date(dto.date),
+        transactionMonth: dto.transactionMonth,
+        transactionYear: dto.transactionYear,
         note: dto.note,
       })
       .returning({ id: transactions.id });
@@ -147,6 +151,14 @@ export class TransactionsService {
       updates.date = new Date(dto.date);
     }
 
+    if (dto.transactionMonth !== undefined) {
+      updates.transactionMonth = dto.transactionMonth;
+    }
+
+    if (dto.transactionYear !== undefined) {
+      updates.transactionYear = dto.transactionYear;
+    }
+
     if (dto.categoryId !== undefined) {
       updates.categoryId = dto.categoryId;
     }
@@ -192,11 +204,15 @@ export class TransactionsService {
 
   async getRawTransactionsForReport(
     userId: string,
-    startDate: Date,
-    endDate: Date,
+    startYear: number,
+    startMonth: number,
+    endYear: number,
+    endMonth: number,
   ): Promise<
     Array<{
       date: Date;
+      transactionMonth: number;
+      transactionYear: number;
       type: 'income' | 'expense';
       categoryName: string;
       amountCents: number;
@@ -206,6 +222,8 @@ export class TransactionsService {
     const rows = await this.db
       .select({
         date: transactions.date,
+        transactionMonth: transactions.transactionMonth,
+        transactionYear: transactions.transactionYear,
         type: transactions.type,
         categoryName: categories.name,
         amountCents: transactions.amountCents,
@@ -216,15 +234,23 @@ export class TransactionsService {
       .where(
         and(
           eq(transactions.userId, userId),
-          gte(transactions.date, startDate),
-          lte(transactions.date, endDate),
+          or(
+            gt(transactions.transactionYear, startYear),
+            and(eq(transactions.transactionYear, startYear), gte(transactions.transactionMonth, startMonth)),
+          ),
+          or(
+            lt(transactions.transactionYear, endYear),
+            and(eq(transactions.transactionYear, endYear), lte(transactions.transactionMonth, endMonth)),
+          ),
           isNull(transactions.deletedAt),
         ),
       )
-      .orderBy(transactions.date);
+      .orderBy(asc(transactions.transactionYear), asc(transactions.transactionMonth), asc(transactions.date));
 
     return rows as Array<{
       date: Date;
+      transactionMonth: number;
+      transactionYear: number;
       type: 'income' | 'expense';
       categoryName: string;
       amountCents: number;
@@ -243,6 +269,14 @@ export class TransactionsService {
 
     if (filters.startDate) {
       clauses.push(gte(transactions.date, new Date(filters.startDate)));
+    }
+
+    if (filters.year !== undefined) {
+      clauses.push(eq(transactions.transactionYear, filters.year));
+    }
+
+    if (filters.month !== undefined) {
+      clauses.push(eq(transactions.transactionMonth, filters.month));
     }
 
     if (filters.endDate) {
@@ -272,6 +306,8 @@ export class TransactionsService {
         type: transactions.type,
         amountCents: transactions.amountCents,
         date: transactions.date,
+        transactionMonth: transactions.transactionMonth,
+        transactionYear: transactions.transactionYear,
         note: transactions.note,
         createdAt: transactions.createdAt,
         updatedAt: transactions.updatedAt,

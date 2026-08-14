@@ -2,12 +2,10 @@ import {
   BadRequestException,
   Inject,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import { and, eq, isNull } from 'drizzle-orm';
 import { sql } from 'drizzle-orm';
 import { DB_TOKEN, type DrizzleDB } from '../../db/db.constants';
-import { users } from '../../db/schema';
 
 type AggregationRow = {
   total_income_cents: number | string | null;
@@ -30,7 +28,8 @@ export class CalculationsService {
 
   async getMonthlySummary(userId: string, year: number, month: number) {
     this.assertMonth(month);
-    const { timezone } = await this.getUserTimezone(userId);
+    // Billing period is explicit — no timezone conversion needed.
+    // transaction_month and transaction_year were set by the user when recording the transaction.
 
     const rows = await this.db.execute<AggregationRow>(sql`
       SELECT
@@ -39,8 +38,9 @@ export class CalculationsService {
         COUNT(*) as transaction_count
       FROM transactions
       WHERE user_id = ${userId}
-        AND EXTRACT(YEAR FROM date AT TIME ZONE ${timezone}) = ${year}
-        AND EXTRACT(MONTH FROM date AT TIME ZONE ${timezone}) = ${month}
+        AND transaction_year = ${year}
+        AND transaction_month = ${month}
+        AND transaction_year > 0 AND transaction_month > 0
         AND deleted_at IS NULL
     `);
 
@@ -49,7 +49,6 @@ export class CalculationsService {
 
   async getQuarterlySummary(userId: string, year: number, quarter: number) {
     this.assertQuarter(quarter);
-    const { timezone } = await this.getUserTimezone(userId);
     const startMonth = (quarter - 1) * 3 + 1;
     const endMonth = startMonth + 2;
 
@@ -60,8 +59,9 @@ export class CalculationsService {
         COUNT(*) as transaction_count
       FROM transactions
       WHERE user_id = ${userId}
-        AND EXTRACT(YEAR FROM date AT TIME ZONE ${timezone}) = ${year}
-        AND EXTRACT(MONTH FROM date AT TIME ZONE ${timezone}) BETWEEN ${startMonth} AND ${endMonth}
+        AND transaction_year = ${year}
+        AND transaction_month BETWEEN ${startMonth} AND ${endMonth}
+        AND transaction_year > 0 AND transaction_month > 0
         AND deleted_at IS NULL
     `);
 
@@ -84,7 +84,6 @@ export class CalculationsService {
   }
 
   async getYearlySummary(userId: string, year: number) {
-    const { timezone } = await this.getUserTimezone(userId);
 
     const rows = await this.db.execute<AggregationRow>(sql`
       SELECT
@@ -93,7 +92,8 @@ export class CalculationsService {
         COUNT(*) as transaction_count
       FROM transactions
       WHERE user_id = ${userId}
-        AND EXTRACT(YEAR FROM date AT TIME ZONE ${timezone}) = ${year}
+        AND transaction_year = ${year}
+        AND transaction_year > 0 AND transaction_month > 0
         AND deleted_at IS NULL
     `);
 
@@ -114,7 +114,6 @@ export class CalculationsService {
 
   async getCategoryBreakdown(userId: string, year: number, month: number) {
     this.assertMonth(month);
-    const { timezone } = await this.getUserTimezone(userId);
 
     const rows = await this.db.execute<CategoryBreakdownRow>(sql`
       SELECT c.name, c.color, c.icon, t.type,
@@ -123,8 +122,9 @@ export class CalculationsService {
       FROM transactions t
       JOIN categories c ON t.category_id = c.id
       WHERE t.user_id = ${userId}
-        AND EXTRACT(YEAR FROM t.date AT TIME ZONE ${timezone}) = ${year}
-        AND EXTRACT(MONTH FROM t.date AT TIME ZONE ${timezone}) = ${month}
+        AND t.transaction_year = ${year}
+        AND t.transaction_month = ${month}
+        AND t.transaction_year > 0 AND t.transaction_month > 0
         AND t.deleted_at IS NULL
       GROUP BY c.id, c.name, c.color, c.icon, t.type
       ORDER BY total_cents DESC
@@ -159,20 +159,6 @@ export class CalculationsService {
       totalExpense,
       savings,
     }));
-  }
-
-  private async getUserTimezone(userId: string) {
-    const [user] = await this.db
-      .select({ timezone: users.timezone })
-      .from(users)
-      .where(and(eq(users.id, userId), isNull(users.deletedAt)))
-      .limit(1);
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    return user;
   }
 
   private toSummary(year: number, month: number, row?: AggregationRow) {

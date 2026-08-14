@@ -34,6 +34,8 @@ export default function TransactionsPage() {
   const [page, setPage] = useState(1);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [filterMonth, setFilterMonth] = useState<number | undefined>();
+  const [filterYear, setFilterYear] = useState<number | undefined>();
   const [type, setType] = useState<"all" | TransactionType>("all");
   const [categoryId, setCategoryId] = useState("");
   const [formTransaction, setFormTransaction] = useState<Transaction | null>(
@@ -47,10 +49,12 @@ export default function TransactionsPage() {
       limit: PAGE_SIZE,
       startDate: startDate || undefined,
       endDate: endDate || undefined,
+      month: filterMonth,
+      year: filterYear,
       type: type === "all" ? undefined : type,
       categoryId: categoryId || undefined,
     }),
-    [categoryId, endDate, page, startDate, type],
+    [categoryId, endDate, filterMonth, filterYear, page, startDate, type],
   );
 
   const { data, isLoading, isFetching } = useTransactions(filters);
@@ -113,6 +117,20 @@ export default function TransactionsPage() {
 
       <section className="rounded-3xl bg-white p-5">
         <div className="grid gap-4 md:grid-cols-4">
+          <label className="space-y-1.5">
+            <span className="text-sm font-semibold text-[#454745]">Show period</span>
+            <select value={filterMonth ?? ""} className="h-11 w-full rounded-xl border border-[#0e0f0c] bg-white px-4 text-sm" onChange={(event) => resetPage(setFilterMonth, event.target.value ? Number(event.target.value) : undefined)}>
+              <option value="">All months</option>
+              {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].map((name, index) => <option key={name} value={index + 1}>{name}</option>)}
+            </select>
+          </label>
+          <label className="space-y-1.5">
+            <span className="text-sm font-semibold text-[#454745]">Year</span>
+            <select value={filterYear ?? ""} className="h-11 w-full rounded-xl border border-[#0e0f0c] bg-white px-4 text-sm" onChange={(event) => resetPage(setFilterYear, event.target.value ? Number(event.target.value) : undefined)}>
+              <option value="">All years</option>
+              {Array.from({ length: 6 }, (_, index) => new Date().getFullYear() - index).map((year) => <option key={year} value={year}>{year}</option>)}
+            </select>
+          </label>
           <label className="space-y-1.5">
             <span className="text-sm font-semibold text-[#454745]">
               Start date
@@ -179,7 +197,8 @@ export default function TransactionsPage() {
         <Table aria-busy={isFetching}>
           <TableHeader>
             <TableRow>
-              <TableHead>Date</TableHead>
+              <TableHead title="The month and year this transaction is attributed to">Period</TableHead>
+              <TableHead title="Date money was physically received or paid">Date</TableHead>
               <TableHead>Category</TableHead>
               <TableHead>Note</TableHead>
               <TableHead className="text-right">Amount</TableHead>
@@ -190,7 +209,8 @@ export default function TransactionsPage() {
           <TableBody>
             {transactions.map((transaction) => (
               <TableRow key={transaction.id}>
-                <TableCell>{formatDate(transaction.date)}</TableCell>
+                <TableCell>{new Date(transaction.transactionYear, transaction.transactionMonth - 1, 1).toLocaleString("en-US", { month: "short", year: "numeric" })}</TableCell>
+                <TableCell><span className="text-xs text-[#868685]">{new Date(transaction.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span></TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <span
@@ -294,7 +314,7 @@ function TransactionTableSkeleton() {
     <Table>
       <TableHeader>
         <TableRow>
-          {["Date", "Category", "Note", "Amount", "Type", "Actions"].map(
+          {["Period", "Date", "Category", "Note", "Amount", "Type", "Actions"].map(
             (heading) => (
               <TableHead key={heading}>{heading}</TableHead>
             ),
@@ -304,7 +324,7 @@ function TransactionTableSkeleton() {
       <TableBody>
         {Array.from({ length: 6 }).map((_, index) => (
           <TableRow key={index}>
-            {Array.from({ length: 6 }).map((__, cellIndex) => (
+            {Array.from({ length: 7 }).map((__, cellIndex) => (
               <TableCell key={cellIndex}>
                 <div className="h-4 animate-pulse rounded bg-[#e8ebe6]" />
               </TableCell>

@@ -9,6 +9,8 @@ export type TransactionFilters = {
   limit?: number;
   startDate?: string;
   endDate?: string;
+  year?: number;
+  month?: number;
   type?: TransactionType;
   categoryId?: string;
 };
@@ -27,6 +29,8 @@ export type Transaction = {
   type: TransactionType;
   amountCents: number;
   date: string;
+  transactionMonth: number;
+  transactionYear: number;
   note?: string | null;
   category: TransactionCategory;
 };
@@ -43,6 +47,8 @@ export type TransactionPayload = {
   categoryId: string;
   amount: number;
   date: string;
+  transactionMonth: number;
+  transactionYear: number;
   note?: string;
 };
 

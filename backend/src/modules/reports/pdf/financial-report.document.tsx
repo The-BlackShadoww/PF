@@ -18,7 +18,8 @@ export interface ReportData {
     transactionCount: number;
   };
   transactions: Array<{
-    date: string;
+    period: string;
+    handoverDate: string;
     type: 'income' | 'expense';
     categoryName: string;
     amountCents: number;
@@ -93,21 +94,24 @@ const styles = StyleSheet.create({
   tableRowAlt: {
     backgroundColor: '#fafafa',
   },
-  colDate: {
-    width: '18%',
+  colPeriod: {
+    width: '14%',
+  },
+  colHandover: {
+    width: '12%',
   },
   colCategory: {
-    width: '22%',
+    width: '20%',
   },
   colNote: {
-    width: '35%',
+    width: '33%',
     color: '#6b7280',
   },
   colType: {
-    width: '12%',
+    width: '10%',
   },
   colAmount: {
-    width: '13%',
+    width: '11%',
     textAlign: 'right',
   },
   incomeText: {
@@ -202,7 +206,8 @@ export default function FinancialReportDocument({
 
         {/* Table Header */}
         <View style={styles.tableHeader}>
-          <Text style={styles.colDate}>Date</Text>
+          <Text style={styles.colPeriod}>Period</Text>
+          <Text style={styles.colHandover}>Handover</Text>
           <Text style={styles.colCategory}>Category</Text>
           <Text style={styles.colNote}>Note</Text>
           <Text style={styles.colType}>Type</Text>
@@ -218,7 +223,8 @@ export default function FinancialReportDocument({
               index % 2 === 1 ? styles.tableRowAlt : {},
             ]}
           >
-            <Text style={styles.colDate}>{tx.date}</Text>
+            <Text style={styles.colPeriod}>{tx.period}</Text>
+            <Text style={styles.colHandover}>{tx.handoverDate}</Text>
             <Text style={styles.colCategory}>{tx.categoryName}</Text>
             <Text style={styles.colNote}>{tx.note ?? '—'}</Text>
             <Text

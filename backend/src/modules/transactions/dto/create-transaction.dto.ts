@@ -2,11 +2,13 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsDateString,
   IsEnum,
+  IsInt,
   IsNumber,
   IsOptional,
   IsString,
   IsUUID,
   MaxLength,
+  Max,
   Min,
 } from 'class-validator';
 
@@ -34,11 +36,36 @@ export class CreateTransactionDto {
   amount!: number;
 
   @ApiProperty({
-    description: 'Transaction date in ISO 8601 format. This is the date the transaction occurred, not when it was recorded.',
+    description:
+      'The date money physically changed hands (received or paid). This is informational only — it does NOT determine which month/year the transaction appears in on the dashboard. Use transactionMonth and transactionYear for period attribution.',
     example: '2025-01-15',
   })
   @IsDateString()
   date!: string;
+
+  @ApiProperty({
+    description:
+      'The month this transaction belongs to (billing period). 1 = January, 12 = December. This determines which month the transaction appears in on the dashboard and reports — independent of the date field.',
+    example: 7,
+    minimum: 1,
+    maximum: 12,
+  })
+  @IsInt()
+  @Min(1)
+  @Max(12)
+  transactionMonth!: number;
+
+  @ApiProperty({
+    description:
+      'The year this transaction belongs to (billing period). This determines which year the transaction appears in on the dashboard.',
+    example: 2026,
+    minimum: 2000,
+    maximum: 2100,
+  })
+  @IsInt()
+  @Min(2000)
+  @Max(2100)
+  transactionYear!: number;
 
   @ApiProperty({
     description: 'UUID of the category this transaction belongs to. Must belong to the authenticated user and match the transaction type.',

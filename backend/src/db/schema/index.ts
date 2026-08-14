@@ -90,6 +90,8 @@ export const transactions = pgTable(
     type: transactionTypeEnum('type').notNull(),
     amountCents: integer('amount_cents').notNull(),
     date: timestamp('date', { withTimezone: true }).notNull(),
+    transactionMonth: integer('transaction_month').notNull().default(0),
+    transactionYear: integer('transaction_year').notNull().default(0),
     note: text('note'),
     createdAt: timestamp('created_at', { withTimezone: true })
       .notNull()
@@ -102,6 +104,15 @@ export const transactions = pgTable(
   (table) => [
     index('transactions_user_id_idx').on(table.userId),
     index('transactions_user_id_date_idx').on(table.userId, table.date),
+    index('transactions_period_idx').on(
+      table.transactionMonth,
+      table.transactionYear,
+    ),
+    index('transactions_user_period_idx').on(
+      table.userId,
+      table.transactionYear,
+      table.transactionMonth,
+    ),
     index('transactions_category_id_idx').on(table.categoryId),
     index('transactions_type_idx').on(table.type),
   ],

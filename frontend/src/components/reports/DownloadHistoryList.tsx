@@ -49,10 +49,10 @@ export function DownloadHistoryList({
 
       <div className="space-y-2">
         {history.map((entry) => {
-          const startLabel = format(parseISO(entry.startDate), "MMM d, yyyy");
-          const endLabel = format(parseISO(entry.endDate), "MMM d, yyyy");
+          const startLabel = format(new Date(entry.startYear, entry.startMonth - 1, 1), "MMMM yyyy");
+          const endLabel = format(new Date(entry.endYear, entry.endMonth - 1, 1), "MMMM yyyy");
           const rangeLabel =
-            entry.startDate === entry.endDate
+            entry.startYear === entry.endYear && entry.startMonth === entry.endMonth
               ? startLabel
               : `${startLabel} to ${endLabel}`;
           const timeAgo = formatDistanceToNow(parseISO(entry.downloadedAt), {

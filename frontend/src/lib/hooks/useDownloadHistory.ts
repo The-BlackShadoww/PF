@@ -8,8 +8,10 @@ const MAX_HISTORY_ITEMS = 10;
 export interface DownloadHistoryEntry {
   id: string;
   format: 'csv' | 'pdf';
-  startDate: string;
-  endDate: string;
+  startYear: number;
+  startMonth: number;
+  endYear: number;
+  endMonth: number;
   downloadedAt: string;
   filename: string;
 }

@@ -3,8 +3,10 @@ import { getAccessToken } from './client';
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export interface ReportDownloadParams {
-  startDate: string;
-  endDate: string;
+  startYear: number;
+  startMonth: number;
+  endYear: number;
+  endMonth: number;
 }
 
 async function downloadReportBlob(
@@ -14,8 +16,10 @@ async function downloadReportBlob(
   const token = getAccessToken();
 
   const url = new URL(`${BASE_URL}${endpoint}`);
-  url.searchParams.set('startDate', params.startDate);
-  url.searchParams.set('endDate', params.endDate);
+  url.searchParams.set('startYear', String(params.startYear));
+  url.searchParams.set('startMonth', String(params.startMonth));
+  url.searchParams.set('endYear', String(params.endYear));
+  url.searchParams.set('endMonth', String(params.endMonth));
 
   const response = await fetch(url.toString(), {
     method: 'GET',
