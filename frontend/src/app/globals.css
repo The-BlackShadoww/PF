@@ -1,25 +1,26 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap");
 @import "tailwindcss";
 
 :root {
   color-scheme: light;
-  --wise-primary: #9fe870;
-  --wise-primary-active: #cdffad;
-  --wise-primary-pale: #e2f6d5;
-  --wise-ink: #0e0f0c;
-  --wise-ink-deep: #163300;
-  --wise-body: #454745;
-  --wise-mute: #868685;
+  --wise-primary: #0f62fe;
+  --wise-primary-active: #0353e9;
+  --wise-primary-pale: #edf5ff;
+  --wise-ink: #161616;
+  --wise-ink-deep: #161616;
+  --wise-body: #525252;
+  --wise-mute: #8c8c8c;
   --wise-canvas: #ffffff;
-  --wise-canvas-soft: #e8ebe6;
-  --wise-positive: #2ead4b;
-  --wise-positive-deep: #054d28;
-  --wise-warning: #ffd11a;
-  --wise-warning-content: #4a3b1c;
-  --wise-negative: #d03238;
-  --wise-negative-deep: #a72027;
-  --wise-negative-bg: #320707;
-  --wise-orange: #ffc091;
-  --wise-cyan: #38c8ff;
+  --wise-canvas-soft: #f4f4f4;
+  --wise-positive: #198038;
+  --wise-positive-deep: #198038;
+  --wise-warning: #f1c21b;
+  --wise-warning-content: #525252;
+  --wise-negative: #da1e28;
+  --wise-negative-deep: #da1e28;
+  --wise-negative-bg: #da1e28;
+  --wise-orange: #e0e0e0;
+  --wise-cyan: #0f62fe;
 }
 
 * {
@@ -35,9 +36,9 @@ body {
   margin: 0;
   background: var(--wise-canvas-soft);
   color: var(--wise-ink);
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", sans-serif;
+  font-family: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
   font-feature-settings: "calt";
+  letter-spacing: 0.16px;
 }
 
 a {
@@ -54,5 +55,79 @@ textarea {
 
 ::selection {
   background: var(--wise-primary);
-  color: var(--wise-ink);
+  color: white;
 }
+
+/* Carbon foundations: flat geometry, hairline hierarchy, and the single IBM Blue accent. */
+*,
+*::before,
+*::after {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* The previous interface used extra-heavy headings; Carbon reserves hierarchy for scale. */
+.font-black {
+  font-weight: 400 !important;
+}
+
+.uppercase {
+  text-transform: none !important;
+}
+
+button,
+input,
+select,
+textarea {
+  min-height: 48px;
+}
+
+input,
+select,
+textarea {
+  background: #f4f4f4;
+  border: 0;
+  border-bottom: 1px solid #8d8d8d;
+  color: #161616;
+  padding: 11px 16px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-bottom: 2px solid #0f62fe;
+  outline: 2px solid #0f62fe;
+  outline-offset: -2px;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #0f62fe;
+  outline-offset: 2px;
+}
+
+/* Translate the retired Wise palette still present in page-level utility classes. */
+[class*="[#0e0f0c]"] { color: #161616 !important; }
+[class*="bg-[#0e0f0c]"] { background-color: #161616 !important; }
+[class*="border-[#0e0f0c]"] { border-color: #161616 !important; }
+[class*="[#163300]"] { color: #161616 !important; }
+[class*="bg-[#163300]"] { background-color: #161616 !important; }
+[class*="[#454745]"] { color: #525252 !important; }
+[class*="bg-[#454745]"] { background-color: #525252 !important; }
+[class*="[#868685]"] { color: #8c8c8c !important; }
+[class*="bg-[#868685]"] { background-color: #8c8c8c !important; }
+[class*="[#e8ebe6]"] { background-color: #f4f4f4 !important; }
+[class*="border-[#e8ebe6]"], [class*="divide-[#e8ebe6]"] { border-color: #e0e0e0 !important; }
+[class*="[#cfd4ca]"] { border-color: #e0e0e0 !important; }
+[class*="[#9fe870]"] { background-color: #0f62fe !important; }
+[class*="[#cdffad]"] { background-color: #0353e9 !important; }
+[class*="bg-[#9fe870]"], [class*="bg-[#cdffad]"] { color: #ffffff !important; }
+[class*="[#e2f6d5]"] { background-color: #edf5ff !important; }
+[class*="[#2ead4b]"], [class*="[#054d28]"] { color: #198038 !important; }
+[class*="bg-[#2ead4b]"], [class*="bg-[#054d28]"] { background-color: #198038 !important; }
+[class*="[#d03238]"], [class*="[#a7000d]"] { color: #da1e28 !important; }
+[class*="bg-[#320707]"] { background-color: #da1e28 !important; }
+[class*="[#ffc091]"] { background-color: #e0e0e0 !important; }
+[class*="[#ffd11a]"] { background-color: #f1c21b !important; }
+[class*="[#38c8ff]"] { color: #0f62fe !important; }
+[class*="bg-[#38c8ff]"] { background-color: #0f62fe !important; }

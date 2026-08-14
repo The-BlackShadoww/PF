@@ -29,7 +29,7 @@ function YearlyChartTooltip({
   if (!active || !payload || payload.length === 0) return null;
 
   return (
-    <div className="rounded-2xl bg-white p-3 text-xs shadow-lg">
+    <div className="border border-[#e0e0e0] bg-white p-3 text-xs">
       <p className="mb-2 font-semibold text-[#454745]">{label}</p>
       {payload.map((entry) => (
         <div key={entry.dataKey} className="mb-1 flex items-center gap-2">
@@ -178,18 +178,18 @@ export function YearlyView() {
                 barSize={16}
               >
                 <CartesianGrid
-                  stroke="#e8ebe6"
+                  stroke="#e0e0e0"
                   strokeDasharray="3 3"
                   vertical={false}
                 />
                 <XAxis
                   dataKey="month"
-                  tick={{ fontSize: 11, fill: "#868685" }}
+                  tick={{ fontSize: 11, fill: "#8c8c8c" }}
                   axisLine={false}
                   tickLine={false}
                 />
                 <YAxis
-                  tick={{ fontSize: 11, fill: "#868685" }}
+                  tick={{ fontSize: 11, fill: "#8c8c8c" }}
                   axisLine={false}
                   tickLine={false}
                   tickFormatter={(value) =>
@@ -200,8 +200,8 @@ export function YearlyView() {
                 <Legend
                   wrapperStyle={{ fontSize: "12px", paddingTop: "16px" }}
                 />
-                <Bar dataKey="Income" fill="#2ead4b" radius={[8, 8, 0, 0]} />
-                <Bar dataKey="Expenses" fill="#d03238" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="Income" fill="#0f62fe" radius={0} />
+                <Bar dataKey="Expenses" fill="#da1e28" radius={0} />
               </BarChart>
             </ResponsiveContainer>
           </div>

@@ -45,12 +45,12 @@ const MONTH_LABELS = [
 ];
 
 const DEFAULT_CATEGORY_COLORS = [
-  "#d03238",
-  "#ffc091",
-  "#ffd11a",
-  "#2ead4b",
-  "#38c8ff",
-  "#163300",
+  "#0f62fe",
+  "#525252",
+  "#8d8d8d",
+  "#a6a6a6",
+  "#c6c6c6",
+  "#e0e0e0",
 ];
 
 type MonthPoint = {
@@ -218,7 +218,7 @@ export default function DashboardPage() {
             >
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={sixMonthData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e8ebe6" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
                   <XAxis dataKey="label" tickLine={false} axisLine={false} />
                   <YAxis
                     tickLine={false}
@@ -232,14 +232,14 @@ export default function DashboardPage() {
                   <Bar
                     dataKey="income"
                     name="Income"
-                    fill="#2ead4b"
-                    radius={8}
+                    fill="#0f62fe"
+                    radius={0}
                   />
                   <Bar
                     dataKey="expense"
                     name="Expense"
-                    fill="#d03238"
-                    radius={8}
+                    fill="#da1e28"
+                    radius={0}
                   />
                 </BarChart>
               </ResponsiveContainer>
@@ -302,7 +302,7 @@ export default function DashboardPage() {
             <ChartPanel title="Savings Rate Trend" isLoading={isYearlyLoading}>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={sixMonthData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e8ebe6" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
                   <XAxis dataKey="label" tickLine={false} axisLine={false} />
                   <YAxis
                     domain={[0, 100]}
@@ -315,19 +315,19 @@ export default function DashboardPage() {
                   />
                   <ReferenceLine
                     y={20}
-                    stroke="#38c8ff"
+                    stroke="#0f62fe"
                     strokeDasharray="4 4"
                     label={{
                       value: "20%",
                       position: "insideTopRight",
-                      fill: "#163300",
+                      fill: "#161616",
                     }}
                   />
                   <Line
                     type="monotone"
                     dataKey="savingsRate"
                     name="Savings rate"
-                    stroke="#163300"
+                    stroke="#0f62fe"
                     strokeWidth={3}
                     dot={{ r: 4 }}
                     activeDot={{ r: 6 }}
