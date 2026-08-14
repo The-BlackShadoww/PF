@@ -1,5 +1,6 @@
 import {
   Body,
+  BadRequestException,
   Controller,
   Delete,
   Get,
@@ -56,6 +57,21 @@ export class TransactionsController {
     @Body() dto: CreateTransactionDto,
   ) {
     return this.transactionsService.create(user.id, dto);
+  }
+
+  @Get('projected-balance')
+  @ApiQuery({ name: 'amount', description: 'Transaction amount in cents' })
+  @ApiQuery({ name: 'type', enum: ['income', 'expense'] })
+  projectedBalance(
+    @CurrentUser() user: AuthenticatedUser,
+    @Query('amount') amount: string,
+    @Query('type') type: 'income' | 'expense',
+  ) {
+    const amountCents = Number(amount);
+    if (!Number.isInteger(amountCents) || amountCents <= 0 || !['income', 'expense'].includes(type)) {
+      throw new BadRequestException('amount must be a positive integer in cents and type must be income or expense');
+    }
+    return this.transactionsService.getProjectedBalance(user.id, amountCents, type);
   }
 
   @ApiOperation({

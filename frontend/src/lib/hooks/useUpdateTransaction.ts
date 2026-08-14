@@ -6,6 +6,7 @@ import {
 } from "@/lib/api/transactions";
 import { ApiError } from "@/lib/api/client";
 import { useToast } from "@/components/ui/Toast";
+import { accountKeys } from "@/lib/hooks/useAccount";
 
 type UpdateTransactionVariables = {
   id: string;
@@ -22,6 +23,7 @@ export function useUpdateTransaction() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       queryClient.invalidateQueries({ queryKey: ["monthly-summary"] });
+      queryClient.invalidateQueries({ queryKey: accountKeys.summary() });
     },
     onError: (error) => {
       toast.error(getErrorMessage(error));

@@ -13,10 +13,20 @@ import {
 } from './dto/create-transaction.dto';
 import { TransactionFiltersDto } from './dto/transaction-filters.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
+import { AccountService } from '../account/account.service';
 
 @Injectable()
 export class TransactionsService {
-  constructor(@Inject(DB_TOKEN) private readonly db: DrizzleDB) {}
+  constructor(
+    @Inject(DB_TOKEN) private readonly db: DrizzleDB,
+    private readonly accountService: AccountService,
+  ) {}
+
+  async getProjectedBalance(userId: string, amountCents: number, type: 'income' | 'expense') {
+    const balance = await this.accountService.getCurrentBalance(userId);
+    const projectedBalanceCents = balance.currentBalanceCents + (type === 'income' ? amountCents : -amountCents);
+    return { projectedBalanceCents, isLowBalance: projectedBalanceCents < balance.lowBalanceThresholdCents };
+  }
 
   async findAll(userId: string, filters: TransactionFiltersDto) {
     const page = filters.page ?? 1;

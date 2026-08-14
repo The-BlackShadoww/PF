@@ -29,6 +29,13 @@
       "when": 1786702048080,
       "tag": "0003_fancy_maelstrom",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1786725996794,
+      "tag": "0004_serious_patriot",
+      "breakpoints": true
     }
   ]
 }

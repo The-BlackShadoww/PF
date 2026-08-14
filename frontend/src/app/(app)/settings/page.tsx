@@ -1,7 +1,8 @@
 "use client";
 
 import { Plus, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { AccountSettingsTab } from "@/components/settings/AccountSettingsTab";
 
 import { CategoryForm } from "@/components/categories/CategoryForm";
 import { CategoryRow } from "@/components/categories/CategoryRow";
@@ -18,13 +19,14 @@ import {
 } from "@/lib/hooks/useCategories";
 import { cn } from "@/lib/utils/cn";
 
-type Tab = "profile" | "security" | "preferences" | "categories";
+type Tab = "profile" | "security" | "preferences" | "categories" | "account";
 
 const TABS: Array<{ id: Tab; label: string }> = [
   { id: "profile", label: "Profile" },
   { id: "security", label: "Security" },
   { id: "preferences", label: "Preferences" },
   { id: "categories", label: "Categories" },
+  { id: "account", label: "Account" },
 ];
 
 export default function SettingsPage() {
@@ -45,6 +47,12 @@ export default function SettingsPage() {
   const expenseCategories = categories.filter(
     (category) => category.type === "expense",
   );
+
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("tab") === "account") {
+      setActiveTab("account");
+    }
+  }, []);
 
   async function handleFormSubmit(values: {
     name: string;
@@ -126,6 +134,7 @@ export default function SettingsPage() {
         {activeTab === "profile" && <ProfileTab />}
         {activeTab === "security" && <SecurityTab />}
         {activeTab === "preferences" && <PreferencesTab />}
+        {activeTab === "account" && <AccountSettingsTab />}
         {activeTab === "categories" && (
           <div className="space-y-8">
             {showCreateForm || editingCategory ? (

@@ -12,6 +12,7 @@ import { useCreateTransaction } from "@/lib/hooks/useCreateTransaction";
 import { useUpdateTransaction } from "@/lib/hooks/useUpdateTransaction";
 import { cn } from "@/lib/utils/cn";
 import { useToast } from "@/components/ui/Toast";
+import { apiClient } from "@/lib/api/client";
 
 const transactionSchema = z.object({
   type: z.enum(["income", "expense"]),
@@ -58,6 +59,8 @@ export function TransactionForm({
   const updateTransaction = useUpdateTransaction();
   const isEditing = Boolean(transaction);
   const [amountDisplay, setAmountDisplay] = useState("");
+  const [projectedBalance, setProjectedBalance] = useState<number | null>(null);
+  const [isProjectedLow, setIsProjectedLow] = useState(false);
 
   const {
     register,
@@ -72,6 +75,7 @@ export function TransactionForm({
   });
 
   const selectedType = watch("type");
+  const amountValue = watch("amount");
   const selectedDate = watch("date");
   const note = watch("note") ?? "";
   const futureDateWarning =
@@ -99,6 +103,14 @@ export function TransactionForm({
     reset(values);
     setAmountDisplay(formatAmount(values.amount));
   }, [reset, transaction]);
+
+  useEffect(() => {
+    if (!amountValue || amountValue <= 0) { setProjectedBalance(null); return; }
+    const amountCents = Math.round(amountValue * 100);
+    apiClient<{ data?: { projectedBalanceCents: number; isLowBalance: boolean }; projectedBalanceCents: number; isLowBalance: boolean }>(`/transactions/projected-balance?amount=${amountCents}&type=${selectedType}`)
+      .then((response) => { const result = response.data ?? response; setProjectedBalance(result.projectedBalanceCents); setIsProjectedLow(result.isLowBalance); })
+      .catch(() => setProjectedBalance(null));
+  }, [amountValue, selectedType]);
 
   function handleTypeChange(nextType: "income" | "expense") {
     setValue("type", nextType, { shouldDirty: true, shouldValidate: true });
@@ -204,6 +216,13 @@ export function TransactionForm({
           <FieldError message={errors.categoryId.message} />
         ) : null}
       </label>
+
+      {selectedType === "expense" && projectedBalance !== null && isProjectedLow ? (
+        <div className="flex items-start gap-2 rounded-xl bg-amber-50 p-3 text-xs text-amber-800">
+          <AlertTriangle aria-hidden="true" className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+          <p>This expense will bring your balance to <strong>{projectedBalance < 0 ? "-" : ""}${(Math.abs(projectedBalance) / 100).toFixed(2)}</strong>{projectedBalance < 0 ? " (negative)" : ""} — below your low-balance threshold.</p>
+        </div>
+      ) : null}
 
       <label className="block space-y-1.5">
         <span className="text-sm font-semibold text-[#454745]">Amount</span>

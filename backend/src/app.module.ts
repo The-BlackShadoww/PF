@@ -16,6 +16,7 @@ import { CalculationsModule } from './modules/calculations/calculations.module';
 import { ReportsModule } from './modules/reports/reports.module';
 import { TransactionsModule } from './modules/transactions/transactions.module';
 import { UsersModule } from './modules/users/users.module';
+import { AccountModule } from './modules/account/account.module';
 
 @Module({
   imports: [
@@ -69,6 +70,7 @@ import { UsersModule } from './modules/users/users.module';
     TransactionsModule,
     ReportsModule,
     UsersModule,
+    AccountModule,
   ],
   providers: [
     {

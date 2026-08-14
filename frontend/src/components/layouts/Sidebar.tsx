@@ -49,7 +49,7 @@ export function Sidebar() {
       <div className="hidden h-8 items-center justify-end bg-[#f4f4f4] px-4 text-xs text-[#525252] md:flex md:px-8">
         Personal Finance workspace
       </div>
-      <div className="mx-auto flex h-12 max-w-[1584px] items-center px-4 md:px-8">
+      <div className="mx-auto flex h-12 max-w-[1584px] items-center justify-between px-4 md:px-8">
         <Link href="/dashboard" className="flex items-center gap-3 font-medium text-[#161616]" onClick={() => setIsOpen(false)}>
           <span className="grid h-8 w-8 place-items-center bg-[#0f62fe] text-white"><LayoutDashboard aria-hidden="true" className="h-4 w-4" /></span>
           <span>Personal Finance</span>

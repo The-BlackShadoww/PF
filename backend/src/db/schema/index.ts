@@ -144,6 +144,36 @@ export const budgets = pgTable(
   ],
 );
 
+export const accountConfig = pgTable('account_config', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').notNull().unique().references(() => users.id, { onDelete: 'cascade' }),
+  initialBalanceCents: integer('initial_balance_cents').notNull().default(0),
+  lowBalanceThresholdCents: integer('low_balance_threshold_cents').notNull().default(500000),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const savingsSectors = pgTable(
+  'savings_sectors',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+    name: varchar('name', { length: 100 }).notNull(),
+    percentage: integer('percentage').notNull(),
+    color: varchar('color', { length: 7 }).notNull().default('#6b7280'),
+    icon: varchar('icon', { length: 50 }).notNull().default('piggy-bank'),
+    targetAmountCents: integer('target_amount_cents'),
+    sortOrder: integer('sort_order').notNull().default(0),
+    isDefault: boolean('is_default').notNull().default(false),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index('savings_sectors_user_id_idx').on(table.userId),
+    uniqueIndex('savings_sectors_user_name_idx').on(table.userId, table.name),
+  ],
+);
+
 export const refreshTokens = pgTable(
   'refresh_tokens',
   {
@@ -167,11 +197,13 @@ export const refreshTokens = pgTable(
   ],
 );
 
-export const usersRelations = relations(users, ({ many }) => ({
+export const usersRelations = relations(users, ({ many, one }) => ({
   categories: many(categories),
   transactions: many(transactions),
   budgets: many(budgets),
   refreshTokens: many(refreshTokens),
+  accountConfig: one(accountConfig),
+  savingsSectors: many(savingsSectors),
 }));
 
 export const categoriesRelations = relations(categories, ({ one, many }) => ({
@@ -210,4 +242,12 @@ export const refreshTokensRelations = relations(refreshTokens, ({ one }) => ({
     fields: [refreshTokens.userId],
     references: [users.id],
   }),
+}));
+
+export const accountConfigRelations = relations(accountConfig, ({ one }) => ({
+  user: one(users, { fields: [accountConfig.userId], references: [users.id] }),
+}));
+
+export const savingsSectorsRelations = relations(savingsSectors, ({ one }) => ({
+  user: one(users, { fields: [savingsSectors.userId], references: [users.id] }),
 }));

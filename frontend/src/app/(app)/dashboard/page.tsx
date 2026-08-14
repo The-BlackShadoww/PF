@@ -20,6 +20,7 @@ import {
 } from "recharts";
 
 import { QuarterlyView } from "@/components/dashboard/QuarterlyView";
+import { AccountBalanceWidget } from "@/components/dashboard/AccountBalanceWidget";
 import { YearlyView } from "@/components/dashboard/YearlyView";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { SummaryCard } from "@/components/shared/SummaryCard";
@@ -166,6 +167,8 @@ export default function DashboardPage() {
           </div>
         )}
       </div>
+
+      <AccountBalanceWidget />
 
       <div className="mb-6 flex gap-1 overflow-x-auto rounded-full bg-white p-1">
         {DASHBOARD_TABS.map((tab) => (
