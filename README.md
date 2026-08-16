@@ -1,36 +1,56 @@
 # Personal Finance App
 
-A modern, full-stack personal finance application designed for tracking income and expenses, organizing spending by category, and setting monthly budgets. The application is multi-tenant, providing secure, isolated data for each user.
+A modern, full-stack personal finance application for tracking income and expenses, organizing spending by category, setting monthly budgets, and exporting financial reports. The application is multi-tenant, providing secure, isolated data for each user.
 
 ---
 
-## 🚀 Features
+## Features
 
-### Current
-- **User Authentication**: Secure user registration API, login, JWT session management, Google OAuth, and Two-Factor Authentication (2FA) with encryption.
-- **Settings Page**: Manage user profile, security settings, and personal preferences.
-- **Categorization**: Group spending into custom categories with colors and icons (CRUD implemented for backend and frontend).
-- **Financial Reports**: PDF generation for financial reports using `date-fns` for accurate date handling.
-- **API Documentation**: Comprehensive Swagger/OpenAPI documentation decorators integrated across controllers and DTOs.
-- **Database Schema**: Fully defined PostgreSQL schema using Drizzle ORM (Users, Categories, Transactions, Budgets, Refresh Tokens).
-- **Core API Architecture**: Standardized error handling, global validation, logging, and response formatting.
-- **Local Infrastructure**: Docker Compose setup for PostgreSQL and Redis.
+### Implemented
 
-### Planned
-- **Transaction Management**: Record income and expenses with precise dates, notes, and categories.
-- **Budgeting**: Define and track monthly limits globally or per category.
-- **Frontend Dashboard**: Complete the comprehensive UI built with Next.js, Tailwind CSS v4, and Recharts.
+**Authentication & security**
+- User registration and login with JWT access tokens and httpOnly refresh-token cookies
+- Google OAuth sign-in
+- Two-factor authentication (TOTP) with encrypted secrets
+- Password change, profile management, and route protection via Next.js middleware
+
+**Financial data**
+- **Transactions** — Create, read, update, and delete income/expense entries with dates, notes, and categories
+- **Categories** — Custom income and expense categories with colors and icons (managed in Settings)
+- **Budgets** — Monthly budget limits per category (API ready; UI page is a placeholder)
+- **Account setup** — Initial balance, low-balance threshold, and savings-sector allocations
+- **Calculations** — Monthly, quarterly, and yearly summaries plus category breakdowns for the dashboard
+- **Reports** — CSV and PDF export for any date range, with preview and local download history
+
+**Frontend**
+- **Dashboard** — Monthly, quarterly, and yearly views with Recharts visualizations
+- **Transactions** — Paginated ledger with filters and modal create/edit forms
+- **Reports** — Date-range picker, format selection, and one-click downloads
+- **Settings** — Profile, security (2FA), preferences, categories, and account configuration
+- **Landing page** — Marketing home page with links to auth flows
+
+**Platform**
+- PostgreSQL schema and Drizzle migrations (users, categories, transactions, budgets, account config, savings sectors, refresh tokens)
+- Standardized API responses, validation, logging, request IDs, and global error handling
+- Swagger/OpenAPI docs at `/api/docs` (enabled in development; set `ENABLE_SWAGGER=true` in production to expose)
+- Rate limiting via `@nestjs/throttler` with optional Redis-backed storage
+- Local infrastructure via Docker Compose (PostgreSQL and Redis)
+
+### Planned / in progress
+
+- **Budgets UI** — Backend endpoints exist; the `/budgets` page still needs a full interface
+- Additional polish, tests, and production hardening
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 **Frontend** ([`frontend/`](./frontend))
-- Framework: **Next.js 15** (React 19)
-- Styling: **Tailwind CSS v4**
-- State & Data Fetching: **TanStack React Query v5**
-- Forms & Validation: **React Hook Form** + **Zod**
-- UI/Charts: **Lucide React** + **Recharts**
+- Framework: **Next.js 15** (React 19, App Router)
+- Styling: **Tailwind CSS v4** (Carbon-inspired design system)
+- State & data fetching: **TanStack React Query v5**
+- Forms & validation: **React Hook Form** + **Zod**
+- UI & charts: **Lucide React** + **Recharts**
 
 **Backend** ([`backend/`](./backend))
 - Framework: **NestJS 11** (Node.js 20+)
@@ -38,7 +58,9 @@ A modern, full-stack personal finance application designed for tracking income a
 - Database: **PostgreSQL 16**
 - ORM: **Drizzle ORM**
 - Validation: `class-validator` & `class-transformer`
-- Security: Helmet, CORS, bcrypt
+- Security: Helmet, CORS, bcrypt, JWT, cookie-based refresh tokens
+- Docs: **Swagger** via `@nestjs/swagger`
+- Reports: **@react-pdf/renderer**, **fast-csv**
 
 **Infrastructure**
 - **Local**: Docker Compose (Postgres & Redis)
@@ -46,28 +68,33 @@ A modern, full-stack personal finance application designed for tracking income a
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```text
 PF/
-├── backend/                # NestJS REST API and database migrations
-├── frontend/               # Next.js Client App
-├── docker-compose.yml      # Local infrastructure (Postgres + Redis)
-├── WIKI.md                 # Detailed project documentation and architecture
+├── backend/                # NestJS REST API, Drizzle schema, and migrations
+├── frontend/               # Next.js client app (App Router)
+├── docker-compose.yml      # Local PostgreSQL and Redis
+├── ARCHITECTURE.md         # System architecture and design patterns
+├── DESIGN.md               # UI/design system notes
+├── WIKI.md                 # Extended project documentation
 └── README.md               # This file
 ```
 
 ---
 
-## 🏁 Getting Started (Development)
+## Getting Started (Development)
 
-### 1. Start Infrastructure
-Run the database and caching layers via Docker Compose:
+### 1. Start infrastructure
+
+From the repository root, start PostgreSQL and Redis:
+
 ```bash
 docker compose up -d postgres redis
 ```
 
-### 2. Run the Backend API
+### 2. Run the backend API
+
 ```bash
 cd backend
 cp .env.example .env
@@ -75,39 +102,60 @@ npm install
 npm run db:migrate
 npm run start:dev
 ```
-The API will be available at `http://localhost:3001/api/v1`.
 
-### 3. Run the Frontend (Coming Soon)
+The API listens at `http://localhost:3001/api/v1`. Interactive API docs are at `http://localhost:3001/api/docs`.
+
+Set `FRONTEND_URL` in `backend/.env` to match your frontend origin (default Next.js dev server: `http://localhost:3000`).
+
+### 3. Run the frontend
+
 ```bash
 cd frontend
+cp .env.example .env
 npm install
 npm run dev
 ```
-The UI will be available at `http://localhost:3000` (or `5173`).
+
+The UI is available at `http://localhost:3000`.
+
+Browser requests go to `/api/v1` on the frontend origin. Next.js rewrites those calls to the backend (`API_PROXY_TARGET`, default `http://localhost:3001/api/v1`), keeping the `refresh_token` cookie first-party so middleware can read it.
 
 ---
 
-## 🌐 Deployment
+## Deployment
 
-The production environment is split across three managed services:
+Production is split across three managed services:
 
 | Component | Platform | Description |
 |-----------|----------|-------------|
-| **Frontend** | [Vercel](https://vercel.com) | Next.js app — automatic builds and deploys from the `frontend/` directory |
-| **Backend** | [Render](https://render.com) | NestJS API — hosted as a web service with environment variables for secrets and DB connection |
-| **Database** | [Neon](https://neon.tech) | Serverless PostgreSQL — production database; connection string is provided to the Render backend |
+| **Frontend** | [Vercel](https://vercel.com) | Next.js app — deploy from the `frontend/` directory |
+| **Backend** | [Render](https://render.com) | NestJS API — web service with secrets and DB connection env vars |
+| **Database** | [Neon](https://neon.tech) | Serverless PostgreSQL — connection string provided to Render |
 
-**Notes**
-- Local development uses Docker Compose for Postgres and Redis; production uses Neon instead of a self-hosted database.
-- Set the backend `DATABASE_URL` on Render to your Neon connection string.
-- Route browser API calls through the frontend origin so the `refresh_token` is a
-  first-party cookie that Next.js middleware can read. In Vercel, set
-  `NEXT_PUBLIC_API_URL=/api/v1` and set the server-only
-  `API_PROXY_TARGET=https://<your-render-service>.onrender.com/api/v1`. Do not
-  point `NEXT_PUBLIC_API_URL` directly at Render.
+**Backend (Render)**
+- Set `DATABASE_URL` to your Neon connection string
+- Configure `JWT_SECRET`, `REFRESH_TOKEN_SECRET`, `TWO_FACTOR_ENCRYPTION_KEY`, `FRONTEND_URL` (your Vercel domain), and `BACKEND_URL` (your Render service URL)
+- Optionally set `REDIS_URL` for distributed rate limiting and `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` for OAuth
+
+**Frontend (Vercel)**
+- Route browser API calls through the frontend origin so the `refresh_token` is a first-party cookie that Next.js middleware can read
+- Set `NEXT_PUBLIC_API_URL=/api/v1`
+- Set the server-only `API_PROXY_TARGET=https://<your-render-service>.onrender.com/api/v1`
+- Do **not** point `NEXT_PUBLIC_API_URL` directly at Render
+
+**Local vs production**
+- Local development uses Docker Compose for Postgres and Redis; production uses Neon instead of a self-hosted database
+- Redis is optional locally but recommended in production for consistent rate limiting across instances
 
 ---
 
-## 📘 Documentation
+## Documentation
 
-For a more in-depth look at the architecture, design decisions, data model, and API conventions, please refer to the [Project Wiki (WIKI.md)](./WIKI.md).
+| Document | Contents |
+|----------|----------|
+| [WIKI.md](./WIKI.md) | Data model, API conventions, and project overview |
+| [ARCHITECTURE.md](./ARCHITECTURE.md) | Client/server architecture, modules, and security flow |
+| [DESIGN.md](./DESIGN.md) | Carbon-inspired UI design system |
+| [backend/README.md](./backend/README.md) | Backend setup, env vars, database scripts, and API details |
+
+For live endpoint reference during development, open `http://localhost:3001/api/docs` after starting the backend.
