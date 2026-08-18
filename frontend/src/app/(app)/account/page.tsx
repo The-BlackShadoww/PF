@@ -17,6 +17,17 @@ import { formatDollar } from "@/lib/utils/format";
 export default function AccountPage() {
   const { data: summary, isLoading } = useAccountSummary();
   const sectors = summary?.sectors ?? [];
+  const allocations = summary
+    ? [
+        {
+          ...summary.cash,
+          id: "cash",
+          targetAmountCents: null,
+          progressPercent: null,
+        },
+        ...sectors,
+      ]
+    : [];
   const balance = summary?.currentBalanceCents ?? 0;
   const signedBalance = `${balance < 0 ? "-" : ""}${formatDollar(
     Math.abs(balance) / 100,
@@ -59,8 +70,8 @@ export default function AccountPage() {
 
         {isLoading ? (
           <div className="h-64 animate-pulse bg-white" />
-        ) : sectors.length === 0 ? (
-          <EmptyState message="No savings sectors have been set up yet." />
+        ) : allocations.length === 0 ? (
+          <EmptyState message="Account allocation is not available yet." />
         ) : (
           <Table>
             <TableHeader>
@@ -73,7 +84,7 @@ export default function AccountPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {sectors.map((sector) => (
+              {allocations.map((sector) => (
                 <TableRow key={sector.id}>
                   <TableCell className="font-semibold text-[#161616]">
                     <span className="flex items-center gap-3">
@@ -121,21 +132,21 @@ export default function AccountPage() {
         <div className="mt-4 h-80">
           {isLoading ? (
             <div className="h-full animate-pulse bg-[#e8ebe6]" />
-          ) : sectors.length === 0 ? (
-            <EmptyState message="Add savings sectors in Settings to view your allocation." />
+          ) : allocations.length === 0 ? (
+            <EmptyState message="Account allocation is not available yet." />
           ) : (
             <div className="grid h-full gap-4 lg:grid-cols-[minmax(0,1fr)_240px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={sectors}
+                    data={allocations}
                     dataKey="allocatedCents"
                     nameKey="name"
                     innerRadius="52%"
                     outerRadius="78%"
                     paddingAngle={2}
                   >
-                    {sectors.map((sector) => (
+                    {allocations.map((sector) => (
                       <Cell key={sector.id} fill={sector.color} />
                     ))}
                   </Pie>
@@ -146,7 +157,7 @@ export default function AccountPage() {
               </ResponsiveContainer>
 
               <div className="flex flex-col justify-center gap-3">
-                {sectors.map((sector) => (
+                {allocations.map((sector) => (
                   <div
                     key={sector.id}
                     className="flex items-center justify-between gap-3 text-sm"
