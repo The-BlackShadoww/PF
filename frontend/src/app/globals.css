@@ -85,11 +85,28 @@ textarea {
 input,
 select,
 textarea {
-  background: #f4f4f4;
+  /* Keep form controls readable even when a legacy accent utility is present. */
+  background-color: #ffffff !important;
   border: 0;
   border-bottom: 1px solid #8d8d8d;
-  color: #161616;
+  color: #161616 !important;
   padding: 11px 16px;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #525252;
+  opacity: 1;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+select:-webkit-autofill,
+textarea:-webkit-autofill {
+  -webkit-text-fill-color: #161616;
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  box-shadow: 0 0 0 1000px #ffffff inset !important;
 }
 
 input:focus,
@@ -107,27 +124,80 @@ a:focus-visible {
 }
 
 /* Translate the retired Wise palette still present in page-level utility classes. */
-[class*="[#0e0f0c]"] { color: #161616 !important; }
-[class*="bg-[#0e0f0c]"] { background-color: #161616 !important; }
-[class*="border-[#0e0f0c]"] { border-color: #161616 !important; }
-[class*="[#163300]"] { color: #161616 !important; }
-[class*="bg-[#163300]"] { background-color: #161616 !important; }
-[class*="[#454745]"] { color: #525252 !important; }
-[class*="bg-[#454745]"] { background-color: #525252 !important; }
-[class*="[#868685]"] { color: #8c8c8c !important; }
-[class*="bg-[#868685]"] { background-color: #8c8c8c !important; }
-[class*="[#e8ebe6]"] { background-color: #f4f4f4 !important; }
-[class*="border-[#e8ebe6]"], [class*="divide-[#e8ebe6]"] { border-color: #e0e0e0 !important; }
-[class*="[#cfd4ca]"] { border-color: #e0e0e0 !important; }
-[class*="[#9fe870]"] { background-color: #0f62fe !important; }
-[class*="[#cdffad]"] { background-color: #0353e9 !important; }
-[class*="bg-[#9fe870]"], [class*="bg-[#cdffad]"] { color: #ffffff !important; }
-[class*="[#e2f6d5]"] { background-color: #edf5ff !important; }
-[class*="[#2ead4b]"], [class*="[#054d28]"] { color: #198038 !important; }
-[class*="bg-[#2ead4b]"], [class*="bg-[#054d28]"] { background-color: #198038 !important; }
-[class*="[#d03238]"], [class*="[#a7000d]"] { color: #da1e28 !important; }
-[class*="bg-[#320707]"] { background-color: #da1e28 !important; }
-[class*="[#ffc091]"] { background-color: #e0e0e0 !important; }
-[class*="[#ffd11a]"] { background-color: #f1c21b !important; }
-[class*="[#38c8ff]"] { color: #0f62fe !important; }
-[class*="bg-[#38c8ff]"] { background-color: #0f62fe !important; }
+[class*="[#0e0f0c]"] {
+  color: #161616 !important;
+}
+[class*="bg-[#0e0f0c]"] {
+  background-color: #161616 !important;
+}
+[class*="border-[#0e0f0c]"] {
+  border-color: #161616 !important;
+}
+[class*="[#163300]"] {
+  color: #161616 !important;
+}
+[class*="bg-[#163300]"] {
+  background-color: #161616 !important;
+}
+[class*="[#454745]"] {
+  color: #525252 !important;
+}
+[class*="bg-[#454745]"] {
+  background-color: #525252 !important;
+}
+[class*="[#868685]"] {
+  color: #8c8c8c !important;
+}
+[class*="bg-[#868685]"] {
+  background-color: #8c8c8c !important;
+}
+[class*="[#e8ebe6]"] {
+  background-color: #f4f4f4 !important;
+}
+[class*="border-[#e8ebe6]"],
+[class*="divide-[#e8ebe6]"] {
+  border-color: #e0e0e0 !important;
+}
+[class*="[#cfd4ca]"] {
+  border-color: #e0e0e0 !important;
+}
+[class*="bg-[#9fe870]"] {
+  background-color: #0f62fe !important;
+}
+[class*="bg-[#cdffad]"] {
+  background-color: #0353e9 !important;
+}
+[class*="bg-[#9fe870]"],
+[class*="bg-[#cdffad]"] {
+  color: #ffffff !important;
+}
+[class*="[#e2f6d5]"] {
+  background-color: #edf5ff !important;
+}
+[class*="[#2ead4b]"],
+[class*="[#054d28]"] {
+  color: #198038 !important;
+}
+[class*="bg-[#2ead4b]"],
+[class*="bg-[#054d28]"] {
+  background-color: #198038 !important;
+}
+[class*="[#d03238]"],
+[class*="[#a7000d]"] {
+  color: #da1e28 !important;
+}
+[class*="bg-[#320707]"] {
+  background-color: #da1e28 !important;
+}
+[class*="[#ffc091]"] {
+  background-color: #e0e0e0 !important;
+}
+[class*="[#ffd11a]"] {
+  background-color: #f1c21b !important;
+}
+[class*="[#38c8ff]"] {
+  color: #0f62fe !important;
+}
+[class*="bg-[#38c8ff]"] {
+  background-color: #0f62fe !important;
+}
