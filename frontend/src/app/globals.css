@@ -1,203 +1,59 @@
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
 :root {
-  color-scheme: light;
-  --wise-primary: #0f62fe;
-  --wise-primary-active: #0353e9;
-  --wise-primary-pale: #edf5ff;
-  --wise-ink: #161616;
-  --wise-ink-deep: #161616;
-  --wise-body: #525252;
-  --wise-mute: #8c8c8c;
-  --wise-canvas: #ffffff;
-  --wise-canvas-soft: #f4f4f4;
-  --wise-positive: #198038;
-  --wise-positive-deep: #198038;
-  --wise-warning: #f1c21b;
-  --wise-warning-content: #525252;
-  --wise-negative: #da1e28;
-  --wise-negative-deep: #da1e28;
-  --wise-negative-bg: #da1e28;
-  --wise-orange: #e0e0e0;
-  --wise-cyan: #0f62fe;
+  color-scheme: dark;
+  --color-text-primary: #fafafa;
+  --color-text-secondary: #a3a3a3;
+  --color-text-tertiary: #ffffff;
+  --color-surface-base: #000000;
+  --color-surface-muted: #272727;
+  --color-surface-raised: #0a0a0a;
+  --color-border-default: #383838;
+  --color-focus: #2667ff;
+  --radius-sm: 10px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
+html, body { min-height: 100%; }
+body { margin: 0; background: var(--color-surface-base); color: var(--color-text-primary); font-family: Inter, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; -webkit-font-smoothing: antialiased; }
+a { color: inherit; text-decoration: none; }
+button, input, select, textarea { font: inherit; -webkit-tap-highlight-color: transparent; }
+::selection { color: #000; background: var(--color-text-primary); }
 
-html,
-body {
-  min-height: 100%;
-}
+/* Focus is intentionally consistent across all interactive controls. */
+:focus-visible { outline: 2px solid var(--color-focus) !important; outline-offset: 2px; }
+button:disabled { cursor: not-allowed; }
+input, select, textarea { min-height: 42px; border: 1px solid var(--color-border-default) !important; border-radius: var(--radius-sm) !important; background: var(--color-surface-raised) !important; color: var(--color-text-primary) !important; }
+input::placeholder, textarea::placeholder { color: var(--color-text-secondary); opacity: 1; }
 
-body {
-  margin: 0;
-  background: var(--wise-canvas-soft);
-  color: var(--wise-ink);
-  font-family: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
-  font-feature-settings: "calt";
-  letter-spacing: 0.16px;
-}
+/* Compatibility layer: maps the existing application utilities onto the Acebuilder semantic tokens. */
+.bg-white, .bg-\[\#f4f4f4\], .bg-\[\#e8ebe6\] { background-color: var(--color-surface-raised) !important; }
+.bg-\[\#e2f6d5\] { background-color: var(--color-surface-muted) !important; }
+.bg-\[\#0e0f0c\], .bg-\[\#161616\] { background-color: var(--color-surface-base) !important; }
+.bg-\[\#9fe870\] { background-color: var(--color-text-primary) !important; }
+.bg-\[\#cdffad\] { background-color: #d4d4d4 !important; }
+.bg-\[\#9fe870\].text-\[\#0e0f0c\], .bg-\[\#9fe870\].text-\[\#161616\], .bg-\[\#cdffad\].text-\[\#0e0f0c\] { color: #000 !important; }
+.bg-\[\#320707\] { background-color: #3b1111 !important; }
+.bg-\[\#0f62fe\] { background-color: var(--color-focus) !important; }
+.text-\[\#0e0f0c\], .text-\[\#161616\], .text-\[\#0f62fe\] { color: var(--color-text-primary) !important; }
+.text-\[\#454745\], .text-\[\#525252\], .text-\[\#868685\], .text-\[\#8c8c8c\] { color: var(--color-text-secondary) !important; }
+.text-\[\#054d28\], .text-\[\#2ead4b\] { color: #86efac !important; }
+.text-\[\#a7000d\], .text-\[\#d03238\] { color: #fca5a5 !important; }
+.border-\[\#0e0f0c\], .border-\[\#161616\], .border-\[\#393939\], .border-\[\#e0e0e0\], .border-\[\#e8ebe6\], .border-\[\#cfd4ca\], .border-\[\#868685\], .border-\[\#8c8c8c\] { border-color: var(--color-border-default) !important; }
+.divide-\[\#e8ebe6\] > :not(:last-child) { border-color: var(--color-border-default) !important; }
+.hover\:bg-\[\#e8ebe6\]:hover, .hover\:bg-\[\#e2f6d5\]:hover { background-color: var(--color-surface-muted) !important; }
+.hover\:text-\[\#0e0f0c\]:hover, .hover\:text-\[\#161616\]:hover, .hover\:text-\[\#454745\]:hover { color: var(--color-text-primary) !important; }
+.text-gray-900, .text-gray-800, .text-gray-700, .text-gray-600, .text-gray-500, .text-gray-400 { color: var(--color-text-secondary) !important; }
+.bg-gray-100, .bg-gray-50, .bg-gray-200 { background-color: var(--color-surface-muted) !important; }
+.border-gray-100, .border-gray-200, .border-gray-300 { border-color: var(--color-border-default) !important; }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-button,
-input,
-select,
-textarea {
-  font: inherit;
-}
-
-::selection {
-  background: var(--wise-primary);
-  color: white;
-}
-
-/* Carbon foundations: flat geometry, hairline hierarchy, and the single IBM Blue accent. */
-*,
-*::before,
-*::after {
-  border-radius: 0 !important;
-  box-shadow: none !important;
-}
-
-/* The previous interface used extra-heavy headings; Carbon reserves hierarchy for scale. */
-.font-black {
-  font-weight: 400 !important;
-}
-
-.uppercase {
-  text-transform: none !important;
-}
-
-button,
-input,
-select,
-textarea {
-  min-height: 48px;
-}
-
-input,
-select,
-textarea {
-  /* Keep form controls readable even when a legacy accent utility is present. */
-  background-color: #ffffff !important;
-  border: 0;
-  border-bottom: 1px solid #8d8d8d;
-  color: #161616 !important;
-  padding: 11px 16px;
-}
-
-input::placeholder,
-textarea::placeholder {
-  color: #525252;
-  opacity: 1;
-}
-
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-select:-webkit-autofill,
-textarea:-webkit-autofill {
-  -webkit-text-fill-color: #161616;
-  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
-  box-shadow: 0 0 0 1000px #ffffff inset !important;
-}
-
-input:focus,
-select:focus,
-textarea:focus {
-  border-bottom: 2px solid #0f62fe;
-  outline: 2px solid #0f62fe;
-  outline-offset: -2px;
-}
-
-button:focus-visible,
-a:focus-visible {
-  outline: 2px solid #0f62fe;
-  outline-offset: 2px;
-}
-
-/* Translate the retired Wise palette still present in page-level utility classes. */
-[class*="[#0e0f0c]"] {
-  color: #161616 !important;
-}
-[class*="bg-[#0e0f0c]"] {
-  background-color: #161616 !important;
-}
-[class*="border-[#0e0f0c]"] {
-  border-color: #161616 !important;
-}
-[class*="[#163300]"] {
-  color: #161616 !important;
-}
-[class*="bg-[#163300]"] {
-  background-color: #161616 !important;
-}
-[class*="[#454745]"] {
-  color: #525252 !important;
-}
-[class*="bg-[#454745]"] {
-  background-color: #525252 !important;
-}
-[class*="[#868685]"] {
-  color: #8c8c8c !important;
-}
-[class*="bg-[#868685]"] {
-  background-color: #8c8c8c !important;
-}
-[class*="[#e8ebe6]"] {
-  background-color: #f4f4f4 !important;
-}
-[class*="border-[#e8ebe6]"],
-[class*="divide-[#e8ebe6]"] {
-  border-color: #e0e0e0 !important;
-}
-[class*="[#cfd4ca]"] {
-  border-color: #e0e0e0 !important;
-}
-[class*="bg-[#9fe870]"] {
-  background-color: #0f62fe !important;
-}
-[class*="bg-[#cdffad]"] {
-  background-color: #0353e9 !important;
-}
-[class*="bg-[#9fe870]"],
-[class*="bg-[#cdffad]"] {
-  color: #ffffff !important;
-}
-[class*="[#e2f6d5]"] {
-  background-color: #edf5ff !important;
-}
-[class*="[#2ead4b]"],
-[class*="[#054d28]"] {
-  color: #198038 !important;
-}
-[class*="bg-[#2ead4b]"],
-[class*="bg-[#054d28]"] {
-  background-color: #198038 !important;
-}
-[class*="[#d03238]"],
-[class*="[#a7000d]"] {
-  color: #da1e28 !important;
-}
-[class*="bg-[#320707]"] {
-  background-color: #da1e28 !important;
-}
-[class*="[#ffc091]"] {
-  background-color: #e0e0e0 !important;
-}
-[class*="[#ffd11a]"] {
-  background-color: #f1c21b !important;
-}
-[class*="[#38c8ff]"] {
-  color: #0f62fe !important;
-}
-[class*="bg-[#38c8ff]"] {
-  background-color: #0f62fe !important;
-}
+.rounded-3xl { border-radius: var(--radius-lg) !important; }
+.rounded-2xl, .rounded-xl { border-radius: var(--radius-md) !important; }
+.rounded-lg { border-radius: var(--radius-sm) !important; }
+.rounded-full { border-radius: 9999px !important; }
+.shadow-xl { box-shadow: 0 12px 48px -8px rgba(0,0,0,.55) !important; }
+table { color: var(--color-text-secondary); }
+thead { color: var(--color-text-primary); }
