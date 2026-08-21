@@ -1,27 +1,15 @@
 "use client";
 
-import {
-  ArrowRightLeft,
-  Landmark,
-  FileText,
-  Grid3X3,
-  LayoutDashboard,
-  LogOut,
-  Menu,
-  PiggyBank,
-  Settings,
-  X,
-} from "lucide-react";
+import { ArrowRightLeft, FileText, Landmark, LayoutDashboard, LogOut, Menu, Moon, PiggyBank, Settings, Sun, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
 import { authApi } from "@/lib/api/auth";
 import { clearAccessToken } from "@/lib/api/client";
 import { cn } from "@/lib/utils/cn";
 
 const navigationItems = [
-  { href: "/dashboard", label: "Dashboard", icon: Grid3X3 },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/account", label: "Account", icon: Landmark },
   { href: "/transactions", label: "Transactions", icon: ArrowRightLeft },
   { href: "/budgets", label: "Budgets", icon: PiggyBank },
@@ -34,105 +22,48 @@ export function Sidebar() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+
+  useEffect(() => {
+    const savedTheme = window.localStorage.getItem("theme");
+    const preferredTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    const nextTheme = savedTheme === "dark" || savedTheme === "light" ? savedTheme : preferredTheme;
+    setTheme(nextTheme);
+    document.documentElement.classList.toggle("dark", nextTheme === "dark");
+  }, []);
+
+  function toggleTheme() {
+    const nextTheme = theme === "light" ? "dark" : "light";
+    setTheme(nextTheme);
+    document.documentElement.classList.toggle("dark", nextTheme === "dark");
+    window.localStorage.setItem("theme", nextTheme);
+  }
 
   async function handleLogout() {
     setIsLoggingOut(true);
-    try {
-      await authApi.logout();
-    } finally {
-      clearAccessToken();
-      router.push("/login");
-      router.refresh();
-    }
+    try { await authApi.logout(); } finally { clearAccessToken(); router.push("/login"); router.refresh(); }
   }
 
-  return (
-    <header className="sticky top-0 z-50 border-b border-[#e0e0e0] bg-white">
-      <div className="hidden h-8 items-center justify-end bg-[#f4f4f4] px-4 text-xs text-[#525252] md:flex md:px-8">
-        Personal Finance workspace
-      </div>
-      <div className="mx-auto flex h-12 max-w-[1584px] items-center justify-between px-4 md:px-8">
-        <Link
-          href="/dashboard"
-          className="flex items-center gap-3 font-medium text-[#161616]"
-          onClick={() => setIsOpen(false)}
-        >
-          <span className="grid h-8 w-8 place-items-center bg-[#0f62fe] text-white">
-            <LayoutDashboard aria-hidden="true" className="h-4 w-4" />
-          </span>
-          <span>Personal Finance</span>
-        </Link>
-        <nav className="ml-10 hidden h-full items-stretch md:flex">
-          {navigationItems.map(({ href, label, icon: Icon }) => {
-            const active = pathname === href;
-            return (
-              <Link
-                key={href}
-                href={href}
-                className={cn(
-                  "flex items-center gap-2 border-b-2 px-4 text-sm transition-colors",
-                  active
-                    ? "border-[#0f62fe] font-medium text-[#161616]"
-                    : "border-transparent text-[#525252] hover:bg-[#f4f4f4] hover:text-[#161616]",
-                )}
-              >
-                <Icon aria-hidden="true" className="h-4 w-4" />
-                {label}
-              </Link>
-            );
-          })}
-        </nav>
-        <button
-          type="button"
-          disabled={isLoggingOut}
-          className="ml-auto hidden h-12 items-center gap-2 px-4 text-sm text-[#525252] hover:bg-[#f4f4f4] hover:text-[#161616] md:flex disabled:opacity-60"
-          onClick={handleLogout}
-        >
-          <LogOut aria-hidden="true" className="h-4 w-4" />
-          {isLoggingOut ? "Logging out..." : "Logout"}
-        </button>
-        <button
-          type="button"
-          aria-label={isOpen ? "Close navigation" : "Open navigation"}
-          className="ml-auto grid h-12 w-12 place-items-center text-[#161616] md:hidden"
-          onClick={() => setIsOpen((current) => !current)}
-        >
-          {isOpen ? (
-            <X aria-hidden="true" className="h-5 w-5" />
-          ) : (
-            <Menu aria-hidden="true" className="h-5 w-5" />
-          )}
-        </button>
-      </div>
-      {isOpen ? (
-        <nav className="border-t border-[#e0e0e0] bg-white p-2 md:hidden">
-          {navigationItems.map(({ href, label, icon: Icon }) => (
-            <Link
-              key={href}
-              href={href}
-              onClick={() => setIsOpen(false)}
-              className={cn(
-                "flex min-h-12 items-center gap-3 border-l-2 px-4 text-sm",
-                pathname === href
-                  ? "border-[#0f62fe] bg-[#edf5ff] font-medium text-[#161616]"
-                  : "border-transparent text-[#525252]",
-              )}
-            >
-              <Icon aria-hidden="true" className="h-4 w-4" />
-              {label}
-            </Link>
-          ))}
-          <button
-            type="button"
-            disabled={isLoggingOut}
-            className="flex min-h-12 w-full items-center gap-3 border-l-2 border-transparent px-4 text-sm text-[#525252]"
-            onClick={handleLogout}
-          >
-            <LogOut aria-hidden="true" className="h-4 w-4" />
-            {isLoggingOut ? "Logging out..." : "Logout"}
-          </button>
-        </nav>
-      ) : null}
+  const navigation = (mobile = false) => <nav aria-label="Main navigation" className="flex flex-1 flex-col gap-1">
+    {navigationItems.map(({ href, label, icon: Icon }) => {
+      const active = pathname === href;
+      return <Link key={href} href={href} onClick={() => mobile && setIsOpen(false)} className={cn("flex min-h-11 items-center gap-3 rounded-[10px] px-3 text-sm font-medium", active ? "bg-[var(--sidebar-accent)] text-[var(--accent-foreground)]" : "text-[var(--muted-foreground)] hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)]")}><Icon aria-hidden="true" className="h-4 w-4" />{label}</Link>;
+    })}
+  </nav>;
+
+  const logout = <button type="button" disabled={isLoggingOut} onClick={handleLogout} className="flex min-h-11 w-full items-center gap-3 rounded-[10px] px-3 text-sm font-medium text-[#717171] hover:bg-[#fef2f2] hover:text-[#d70015] disabled:opacity-60"><LogOut aria-hidden="true" className="h-4 w-4" />{isLoggingOut ? "Logging out…" : "Log out"}</button>;
+  const themeSwitcher = <button type="button" role="switch" aria-checked={theme === "dark"} aria-label={`Switch to ${theme === "light" ? "dark" : "light"} theme`} onClick={toggleTheme} className="flex min-h-11 w-full items-center gap-3 rounded-[10px] px-3 text-sm font-medium text-[var(--muted-foreground)] hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)]"><span className="grid h-5 w-5 place-items-center">{theme === "light" ? <Moon aria-hidden="true" className="h-4 w-4" /> : <Sun aria-hidden="true" className="h-4 w-4" />}</span><span>{theme === "light" ? "Dark theme" : "Light theme"}</span><span aria-hidden="true" className="ml-auto h-5 w-9 rounded-full bg-[var(--muted)] p-0.5"><span className={cn("block h-4 w-4 rounded-full bg-[var(--foreground)] transition-transform", theme === "dark" && "translate-x-4")} /></span></button>;
+
+  return <>
+    <header className="sticky top-0 z-50 flex h-16 items-center border-b border-[var(--sidebar-border)] bg-[color-mix(in_srgb,var(--sidebar)_90%,transparent)] px-4 text-[var(--sidebar-foreground)] backdrop-blur-lg lg:hidden">
+      <Link href="/dashboard" className="flex items-center gap-2 text-sm font-semibold"><span className="grid h-8 w-8 place-items-center rounded-[10px] bg-[var(--primary-color)] text-white"><LayoutDashboard className="h-4 w-4" /></span>Personal Finance</Link>
+      <button type="button" aria-label={isOpen ? "Close navigation" : "Open navigation"} aria-expanded={isOpen} className="ml-auto grid h-10 w-10 place-items-center rounded-[10px] hover:bg-[var(--sidebar-accent)]" onClick={() => setIsOpen((value) => !value)}>{isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}</button>
     </header>
-  );
+    {isOpen && <div className="fixed inset-x-0 bottom-0 top-16 z-40 flex flex-col border-r border-[var(--sidebar-border)] bg-[var(--sidebar)] p-4 text-[var(--sidebar-foreground)] lg:hidden">{navigation(true)}<div className="mt-4 border-t border-[var(--sidebar-border)] pt-4">{themeSwitcher}{logout}</div></div>}
+    <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-[var(--sidebar-border)] bg-[var(--sidebar)] p-4 text-[var(--sidebar-foreground)] lg:flex">
+      <Link href="/dashboard" className="mb-8 flex items-center gap-3 px-2 text-sm font-semibold"><span className="grid h-9 w-9 place-items-center rounded-[10px] bg-[var(--primary-color)] text-white"><LayoutDashboard className="h-4 w-4" /></span><span>Personal Finance</span></Link>
+      <p className="mb-3 px-3 text-[10px] font-semibold uppercase tracking-[.12em] text-[var(--muted-foreground)]">Workspace</p>
+      {navigation()}<div className="mt-4 border-t border-[var(--sidebar-border)] pt-4">{themeSwitcher}{logout}</div>
+    </aside>
+  </>;
 }

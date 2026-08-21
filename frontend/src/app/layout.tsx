@@ -16,7 +16,12 @@ type RootLayoutProps = {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `(() => { try { const saved = localStorage.getItem("theme"); const theme = saved === "dark" || saved === "light" ? saved : (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"); document.documentElement.classList.toggle("dark", theme === "dark"); } catch {} })();`,
+        }}
+      />
       <body>
         <Providers>{children}</Providers>
       </body>
