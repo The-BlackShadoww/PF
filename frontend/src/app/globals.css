@@ -80,6 +80,11 @@
 * {
   box-sizing: border-box;
 }
+html {
+  /* A denser application scale: Tailwind's rem-based text and control sizes
+     reduce together while preserving the existing spacing proportions. */
+  font-size: 14px;
+}
 html,
 body {
   min-height: 100%;
@@ -89,7 +94,7 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Inter, sans-serif;
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 400;
   line-height: 24px;
   -webkit-font-smoothing: antialiased;
@@ -260,6 +265,13 @@ textarea:focus {
 }
 .rounded-full {
   border-radius: 9999px !important;
+}
+
+/* A few legacy values use pixels instead of the shared rem scale. */
+.text-\[42px\] { font-size: 34px !important; }
+.text-\[32px\] { font-size: 27px !important; }
+@media (min-width: 768px) {
+  .md\:text-\[60px\] { font-size: 46px !important; }
 }
 .bg-white.rounded-3xl,
 .bg-white.rounded-2xl,
