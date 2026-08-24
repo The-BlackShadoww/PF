@@ -92,7 +92,7 @@ export function YearlyView() {
           <button
             type="button"
             onClick={goToPreviousYear}
-            className="rounded-full p-1.5 text-[#454745] transition-colors hover:bg-white hover:text-[#0e0f0c]"
+            className="rounded-full p-1.5 text-[#454745]"
             title="Previous year"
           >
             <ChevronLeft aria-hidden="true" size={16} />
@@ -107,10 +107,10 @@ export function YearlyView() {
             onClick={goToNextYear}
             disabled={selectedYear >= currentYear}
             className={cn(
-              "rounded-lg p-1.5 transition-colors",
+              "rounded-lg p-1.5",
               selectedYear >= currentYear
                 ? "cursor-not-allowed text-[#868685] opacity-40"
-                : "text-[#454745] hover:bg-white hover:text-[#0e0f0c]",
+                : "text-[#454745]",
             )}
             title={
               selectedYear >= currentYear

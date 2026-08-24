@@ -234,6 +234,28 @@ textarea:focus {
 .bg-\[\#cdffad\].text-\[\#0e0f0c\] {
   color: #fff !important;
 }
+
+/* Dashboard controls need dependable contrast in both themes. Its surface also
+   stays intentionally still on hover, so cards and controls do not feel like
+   decorative pop-ups. */
+.dashboard-tabs {
+  background-color: var(--muted) !important;
+}
+.dashboard-tab-active {
+  background-color: var(--primary-color) !important;
+  color: #fff !important;
+}
+.dashboard-tab-inactive {
+  color: var(--foreground) !important;
+}
+.dashboard-page button:hover,
+.dashboard-page a:hover,
+.dashboard-page article:hover,
+.dashboard-page .rounded-3xl:hover,
+.dashboard-page .rounded-2xl:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
 .text-gray-900,
 .text-gray-800,
 .text-gray-700,
@@ -339,4 +361,12 @@ table {
 }
 thead {
   color: var(--foreground);
+}
+
+/* Keep this after the shared hover rules so dashboard surfaces never lift. */
+.dashboard-page .bg-white.rounded-3xl:hover,
+.dashboard-page .bg-white.rounded-2xl:hover,
+.dashboard-page .bg-\[\#9fe870\]:not(:disabled):hover {
+  transform: none !important;
+  box-shadow: none !important;
 }
