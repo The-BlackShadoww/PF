@@ -70,12 +70,12 @@ export function QuarterlyView() {
                 onClick={() => setSelectedQuarter(q)}
                 disabled={isFutureQuarter}
                 className={cn(
-                  "flex min-w-16 flex-col items-center rounded-full px-3 py-1.5 text-xs font-semibold transition",
+                  "flex min-w-16 flex-col items-center rounded-full px-3 py-1.5 text-xs font-semibold",
                   selectedQuarter === q
                     ? "bg-[#9fe870] text-[#0e0f0c]"
-                    : "text-[#454745] hover:text-[#0e0f0c]",
+                    : "text-[#454745]",
                   isFutureQuarter &&
-                    "cursor-not-allowed text-[#868685] opacity-50 hover:text-[#868685]",
+                    "cursor-not-allowed text-[#868685] opacity-50",
                 )}
                 title={
                   isFutureQuarter
@@ -102,7 +102,7 @@ export function QuarterlyView() {
           <button
             type="button"
             onClick={goToPreviousQuarter}
-            className="rounded-full p-1.5 text-[#454745] transition-colors hover:bg-[#e8ebe6] hover:text-[#0e0f0c]"
+            className="rounded-full p-1.5 text-[#454745]"
             title="Previous quarter"
           >
             <ChevronLeft aria-hidden="true" size={16} />
@@ -117,10 +117,10 @@ export function QuarterlyView() {
             onClick={goToNextQuarter}
             disabled={isCurrentQuarter}
             className={cn(
-              "rounded-lg p-1.5 transition-colors",
+              "rounded-lg p-1.5",
               isCurrentQuarter
                 ? "cursor-not-allowed text-[#868685] opacity-40"
-                : "text-[#454745] hover:bg-[#e8ebe6] hover:text-[#0e0f0c]",
+                : "text-[#454745]",
             )}
             title={
               isCurrentQuarter

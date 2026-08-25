@@ -135,7 +135,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="dashboard-page space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <PageHeader
           title="Dashboard"
@@ -147,7 +147,7 @@ export default function DashboardPage() {
             <button
               type="button"
               aria-label="Previous month"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full text-[#454745] transition hover:bg-[#e8ebe6] hover:text-[#0e0f0c]"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full text-[#454745]"
               onClick={goToPreviousMonth}
             >
               <ChevronLeft aria-hidden="true" className="h-4 w-4" />
@@ -158,7 +158,7 @@ export default function DashboardPage() {
             <button
               type="button"
               aria-label="Next month"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full text-[#454745] transition hover:bg-[#e8ebe6] hover:text-[#0e0f0c]"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full text-[#454745]"
               onClick={goToNextMonth}
             >
               <ChevronRight aria-hidden="true" className="h-4 w-4" />
@@ -167,17 +167,23 @@ export default function DashboardPage() {
         )}
       </div>
 
-      <div className="mb-6 flex gap-1 overflow-x-auto rounded-full bg-white p-1">
+      <div
+        className="dashboard-tabs mb-6 flex gap-1 overflow-x-auto rounded-full bg-white p-1"
+        role="tablist"
+        aria-label="Dashboard period"
+      >
         {DASHBOARD_TABS.map((tab) => (
           <button
             key={tab.id}
             type="button"
             onClick={() => setActiveTab(tab.id)}
+            role="tab"
+            aria-selected={activeTab === tab.id}
             className={cn(
-              "rounded-full px-4 py-2.5 text-sm font-semibold transition-colors focus:outline-none",
+              "dashboard-tab rounded-full px-4 py-2.5 text-sm font-semibold focus:outline-none",
               activeTab === tab.id
-                ? "bg-[#9fe870] text-[#0e0f0c]"
-                : "text-[#454745] hover:bg-[#e8ebe6] hover:text-[#0e0f0c]",
+                ? "dashboard-tab-active bg-[#9fe870] text-[#0e0f0c]"
+                : "dashboard-tab-inactive text-[#454745]",
             )}
           >
             {tab.label}

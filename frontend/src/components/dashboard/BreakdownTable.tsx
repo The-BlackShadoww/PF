@@ -80,7 +80,7 @@ export function BreakdownTable({
                     <tr
                       key={row.month}
                       className={cn(
-                        "transition-colors hover:bg-[#e2f6d5]/40",
+                        "",
                         index % 2 === 0 ? "bg-white" : "bg-[#e8ebe6]/35",
                       )}
                     >
