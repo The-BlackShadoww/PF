@@ -302,20 +302,9 @@ textarea:focus {
   box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
 }
 
-/* The reference uses subtle spatial feedback rather than decorative motion. */
-@media (prefers-reduced-motion: no-preference) {
-  .bg-white.rounded-3xl:hover,
-  .bg-white.rounded-2xl:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 24px -16px rgb(10 10 10 / 25%);
-  }
-  .bg-\[\#9fe870\]:not(:disabled):hover {
-    transform: translateY(-1px);
-    box-shadow: 0 8px 16px -8px rgb(38 103 255 / 60%);
-  }
-  .animate-pulse {
-    animation-duration: 1.5s;
-  }
+/* Keep loading placeholders calm without adding hover motion to controls. */
+.animate-pulse {
+  animation-duration: 1.5s;
 }
 
 @keyframes ace-marquee {
@@ -361,12 +350,4 @@ table {
 }
 thead {
   color: var(--foreground);
-}
-
-/* Keep this after the shared hover rules so dashboard surfaces never lift. */
-.dashboard-page .bg-white.rounded-3xl:hover,
-.dashboard-page .bg-white.rounded-2xl:hover,
-.dashboard-page .bg-\[\#9fe870\]:not(:disabled):hover {
-  transform: none !important;
-  box-shadow: none !important;
 }
