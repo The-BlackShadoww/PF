@@ -1,6 +1,4 @@
-import { getAccessToken } from './client';
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+import { buildUrl, getAccessToken } from './client';
 
 export interface ReportDownloadParams {
   startYear: number;
@@ -15,13 +13,15 @@ async function downloadReportBlob(
 ): Promise<Blob> {
   const token = getAccessToken();
 
-  const url = new URL(`${BASE_URL}${endpoint}`);
-  url.searchParams.set('startYear', String(params.startYear));
-  url.searchParams.set('startMonth', String(params.startMonth));
-  url.searchParams.set('endYear', String(params.endYear));
-  url.searchParams.set('endMonth', String(params.endMonth));
+  const searchParams = new URLSearchParams({
+    startYear: String(params.startYear),
+    startMonth: String(params.startMonth),
+    endYear: String(params.endYear),
+    endMonth: String(params.endMonth),
+  });
+  const url = `${buildUrl(endpoint)}?${searchParams.toString()}`;
 
-  const response = await fetch(url.toString(), {
+  const response = await fetch(url, {
     method: 'GET',
     headers: {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),

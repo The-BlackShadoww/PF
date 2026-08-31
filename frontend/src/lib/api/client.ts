@@ -108,7 +108,7 @@ function getRefreshToken(payload: RefreshResponse) {
   return payload.accessToken;
 }
 
-function buildUrl(endpoint: string) {
+export function buildUrl(endpoint: string) {
   if (endpoint.startsWith("http://") || endpoint.startsWith("https://")) {
     return endpoint;
   }
