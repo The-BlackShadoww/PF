@@ -100,7 +100,7 @@ export default function SettingsPage() {
         description="Manage your account, security, preferences, and categories."
       />
 
-      <div className="flex gap-1 overflow-x-auto rounded-full bg-white p-1">
+      <div className="flex gap-1 overflow-x-auto rounded-full bg-surface p-1">
         {TABS.map((tab) => (
           <button
             key={tab.id}
@@ -108,8 +108,8 @@ export default function SettingsPage() {
             className={cn(
               "whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition-colors focus:outline-none",
               activeTab === tab.id
-                ? "bg-[#9fe870] text-[#0e0f0c]"
-                : "text-[#454745] hover:bg-[#e8ebe6] hover:text-[#0e0f0c]",
+                ? "bg-primary text-ink"
+                : "text-muted hover:bg-canvas hover:text-ink",
             )}
           >
             {tab.label}
@@ -118,7 +118,7 @@ export default function SettingsPage() {
       </div>
 
       {error ? (
-        <div className="flex items-start justify-between gap-3 rounded-3xl bg-[#320707] p-4 text-white">
+        <div className="flex items-start justify-between gap-3 rounded-card bg-danger-surface p-4 text-white">
           <p className="text-sm font-semibold">{error}</p>
           <button
             onClick={() => setError(null)}
@@ -130,7 +130,7 @@ export default function SettingsPage() {
         </div>
       ) : null}
 
-      <section className="rounded-3xl bg-white p-6">
+      <section className="rounded-card bg-surface p-6">
         {activeTab === "profile" && <ProfileTab />}
         {activeTab === "security" && <SecurityTab />}
         {activeTab === "preferences" && <PreferencesTab />}
@@ -138,8 +138,8 @@ export default function SettingsPage() {
         {activeTab === "categories" && (
           <div className="space-y-8">
             {showCreateForm || editingCategory ? (
-              <div className="rounded-3xl bg-[#e8ebe6] p-5">
-                <h3 className="mb-4 text-sm font-black text-[#0e0f0c]">
+              <div className="rounded-card bg-canvas p-5">
+                <h3 className="mb-4 text-sm font-black text-ink">
                   {editingCategory
                     ? `Edit "${editingCategory.name}"`
                     : "New category"}
@@ -158,7 +158,7 @@ export default function SettingsPage() {
             ) : (
               <button
                 onClick={() => setShowCreateForm(true)}
-                className="flex items-center gap-2 rounded-3xl bg-[#9fe870] px-5 py-3 text-sm font-semibold text-[#0e0f0c] transition hover:bg-[#cdffad]"
+                className="flex items-center gap-2 rounded-card bg-primary px-5 py-3 text-sm font-semibold text-ink transition hover:bg-primary-hover"
               >
                 <Plus size={16} />
                 New category
@@ -170,7 +170,7 @@ export default function SettingsPage() {
                 {Array.from({ length: 5 }).map((_, index) => (
                   <div
                     key={index}
-                    className="h-14 animate-pulse rounded-2xl bg-[#e8ebe6]"
+                    className="h-14 animate-pulse rounded-panel bg-canvas"
                   />
                 ))}
               </div>
@@ -204,11 +204,11 @@ export default function SettingsPage() {
             />
 
             {!isLoading && categories.length === 0 ? (
-              <div className="rounded-3xl border border-dashed border-[#868685] bg-[#e8ebe6] px-6 py-12 text-center">
-                <p className="text-sm font-semibold text-[#454745]">
+              <div className="rounded-card border border-dashed border-muted bg-canvas px-6 py-12 text-center">
+                <p className="text-sm font-semibold text-muted">
                   No categories yet.
                 </p>
-                <p className="mt-1 text-xs text-[#868685]">
+                <p className="mt-1 text-xs text-muted">
                   Create your first one above.
                 </p>
               </div>
@@ -243,7 +243,7 @@ function CategoryGroup({
 
   return (
     <div>
-      <h3 className="mb-3 text-xs font-semibold uppercase tracking-normal text-[#454745]">
+      <h3 className="mb-3 text-xs font-semibold uppercase tracking-normal text-muted">
         {title} ({categories.length})
       </h3>
       <div className="space-y-2">
@@ -256,7 +256,7 @@ function CategoryGroup({
               isDeleting={isDeleting}
             />
             {deleteConfirmId === category.id ? (
-              <div className="ml-12 mt-2 flex flex-wrap items-center gap-3 text-sm text-[#a7000d]">
+              <div className="ml-12 mt-2 flex flex-wrap items-center gap-3 text-sm text-danger">
                 <span>
                   Delete &quot;{category.name}&quot;? This cannot be undone.
                 </span>
@@ -268,7 +268,7 @@ function CategoryGroup({
                 </button>
                 <button
                   onClick={onCancelDelete}
-                  className="text-[#868685] hover:text-[#454745]"
+                  className="text-muted hover:text-muted"
                 >
                   Cancel
                 </button>

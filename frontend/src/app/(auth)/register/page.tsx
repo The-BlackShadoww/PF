@@ -65,10 +65,10 @@ export default function RegisterPage() {
   return (
     <div className="space-y-6">
       <div className="space-y-2 text-center">
-        <h1 className="text-4xl font-black leading-none text-[#0e0f0c]">
+        <h1 className="text-4xl font-black leading-none text-ink">
           Create account
         </h1>
-        <p className="text-sm text-[#454745]">
+        <p className="text-sm text-muted">
           Start tracking your finances with a secure account.
         </p>
       </div>
@@ -76,7 +76,7 @@ export default function RegisterPage() {
       <form className="space-y-4" onSubmit={handleSubmit(onSubmit)} noValidate>
         {formError ? (
           <p
-            className="rounded-2xl bg-[#320707] px-4 py-3 text-sm font-semibold text-white"
+            className="rounded-panel bg-danger-surface px-4 py-3 text-sm font-semibold text-white"
             role="alert"
           >
             {formError}
@@ -85,7 +85,7 @@ export default function RegisterPage() {
 
         <div className="space-y-1.5">
           <label
-            className="block text-sm font-semibold text-[#454745]"
+            className="block text-sm font-semibold text-muted"
             htmlFor="name"
           >
             Full Name
@@ -96,11 +96,11 @@ export default function RegisterPage() {
             autoComplete="name"
             aria-invalid={errors.name ? "true" : "false"}
             aria-describedby={errors.name ? "name-error" : undefined}
-            className="w-full rounded-xl border border-[#0e0f0c] px-4 py-3 text-sm text-[#0e0f0c] outline-none transition focus:ring-2 focus:ring-[#9fe870]"
+            className="w-full rounded-panel border border-ink px-4 py-3 text-sm text-ink outline-none transition focus:ring-2 focus:ring-primary"
             {...register("name")}
           />
           {errors.name ? (
-            <p className="text-sm text-[#a7000d]" id="name-error" role="alert">
+            <p className="text-sm text-danger" id="name-error" role="alert">
               {errors.name.message}
             </p>
           ) : null}
@@ -108,7 +108,7 @@ export default function RegisterPage() {
 
         <div className="space-y-1.5">
           <label
-            className="block text-sm font-semibold text-[#454745]"
+            className="block text-sm font-semibold text-muted"
             htmlFor="email"
           >
             Email
@@ -119,11 +119,11 @@ export default function RegisterPage() {
             autoComplete="email"
             aria-invalid={errors.email ? "true" : "false"}
             aria-describedby={errors.email ? "email-error" : undefined}
-            className="w-full rounded-xl border border-[#0e0f0c] px-4 py-3 text-sm text-[#0e0f0c] outline-none transition focus:ring-2 focus:ring-[#9fe870]"
+            className="w-full rounded-panel border border-ink px-4 py-3 text-sm text-ink outline-none transition focus:ring-2 focus:ring-primary"
             {...register("email")}
           />
           {errors.email ? (
-            <p className="text-sm text-[#a7000d]" id="email-error" role="alert">
+            <p className="text-sm text-danger" id="email-error" role="alert">
               {errors.email.message}
             </p>
           ) : null}
@@ -131,7 +131,7 @@ export default function RegisterPage() {
 
         <div className="space-y-1.5">
           <label
-            className="block text-sm font-semibold text-[#454745]"
+            className="block text-sm font-semibold text-muted"
             htmlFor="password"
           >
             Password
@@ -142,12 +142,12 @@ export default function RegisterPage() {
             autoComplete="new-password"
             aria-invalid={errors.password ? "true" : "false"}
             aria-describedby={errors.password ? "password-error" : undefined}
-            className="w-full rounded-xl border border-[#0e0f0c] px-4 py-3 text-sm text-[#0e0f0c] outline-none transition focus:ring-2 focus:ring-[#9fe870]"
+            className="w-full rounded-panel border border-ink px-4 py-3 text-sm text-ink outline-none transition focus:ring-2 focus:ring-primary"
             {...register("password")}
           />
           {errors.password ? (
             <p
-              className="text-sm text-[#a7000d]"
+              className="text-sm text-danger"
               id="password-error"
               role="alert"
             >
@@ -158,7 +158,7 @@ export default function RegisterPage() {
 
         <div className="space-y-1.5">
           <label
-            className="block text-sm font-semibold text-[#454745]"
+            className="block text-sm font-semibold text-muted"
             htmlFor="confirmPassword"
           >
             Confirm Password
@@ -171,12 +171,12 @@ export default function RegisterPage() {
             aria-describedby={
               errors.confirmPassword ? "confirm-password-error" : undefined
             }
-            className="w-full rounded-xl border border-[#0e0f0c] px-4 py-3 text-sm text-[#0e0f0c] outline-none transition focus:ring-2 focus:ring-[#9fe870]"
+            className="w-full rounded-panel border border-ink px-4 py-3 text-sm text-ink outline-none transition focus:ring-2 focus:ring-primary"
             {...register("confirmPassword")}
           />
           {errors.confirmPassword ? (
             <p
-              className="text-sm text-[#a7000d]"
+              className="text-sm text-danger"
               id="confirm-password-error"
               role="alert"
             >
@@ -188,16 +188,16 @@ export default function RegisterPage() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="flex w-full items-center justify-center gap-2 rounded-3xl bg-[#9fe870] px-4 py-3 text-sm font-semibold text-[#0e0f0c] transition hover:bg-[#cdffad] disabled:cursor-not-allowed disabled:opacity-70"
+          className="flex w-full items-center justify-center gap-2 rounded-card bg-primary px-4 py-3 text-sm font-semibold text-ink transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-70"
         >
           {isSubmitting ? <Spinner /> : null}
           {isSubmitting ? "Creating account..." : "Create account"}
         </button>
       </form>
 
-      <p className="text-center text-sm text-[#454745]">
+      <p className="text-center text-sm text-muted">
         Already have an account?{" "}
-        <Link className="font-semibold text-[#0e0f0c] underline" href="/login">
+        <Link className="font-semibold text-ink underline" href="/login">
           Log in
         </Link>
       </p>

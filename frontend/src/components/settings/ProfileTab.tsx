@@ -71,7 +71,7 @@ export function ProfileTab() {
     return (
       <div className="space-y-4">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="h-12 bg-gray-100 rounded-lg animate-pulse" />
+          <div key={i} className="h-12 bg-gray-100 rounded-control animate-pulse" />
         ))}
       </div>
     );
@@ -111,7 +111,7 @@ export function ProfileTab() {
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Email Address
         </label>
-        <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg">
+        <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-control">
           <Mail size={15} className="text-gray-400 flex-shrink-0" />
           <span className="text-sm text-gray-500">{profile?.email}</span>
         </div>
@@ -134,7 +134,7 @@ export function ProfileTab() {
             {...register('name')}
             placeholder="Your full name"
             className={cn(
-              'w-full pl-9 pr-3 py-2 border rounded-lg text-sm',
+              'w-full pl-9 pr-3 py-2 border rounded-control text-sm',
               'focus:outline-none focus:ring-2 focus:ring-gray-900',
               errors.name ? 'border-red-400' : 'border-gray-300',
             )}
@@ -160,7 +160,7 @@ export function ProfileTab() {
             {...register('avatarUrl')}
             placeholder="https://example.com/your-photo.jpg"
             className={cn(
-              'w-full pl-9 pr-3 py-2 border rounded-lg text-sm',
+              'w-full pl-9 pr-3 py-2 border rounded-control text-sm',
               'focus:outline-none focus:ring-2 focus:ring-gray-900',
               errors.avatarUrl ? 'border-red-400' : 'border-gray-300',
             )}
@@ -176,7 +176,7 @@ export function ProfileTab() {
 
       {/* Error from API */}
       {updateMutation.error && (
-        <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+        <div className="p-3 bg-red-50 border border-red-200 rounded-control">
           <p className="text-sm text-red-700">
             {(updateMutation.error as Error)?.message ?? 'Failed to update profile'}
           </p>
@@ -185,7 +185,7 @@ export function ProfileTab() {
 
       {/* Success message */}
       {showSuccess && (
-        <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+        <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-control">
           <CheckCircle2 size={16} className="text-green-600 flex-shrink-0" />
           <p className="text-sm text-green-700">Profile updated successfully</p>
         </div>
@@ -197,7 +197,7 @@ export function ProfileTab() {
           type="submit"
           disabled={updateMutation.isPending || !isDirty}
           className={cn(
-            'px-5 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg',
+            'px-5 py-2 bg-gray-900 text-white text-sm font-medium rounded-control',
             'hover:bg-gray-800 transition-colors',
             'disabled:opacity-50 disabled:cursor-not-allowed',
           )}

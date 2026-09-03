@@ -77,17 +77,17 @@ function LoginForm({ registered }: LoginFormProps) {
   return (
     <div className="space-y-6">
       <div className="space-y-2 text-center">
-        <h1 className="text-4xl font-black leading-none text-[#0e0f0c]">
+        <h1 className="text-4xl font-black leading-none text-ink">
           Log in
         </h1>
-        <p className="text-sm text-[#454745]">
+        <p className="text-sm text-muted">
           Access your personal finance dashboard.
         </p>
       </div>
 
       {registered ? (
         <p
-          className="rounded-2xl bg-[#e2f6d5] px-4 py-3 text-sm font-semibold text-[#054d28]"
+          className="rounded-panel bg-accent px-4 py-3 text-sm font-semibold text-success"
           role="status"
         >
           Registered successfully. Please log in.
@@ -97,7 +97,7 @@ function LoginForm({ registered }: LoginFormProps) {
       <form className="space-y-4" onSubmit={handleSubmit(onSubmit)} noValidate>
         {formError ? (
           <p
-            className="rounded-2xl bg-[#320707] px-4 py-3 text-sm font-semibold text-white"
+            className="rounded-panel bg-danger-surface px-4 py-3 text-sm font-semibold text-white"
             role="alert"
           >
             {formError}
@@ -106,7 +106,7 @@ function LoginForm({ registered }: LoginFormProps) {
 
         <div className="space-y-1.5">
           <label
-            className="block text-sm font-semibold text-[#454745]"
+            className="block text-sm font-semibold text-muted"
             htmlFor="email"
           >
             Email
@@ -117,11 +117,11 @@ function LoginForm({ registered }: LoginFormProps) {
             autoComplete="email"
             aria-invalid={errors.email ? "true" : "false"}
             aria-describedby={errors.email ? "email-error" : undefined}
-            className="w-full rounded-xl border border-[#0e0f0c] px-4 py-3 text-sm text-[#0e0f0c] outline-none transition focus:ring-2 focus:ring-[#9fe870]"
+            className="w-full rounded-panel border border-ink px-4 py-3 text-sm text-ink outline-none transition focus:ring-2 focus:ring-primary"
             {...register("email")}
           />
           {errors.email ? (
-            <p className="text-sm text-[#a7000d]" id="email-error" role="alert">
+            <p className="text-sm text-danger" id="email-error" role="alert">
               {errors.email.message}
             </p>
           ) : null}
@@ -129,7 +129,7 @@ function LoginForm({ registered }: LoginFormProps) {
 
         <div className="space-y-1.5">
           <label
-            className="block text-sm font-semibold text-[#454745]"
+            className="block text-sm font-semibold text-muted"
             htmlFor="password"
           >
             Password
@@ -140,12 +140,12 @@ function LoginForm({ registered }: LoginFormProps) {
             autoComplete="current-password"
             aria-invalid={errors.password ? "true" : "false"}
             aria-describedby={errors.password ? "password-error" : undefined}
-            className="w-full rounded-xl border border-[#0e0f0c] px-4 py-3 text-sm text-[#0e0f0c] outline-none transition focus:ring-2 focus:ring-[#9fe870]"
+            className="w-full rounded-panel border border-ink px-4 py-3 text-sm text-ink outline-none transition focus:ring-2 focus:ring-primary"
             {...register("password")}
           />
           {errors.password ? (
             <p
-              className="text-sm text-[#a7000d]"
+              className="text-sm text-danger"
               id="password-error"
               role="alert"
             >
@@ -157,16 +157,16 @@ function LoginForm({ registered }: LoginFormProps) {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="flex w-full items-center justify-center gap-2 rounded-3xl bg-[#9fe870] px-4 py-3 text-sm font-semibold text-[#0e0f0c] transition hover:bg-[#cdffad] disabled:cursor-not-allowed disabled:opacity-70"
+          className="flex w-full items-center justify-center gap-2 rounded-card bg-primary px-4 py-3 text-sm font-semibold text-ink transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-70"
         >
           {isSubmitting ? <Spinner /> : null}
           {isSubmitting ? "Logging in..." : "Log in"}
         </button>
       </form>
 
-      <p className="text-center text-sm text-[#454745]">
+      <p className="text-center text-sm text-muted">
         New here?{" "}
-        <Link className="font-semibold text-[#0e0f0c] underline" href="/register">
+        <Link className="font-semibold text-ink underline" href="/register">
           Create an account
         </Link>
       </p>

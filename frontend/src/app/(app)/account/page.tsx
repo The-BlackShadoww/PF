@@ -41,13 +41,13 @@ export default function AccountPage() {
       />
 
       <section aria-labelledby="account-balance-heading" className="pt-1">
-        <p className="text-sm font-semibold text-[#525252]">Account balance</p>
+        <p className="text-sm font-semibold text-muted">Account balance</p>
         {isLoading ? (
-          <div className="mt-2 h-16 w-72 animate-pulse bg-[#e8ebe6]" />
+          <div className="mt-2 h-16 w-72 animate-pulse bg-canvas" />
         ) : (
           <h2
             id="account-balance-heading"
-            className="mt-1 text-[42px] font-light leading-[1.2] tracking-normal text-[#161616] md:text-[60px]"
+            className="mt-1 text-display font-light leading-[1.2] tracking-normal text-ink md:text-hero"
           >
             {signedBalance}
           </h2>
@@ -58,18 +58,18 @@ export default function AccountPage() {
         <div>
           <h2
             id="savings-sectors-heading"
-            className="text-xl font-semibold text-[#161616]"
+            className="text-xl font-semibold text-ink"
           >
             Savings sectors
           </h2>
-          <p className="mt-1 text-sm text-[#525252]">
+          <p className="mt-1 text-sm text-muted">
             Your balance allocation by sector. Cash is calculated from the
             remaining balance.
           </p>
         </div>
 
         {isLoading ? (
-          <div className="h-64 animate-pulse bg-white" />
+          <div className="h-64 animate-pulse bg-surface" />
         ) : allocations.length === 0 ? (
           <EmptyState message="Account allocation is not available yet." />
         ) : (
@@ -86,7 +86,7 @@ export default function AccountPage() {
             <TableBody>
               {allocations.map((sector) => (
                 <TableRow key={sector.id}>
-                  <TableCell className="font-semibold text-[#161616]">
+                  <TableCell className="font-semibold text-ink">
                     <span className="flex items-center gap-3">
                       <span
                         aria-hidden="true"
@@ -99,7 +99,7 @@ export default function AccountPage() {
                   <TableCell className="text-right">
                     {sector.percentage}%
                   </TableCell>
-                  <TableCell className="text-right font-semibold text-[#161616]">
+                  <TableCell className="text-right font-semibold text-ink">
                     {formatDollar(sector.allocatedCents / 100)}
                   </TableCell>
                   <TableCell className="text-right">
@@ -121,17 +121,17 @@ export default function AccountPage() {
 
       <section
         aria-labelledby="allocation-chart-heading"
-        className="rounded-3xl bg-white p-6"
+        className="rounded-card bg-surface p-6"
       >
         <h2
           id="allocation-chart-heading"
-          className="text-xl font-semibold text-[#161616]"
+          className="text-xl font-semibold text-ink"
         >
           Savings sector allocation
         </h2>
         <div className="mt-4 h-80">
           {isLoading ? (
-            <div className="h-full animate-pulse bg-[#e8ebe6]" />
+            <div className="h-full animate-pulse bg-canvas" />
           ) : allocations.length === 0 ? (
             <EmptyState message="Account allocation is not available yet." />
           ) : (
@@ -168,11 +168,11 @@ export default function AccountPage() {
                         className="h-2.5 w-2.5 shrink-0 rounded-full"
                         style={{ backgroundColor: sector.color }}
                       />
-                      <span className="truncate text-[#525252]">
+                      <span className="truncate text-muted">
                         {sector.name}
                       </span>
                     </div>
-                    <span className="font-semibold text-[#161616]">
+                    <span className="font-semibold text-ink">
                       {formatDollar(sector.allocatedCents / 100)}
                     </span>
                   </div>
@@ -188,7 +188,7 @@ export default function AccountPage() {
 
 function EmptyState({ message }: { message: string }) {
   return (
-    <div className="flex h-full min-h-40 items-center justify-center border border-dashed border-[#8c8c8c] bg-[#f4f4f4] px-6 text-center text-sm font-semibold text-[#525252]">
+    <div className="flex h-full min-h-40 items-center justify-center border border-dashed border-muted bg-canvas px-6 text-center text-sm font-semibold text-muted">
       {message}
     </div>
   );

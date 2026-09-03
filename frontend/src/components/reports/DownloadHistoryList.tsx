@@ -21,7 +21,7 @@ export function DownloadHistoryList({
 }: DownloadHistoryListProps) {
   if (history.length === 0) {
     return (
-      <div className="flex items-center gap-2 py-2 text-xs text-[#868685]">
+      <div className="flex items-center gap-2 py-2 text-xs text-muted">
         <Clock size={13} />
         <span>No reports downloaded yet. Your history will appear here.</span>
       </div>
@@ -32,14 +32,14 @@ export function DownloadHistoryList({
     <div>
       <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Clock size={14} className="text-[#454745]" />
-          <span className="text-xs font-semibold uppercase tracking-normal text-[#454745]">
+          <Clock size={14} className="text-muted" />
+          <span className="text-xs font-semibold uppercase tracking-normal text-muted">
             Download history
           </span>
         </div>
         <button
           onClick={onClear}
-          className="flex items-center gap-1 text-xs font-semibold text-[#868685] transition hover:text-[#a7000d]"
+          className="flex items-center gap-1 text-xs font-semibold text-muted transition hover:text-danger"
           title="Clear download history"
         >
           <Trash2 size={12} />
@@ -62,31 +62,31 @@ export function DownloadHistoryList({
           return (
             <div
               key={entry.id}
-              className="group flex items-center gap-3 rounded-2xl bg-[#e8ebe6] p-3 transition hover:bg-[#e2f6d5]"
+              className="group flex items-center gap-3 rounded-panel bg-canvas p-3 transition hover:bg-accent"
             >
               <span
                 className={cn(
                   "flex-shrink-0 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-normal",
                   entry.format === "csv"
-                    ? "bg-[#e2f6d5] text-[#054d28]"
-                    : "bg-[#320707] text-white",
+                    ? "bg-accent text-success"
+                    : "bg-danger-surface text-white",
                 )}
               >
                 {entry.format}
               </span>
 
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold text-[#0e0f0c]">
+                <p className="truncate text-sm font-semibold text-ink">
                   {rangeLabel}
                 </p>
-                <p className="mt-0.5 text-xs text-[#868685]">{timeAgo}</p>
+                <p className="mt-0.5 text-xs text-muted">{timeAgo}</p>
               </div>
 
               <button
                 onClick={() => onRedownload(entry)}
                 disabled={isDownloading}
                 className={cn(
-                  "flex-shrink-0 items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-[#454745] transition hover:text-[#0e0f0c]",
+                  "flex-shrink-0 items-center gap-1.5 rounded-full bg-surface px-3 py-1.5 text-xs font-semibold text-muted transition hover:text-ink",
                   "hidden sm:flex sm:opacity-0 sm:group-hover:opacity-100",
                   isDownloading && "cursor-not-allowed opacity-30",
                 )}
@@ -100,7 +100,7 @@ export function DownloadHistoryList({
         })}
       </div>
 
-      <p className="mt-3 text-xs text-[#868685]">
+      <p className="mt-3 text-xs text-muted">
         Showing last {history.length} download{history.length !== 1 ? "s" : ""}.
         History is stored on this device only.
       </p>

@@ -158,33 +158,33 @@ export function TransactionForm({
   return (
     <form className="space-y-5" onSubmit={handleSubmit(submit)}>
       <div className="space-y-2">
-        <label className="block text-sm font-semibold text-[#454745]">
-          Transaction For <span className="text-xs font-normal text-[#868685]">Which month does this belong to?</span>
+        <label className="block text-sm font-semibold text-muted">
+          Transaction For <span className="text-xs font-normal text-muted">Which month does this belong to?</span>
         </label>
-        <p className="text-xs text-[#868685]">Choose the month and year this income or expense belongs to, not necessarily when money changed hands.</p>
+        <p className="text-xs text-muted">Choose the month and year this income or expense belongs to, not necessarily when money changed hands.</p>
         <div className="flex gap-2">
-          <select value={watch("transactionMonth")} onChange={(event) => setValue("transactionMonth", parseInt(event.target.value, 10), { shouldValidate: true })} className="h-11 flex-1 rounded-xl border border-[#0e0f0c] bg-white px-4 text-sm">
+          <select value={watch("transactionMonth")} onChange={(event) => setValue("transactionMonth", parseInt(event.target.value, 10), { shouldValidate: true })} className="h-11 flex-1 rounded-panel border border-ink bg-surface px-4 text-sm">
             {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].map((name, index) => <option key={name} value={index + 1}>{name}</option>)}
           </select>
-          <select value={watch("transactionYear")} onChange={(event) => setValue("transactionYear", parseInt(event.target.value, 10), { shouldValidate: true })} className="h-11 w-28 rounded-xl border border-[#0e0f0c] bg-white px-3 text-sm">
+          <select value={watch("transactionYear")} onChange={(event) => setValue("transactionYear", parseInt(event.target.value, 10), { shouldValidate: true })} className="h-11 w-28 rounded-panel border border-ink bg-surface px-3 text-sm">
             {Array.from({ length: 6 }, (_, index) => new Date().getFullYear() - index).map((year) => <option key={year} value={year}>{year}</option>)}
           </select>
         </div>
-        <p className="text-xs font-semibold text-[#054d28]">This transaction will be counted in: {new Date(watch("transactionYear"), watch("transactionMonth") - 1, 1).toLocaleString("en-US", { month: "long", year: "numeric" })}</p>
+        <p className="text-xs font-semibold text-success">This transaction will be counted in: {new Date(watch("transactionYear"), watch("transactionMonth") - 1, 1).toLocaleString("en-US", { month: "long", year: "numeric" })}</p>
       </div>
-      <div className="border-t border-[#e8ebe6]" />
+      <div className="border-t border-line" />
       <div className="space-y-2">
-        <span className="text-sm font-semibold text-[#454745]">Type</span>
+        <span className="text-sm font-semibold text-muted">Type</span>
         <div className="grid grid-cols-2 gap-2">
           {(["income", "expense"] as const).map((transactionType) => (
             <button
               key={transactionType}
               type="button"
               className={cn(
-                "h-11 rounded-3xl text-sm font-semibold capitalize transition",
+                "h-11 rounded-card text-sm font-semibold capitalize transition",
                 selectedType === transactionType
-                  ? "bg-[#9fe870] text-[#0e0f0c]"
-                  : "border border-[#0e0f0c] bg-white text-[#0e0f0c] hover:bg-[#e8ebe6]",
+                  ? "bg-primary text-ink"
+                  : "border border-ink bg-surface text-ink hover:bg-canvas",
               )}
               onClick={() => handleTypeChange(transactionType)}
             >
@@ -197,9 +197,9 @@ export function TransactionForm({
       </div>
 
       <label className="block space-y-1.5">
-        <span className="text-sm font-semibold text-[#454745]">Category</span>
+        <span className="text-sm font-semibold text-muted">Category</span>
         <select
-          className="h-11 w-full rounded-xl border border-[#0e0f0c] bg-white px-4 text-sm text-[#0e0f0c] outline-none transition focus:ring-2 focus:ring-[#9fe870]"
+          className="h-11 w-full rounded-panel border border-ink bg-surface px-4 text-sm text-ink outline-none transition focus:ring-2 focus:ring-primary"
           disabled={categoriesLoading}
           {...register("categoryId")}
         >
@@ -218,19 +218,19 @@ export function TransactionForm({
       </label>
 
       {selectedType === "expense" && projectedBalance !== null && isProjectedLow ? (
-        <div className="flex items-start gap-2 rounded-xl bg-amber-50 p-3 text-xs text-amber-800">
+        <div className="flex items-start gap-2 rounded-panel bg-amber-50 p-3 text-xs text-amber-800">
           <AlertTriangle aria-hidden="true" className="mt-0.5 h-3.5 w-3.5 shrink-0" />
           <p>This expense will bring your balance to <strong>{projectedBalance < 0 ? "-" : ""}${(Math.abs(projectedBalance) / 100).toFixed(2)}</strong>{projectedBalance < 0 ? " (negative)" : ""} — below your low-balance threshold.</p>
         </div>
       ) : null}
 
       <label className="block space-y-1.5">
-        <span className="text-sm font-semibold text-[#454745]">Amount</span>
+        <span className="text-sm font-semibold text-muted">Amount</span>
         <input
           type="text"
           inputMode="decimal"
           value={amountDisplay}
-          className="h-11 w-full rounded-xl border border-[#0e0f0c] px-4 text-sm text-[#0e0f0c] outline-none transition focus:ring-2 focus:ring-[#9fe870]"
+          className="h-11 w-full rounded-panel border border-ink px-4 text-sm text-ink outline-none transition focus:ring-2 focus:ring-primary"
           placeholder="$0.00"
           onChange={(event) => handleAmountChange(event.target.value)}
         />
@@ -239,15 +239,15 @@ export function TransactionForm({
       </label>
 
       <label className="block space-y-1.5">
-        <span className="text-sm font-semibold text-[#454745]">Date Received / Paid</span>
-        <p className="text-xs text-[#868685]">When did the money actually change hands? This is for your records only — it does not affect which month this transaction appears in.</p>
+        <span className="text-sm font-semibold text-muted">Date Received / Paid</span>
+        <p className="text-xs text-muted">When did the money actually change hands? This is for your records only — it does not affect which month this transaction appears in.</p>
         <input
           type="date"
-          className="h-11 w-full rounded-xl border border-[#0e0f0c] px-4 text-sm text-[#0e0f0c] outline-none transition focus:ring-2 focus:ring-[#9fe870]"
+          className="h-11 w-full rounded-panel border border-ink px-4 text-sm text-ink outline-none transition focus:ring-2 focus:ring-primary"
           {...register("date")}
         />
         {futureDateWarning ? (
-          <p className="flex items-center gap-2 text-xs font-semibold text-[#4a3b1c]">
+          <p className="flex items-center gap-2 text-xs font-semibold text-warning-ink">
             <AlertTriangle aria-hidden="true" className="h-3.5 w-3.5" />
             This date is in the future.
           </p>
@@ -256,24 +256,24 @@ export function TransactionForm({
       </label>
 
       <label className="block space-y-1.5">
-        <span className="text-sm font-semibold text-[#454745]">Note</span>
+        <span className="text-sm font-semibold text-muted">Note</span>
         <textarea
           rows={4}
           maxLength={500}
-          className="w-full resize-none rounded-xl border border-[#0e0f0c] px-4 py-3 text-sm text-[#0e0f0c] outline-none transition focus:ring-2 focus:ring-[#9fe870]"
+          className="w-full resize-none rounded-panel border border-ink px-4 py-3 text-sm text-ink outline-none transition focus:ring-2 focus:ring-primary"
           placeholder="Optional"
           {...register("note")}
         />
         <div className="flex items-center justify-between gap-3">
           {errors.note ? <FieldError message={errors.note.message} /> : <span />}
-          <span className="text-xs text-[#868685]">{note.length}/500</span>
+          <span className="text-xs text-muted">{note.length}/500</span>
         </div>
       </label>
 
-      <div className="flex justify-end gap-2 border-t border-[#e8ebe6] pt-5">
+      <div className="flex justify-end gap-2 border-t border-line pt-5">
         <button
           type="button"
-          className="inline-flex h-11 items-center justify-center rounded-3xl border border-[#0e0f0c] px-5 text-sm font-semibold text-[#0e0f0c] transition hover:bg-[#e8ebe6]"
+          className="inline-flex h-11 items-center justify-center rounded-card border border-ink px-5 text-sm font-semibold text-ink transition hover:bg-canvas"
           onClick={onCancel}
           disabled={submitting}
         >
@@ -281,7 +281,7 @@ export function TransactionForm({
         </button>
         <button
           type="submit"
-          className="inline-flex h-11 items-center justify-center rounded-3xl bg-[#9fe870] px-5 text-sm font-semibold text-[#0e0f0c] transition hover:bg-[#cdffad] disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex h-11 items-center justify-center rounded-card bg-primary px-5 text-sm font-semibold text-ink transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
           disabled={submitting}
         >
           {submitting
@@ -300,7 +300,7 @@ function FieldError({ message }: { message?: string }) {
     return null;
   }
 
-  return <p className="text-xs font-semibold text-[#a7000d]">{message}</p>;
+  return <p className="text-xs font-semibold text-danger">{message}</p>;
 }
 
 function formatAmount(amount: number) {

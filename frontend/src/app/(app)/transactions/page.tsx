@@ -107,7 +107,7 @@ export default function TransactionsPage() {
         />
         <button
           type="button"
-          className="inline-flex h-12 items-center justify-center gap-2 rounded-3xl bg-[#9fe870] px-5 text-sm font-semibold text-[#0e0f0c] transition hover:bg-[#cdffad]"
+          className="inline-flex h-12 items-center justify-center gap-2 rounded-card bg-primary px-5 text-sm font-semibold text-ink transition hover:bg-primary-hover"
           onClick={openAddModal}
         >
           <Plus aria-hidden="true" className="h-4 w-4" />
@@ -115,49 +115,49 @@ export default function TransactionsPage() {
         </button>
       </div>
 
-      <section className="rounded-3xl bg-white p-5">
+      <section className="rounded-card bg-surface p-5">
         <div className="grid gap-4 md:grid-cols-4">
           <label className="space-y-1.5">
-            <span className="text-sm font-semibold text-[#454745]">Show period</span>
-            <select value={filterMonth ?? ""} className="h-11 w-full rounded-xl border border-[#0e0f0c] bg-white px-4 text-sm" onChange={(event) => resetPage(setFilterMonth, event.target.value ? Number(event.target.value) : undefined)}>
+            <span className="text-sm font-semibold text-muted">Show period</span>
+            <select value={filterMonth ?? ""} className="h-11 w-full rounded-panel border border-ink bg-surface px-4 text-sm" onChange={(event) => resetPage(setFilterMonth, event.target.value ? Number(event.target.value) : undefined)}>
               <option value="">All months</option>
               {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].map((name, index) => <option key={name} value={index + 1}>{name}</option>)}
             </select>
           </label>
           <label className="space-y-1.5">
-            <span className="text-sm font-semibold text-[#454745]">Year</span>
-            <select value={filterYear ?? ""} className="h-11 w-full rounded-xl border border-[#0e0f0c] bg-white px-4 text-sm" onChange={(event) => resetPage(setFilterYear, event.target.value ? Number(event.target.value) : undefined)}>
+            <span className="text-sm font-semibold text-muted">Year</span>
+            <select value={filterYear ?? ""} className="h-11 w-full rounded-panel border border-ink bg-surface px-4 text-sm" onChange={(event) => resetPage(setFilterYear, event.target.value ? Number(event.target.value) : undefined)}>
               <option value="">All years</option>
               {Array.from({ length: 6 }, (_, index) => new Date().getFullYear() - index).map((year) => <option key={year} value={year}>{year}</option>)}
             </select>
           </label>
           <label className="space-y-1.5">
-            <span className="text-sm font-semibold text-[#454745]">
+            <span className="text-sm font-semibold text-muted">
               Start date
             </span>
             <input
               type="date"
               value={startDate}
-              className="h-11 w-full rounded-xl border border-[#0e0f0c] px-4 text-sm text-[#0e0f0c] outline-none transition focus:ring-2 focus:ring-[#9fe870]"
+              className="h-11 w-full rounded-panel border border-ink px-4 text-sm text-ink outline-none transition focus:ring-2 focus:ring-primary"
               onChange={(event) => resetPage(setStartDate, event.target.value)}
             />
           </label>
 
           <label className="space-y-1.5">
-            <span className="text-sm font-semibold text-[#454745]">End date</span>
+            <span className="text-sm font-semibold text-muted">End date</span>
             <input
               type="date"
               value={endDate}
-              className="h-11 w-full rounded-xl border border-[#0e0f0c] px-4 text-sm text-[#0e0f0c] outline-none transition focus:ring-2 focus:ring-[#9fe870]"
+              className="h-11 w-full rounded-panel border border-ink px-4 text-sm text-ink outline-none transition focus:ring-2 focus:ring-primary"
               onChange={(event) => resetPage(setEndDate, event.target.value)}
             />
           </label>
 
           <label className="space-y-1.5">
-            <span className="text-sm font-semibold text-[#454745]">Type</span>
+            <span className="text-sm font-semibold text-muted">Type</span>
             <select
               value={type}
-              className="h-11 w-full rounded-xl border border-[#0e0f0c] bg-white px-4 text-sm text-[#0e0f0c] outline-none transition focus:ring-2 focus:ring-[#9fe870]"
+              className="h-11 w-full rounded-panel border border-ink bg-surface px-4 text-sm text-ink outline-none transition focus:ring-2 focus:ring-primary"
               onChange={(event) =>
                 resetPage(
                   setType,
@@ -172,10 +172,10 @@ export default function TransactionsPage() {
           </label>
 
           <label className="space-y-1.5">
-            <span className="text-sm font-semibold text-[#454745]">Category</span>
+            <span className="text-sm font-semibold text-muted">Category</span>
             <select
               value={categoryId}
-              className="h-11 w-full rounded-xl border border-[#0e0f0c] bg-white px-4 text-sm text-[#0e0f0c] outline-none transition focus:ring-2 focus:ring-[#9fe870]"
+              className="h-11 w-full rounded-panel border border-ink bg-surface px-4 text-sm text-ink outline-none transition focus:ring-2 focus:ring-primary"
               onChange={(event) => resetPage(setCategoryId, event.target.value)}
             >
               <option value="">All categories</option>
@@ -210,7 +210,7 @@ export default function TransactionsPage() {
             {transactions.map((transaction) => (
               <TableRow key={transaction.id}>
                 <TableCell>{new Date(transaction.transactionYear, transaction.transactionMonth - 1, 1).toLocaleString("en-US", { month: "short", year: "numeric" })}</TableCell>
-                <TableCell><span className="text-xs text-[#868685]">{new Date(transaction.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span></TableCell>
+                <TableCell><span className="text-xs text-muted">{new Date(transaction.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span></TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <span
@@ -220,7 +220,7 @@ export default function TransactionsPage() {
                       backgroundColor: transaction.category.color ?? "#868685",
                       }}
                     />
-                    <span className="font-semibold text-[#0e0f0c]">
+                    <span className="font-semibold text-ink">
                       {transaction.category.name}
                     </span>
                   </div>
@@ -231,15 +231,15 @@ export default function TransactionsPage() {
                 <TableCell
                   className={
                     transaction.type === "income"
-                      ? "text-right font-semibold text-[#054d28]"
-                      : "text-right font-semibold text-[#a7000d]"
+                      ? "text-right font-semibold text-success"
+                      : "text-right font-semibold text-danger"
                   }
                 >
                   {transaction.type === "income" ? "+" : "-"}
                   {formatCurrency(transaction.amountCents)}
                 </TableCell>
                 <TableCell>
-                  <span className="rounded-full bg-[#e8ebe6] px-3 py-1 text-xs font-semibold capitalize text-[#454745]">
+                  <span className="rounded-full bg-canvas px-3 py-1 text-xs font-semibold capitalize text-muted">
                     {transaction.type}
                   </span>
                 </TableCell>
@@ -248,7 +248,7 @@ export default function TransactionsPage() {
                     <button
                       type="button"
                       aria-label="Edit transaction"
-                      className="inline-flex h-9 w-9 items-center justify-center rounded-full text-[#454745] transition hover:bg-[#e8ebe6] hover:text-[#0e0f0c]"
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted transition hover:bg-canvas hover:text-ink"
                       onClick={() => openEditModal(transaction)}
                     >
                       <Pencil aria-hidden="true" className="h-4 w-4" />
@@ -256,7 +256,7 @@ export default function TransactionsPage() {
                     <button
                       type="button"
                       aria-label="Delete transaction"
-                      className="inline-flex h-9 w-9 items-center justify-center rounded-full text-[#454745] transition hover:bg-[#320707] hover:text-white"
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted transition hover:bg-danger-surface hover:text-white"
                     >
                       <Trash2 aria-hidden="true" className="h-4 w-4" />
                     </button>
@@ -268,15 +268,15 @@ export default function TransactionsPage() {
         </Table>
       )}
 
-      <div className="flex flex-col gap-3 rounded-3xl bg-white px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-[#454745]">
+      <div className="flex flex-col gap-3 rounded-card bg-surface px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-sm text-muted">
           Page {page} of {totalPages} · {total} total transactions
         </p>
         <div className="flex gap-2">
           <button
             type="button"
             disabled={!canGoPrevious}
-            className="inline-flex h-10 items-center gap-2 rounded-3xl border border-[#0e0f0c] px-4 text-sm font-semibold text-[#0e0f0c] transition hover:bg-[#e8ebe6] disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex h-10 items-center gap-2 rounded-card border border-ink px-4 text-sm font-semibold text-ink transition hover:bg-canvas disabled:cursor-not-allowed disabled:opacity-50"
             onClick={() => setPage((current) => Math.max(1, current - 1))}
           >
             <ChevronLeft aria-hidden="true" className="h-4 w-4" />
@@ -285,7 +285,7 @@ export default function TransactionsPage() {
           <button
             type="button"
             disabled={!canGoNext}
-            className="inline-flex h-10 items-center gap-2 rounded-3xl border border-[#0e0f0c] px-4 text-sm font-semibold text-[#0e0f0c] transition hover:bg-[#e8ebe6] disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex h-10 items-center gap-2 rounded-card border border-ink px-4 text-sm font-semibold text-ink transition hover:bg-canvas disabled:cursor-not-allowed disabled:opacity-50"
             onClick={() => setPage((current) => current + 1)}
           >
             Next
@@ -326,7 +326,7 @@ function TransactionTableSkeleton() {
           <TableRow key={index}>
             {Array.from({ length: 7 }).map((__, cellIndex) => (
               <TableCell key={cellIndex}>
-                <div className="h-4 animate-pulse rounded bg-[#e8ebe6]" />
+                <div className="h-4 animate-pulse rounded bg-canvas" />
               </TableCell>
             ))}
           </TableRow>
@@ -338,11 +338,11 @@ function TransactionTableSkeleton() {
 
 function EmptyState() {
   return (
-    <div className="rounded-3xl border border-dashed border-[#868685] bg-white px-6 py-12 text-center">
-      <h2 className="text-base font-black text-[#0e0f0c]">
+    <div className="rounded-card border border-dashed border-muted bg-surface px-6 py-12 text-center">
+      <h2 className="text-base font-black text-ink">
         No transactions found
       </h2>
-      <p className="mt-2 text-sm text-[#454745]">
+      <p className="mt-2 text-sm text-muted">
         Adjust the filters or add a new transaction to start tracking activity.
       </p>
     </div>

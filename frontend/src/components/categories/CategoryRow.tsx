@@ -14,7 +14,7 @@ interface CategoryRowProps {
 
 export function CategoryRow({ category, onEdit, onDelete, isDeleting }: CategoryRowProps) {
   return (
-    <div className="flex items-center gap-3 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition-colors">
+    <div className="flex items-center gap-3 p-3 bg-surface rounded-control border border-gray-200 hover:border-gray-300 transition-colors">
 
       {/* Color dot + icon */}
       <div
