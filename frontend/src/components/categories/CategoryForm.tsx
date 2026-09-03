@@ -60,7 +60,7 @@ export function CategoryForm({
           {...register('name')}
           placeholder="e.g. Groceries"
           className={cn(
-            'w-full px-3 py-2 border rounded-lg text-sm',
+            'w-full px-3 py-2 border rounded-control text-sm',
             'focus:outline-none focus:ring-2 focus:ring-gray-900',
             errors.name ? 'border-red-400' : 'border-gray-300',
           )}
@@ -88,7 +88,7 @@ export function CategoryForm({
               disabled={isEditing}
               onClick={() => !isEditing && setValue('type', type)}
               className={cn(
-                'flex-1 py-2 px-4 rounded-lg text-sm font-medium capitalize transition-all',
+                'flex-1 py-2 px-4 rounded-control text-sm font-medium capitalize transition-all',
                 'focus:outline-none focus:ring-2 focus:ring-gray-400',
                 isEditing && 'opacity-60 cursor-not-allowed',
                 selectedType === type
@@ -133,7 +133,7 @@ export function CategoryForm({
       </div>
 
       {/* Preview */}
-      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-control border border-gray-200">
         <span className="text-xs text-gray-500">Preview:</span>
         <div
           className="flex items-center gap-2 px-3 py-1.5 rounded-full text-white text-sm font-medium"
@@ -150,14 +150,14 @@ export function CategoryForm({
         <button
           type="button"
           onClick={onCancel}
-          className="flex-1 py-2 px-4 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+          className="flex-1 py-2 px-4 border border-gray-300 rounded-control text-sm text-gray-700 hover:bg-gray-50 transition-colors"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={isLoading}
-          className="flex-1 py-2 px-4 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 py-2 px-4 bg-gray-900 text-white rounded-control text-sm font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? 'Saving...' : isEditing ? 'Save Changes' : 'Create Category'}
         </button>

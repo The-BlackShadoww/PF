@@ -44,7 +44,7 @@ export function AccountSettingsTab() {
     }
   }, [summary]);
   if (isLoading)
-    return <div className="h-48 animate-pulse rounded-3xl bg-[#e8ebe6]" />;
+    return <div className="h-48 animate-pulse rounded-card bg-canvas" />;
   const total =
     summary?.sectors.reduce((sum, item) => sum + item.percentage, 0) ?? 0;
   const available = 99 - total + (editing?.percentage ?? 0);
@@ -85,7 +85,7 @@ export function AccountSettingsTab() {
     <div className="max-w-2xl space-y-10">
       <section>
         <h2 className="text-lg font-black">Account configuration</h2>
-        <p className="mt-1 text-sm text-[#868685]">
+        <p className="mt-1 text-sm text-muted">
           Your running balance is recalculated from this starting balance and
           every transaction.
         </p>
@@ -102,17 +102,17 @@ export function AccountSettingsTab() {
           />
           <button
             disabled={setup.isPending}
-            className="w-fit rounded-3xl bg-[#9fe870] px-5 py-3 text-sm font-semibold disabled:opacity-60"
+            className="w-fit rounded-card bg-primary px-5 py-3 text-sm font-semibold disabled:opacity-60"
           >
             {setup.isPending ? "Saving…" : "Save configuration"}
           </button>
         </form>
       </section>
-      <section className="border-t border-[#e8ebe6] pt-8">
+      <section className="border-t border-line pt-8">
         <div className="flex items-start justify-between p-3 gap-3">
           <div>
             <h2 className="text-lg font-black">Savings sectors</h2>
-            <p className="mt-1 text-sm text-[#868685]">
+            <p className="mt-1 text-sm text-muted">
               Cash is calculated as the remainder.
             </p>
           </div>
@@ -122,13 +122,13 @@ export function AccountSettingsTab() {
               setSector(blank);
             }}
             disabled={available <= 0}
-            className="inline-flex items-center gap-2 rounded-3xl bg-[#9fe870] px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
+            className="inline-flex items-center gap-2 rounded-card bg-primary px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
           >
             <Plus size={16} />
             New sector
           </button>
         </div>
-        <div className="mt-4 rounded-2xl bg-[#e8ebe6] p-3 text-sm">
+        <div className="mt-4 rounded-panel bg-canvas p-3 text-sm">
           Allocated: <strong>{total}% / 99%</strong> · Cash receives{" "}
           {100 - total}%
         </div>
@@ -136,7 +136,7 @@ export function AccountSettingsTab() {
           {summary?.sectors.map((item) => (
             <div
               key={item.id}
-              className="flex items-center gap-3 rounded-2xl border border-[#e8ebe6] p-3"
+              className="flex items-center gap-3 rounded-panel border border-line p-3"
             >
               <span
                 className="flex h-9 w-9 items-center justify-center rounded-full text-white"
@@ -146,7 +146,7 @@ export function AccountSettingsTab() {
               </span>
               <span className="flex-1 text-sm font-semibold">
                 {item.name}{" "}
-                <small className="font-normal text-[#868685]">
+                <small className="font-normal text-muted">
                   {item.percentage}%
                 </small>
               </span>
@@ -179,7 +179,7 @@ export function AccountSettingsTab() {
         {sector && (
           <form
             onSubmit={saveSector}
-            className="mt-5 space-y-4 rounded-3xl bg-[#e8ebe6] p-5"
+            className="mt-5 space-y-4 rounded-card bg-canvas p-5"
           >
             <h3 className="font-black">
               {editing ? `Edit ${editing.name}` : "New savings sector"}
@@ -191,7 +191,7 @@ export function AccountSettingsTab() {
                 maxLength={100}
                 value={sector.name}
                 onChange={(e) => setSector({ ...sector, name: e.target.value })}
-                className="mt-1 h-11 w-full rounded-xl border border-[#0e0f0c] bg-white px-3"
+                className="mt-1 h-11 w-full rounded-panel border border-ink bg-surface px-3"
               />
             </label>
             <NumberInput
@@ -210,7 +210,7 @@ export function AccountSettingsTab() {
                 onChange={(e) =>
                   setSector({ ...sector, targetAmount: e.target.value })
                 }
-                className="mt-1 h-11 w-full rounded-xl border border-[#0e0f0c] bg-white px-3"
+                className="mt-1 h-11 w-full rounded-panel border border-ink bg-surface px-3"
               />
             </label>
             <ColorPicker
@@ -228,13 +228,13 @@ export function AccountSettingsTab() {
                   setSector(null);
                   setEditing(null);
                 }}
-                className="rounded-3xl border border-[#0e0f0c] px-4 py-2 text-sm font-semibold"
+                className="rounded-card border border-ink px-4 py-2 text-sm font-semibold"
               >
                 Cancel
               </button>
               <button
                 disabled={create.isPending || update.isPending}
-                className="rounded-3xl bg-[#9fe870] px-4 py-2 text-sm font-semibold"
+                className="rounded-card bg-primary px-4 py-2 text-sm font-semibold"
               >
                 Save sector
               </button>
@@ -243,7 +243,7 @@ export function AccountSettingsTab() {
         )}
       </section>
       {error && (
-        <p className="rounded-xl bg-red-50 p-3 text-sm text-red-700">{error}</p>
+        <p className="rounded-panel bg-red-50 p-3 text-sm text-red-700">{error}</p>
       )}
     </div>
   );
@@ -272,7 +272,7 @@ function NumberInput({
         step="1"
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="mt-1 h-11 w-full rounded-xl border border-[#0e0f0c] px-3"
+        className="mt-1 h-11 w-full rounded-panel border border-ink px-3"
       />
     </label>
   );

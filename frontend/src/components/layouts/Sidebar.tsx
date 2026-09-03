@@ -78,10 +78,10 @@ export function Sidebar() {
             href={href}
             onClick={() => mobile && setIsOpen(false)}
             className={cn(
-              "flex min-h-11 items-center gap-3 rounded-[10px] px-3 text-sm font-medium",
+              "flex min-h-11 items-center gap-3 rounded-control px-3 text-sm font-medium",
               active
-                ? "bg-[var(--sidebar-accent)] text-[var(--accent-foreground)]"
-                : "text-[var(--muted-foreground)] hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)]",
+                ? "bg-sidebar-accent text-primary"
+                : "text-muted hover:bg-sidebar-accent hover:text-sidebar-foreground",
             )}
           >
             <Icon aria-hidden="true" className="h-4 w-4" />
@@ -97,7 +97,7 @@ export function Sidebar() {
       type="button"
       disabled={isLoggingOut}
       onClick={handleLogout}
-      className="flex min-h-11 w-full items-center gap-3 rounded-[10px] px-3 text-sm font-medium text-[#717171] hover:bg-[#fef2f2] hover:text-[#d70015] disabled:opacity-60"
+      className="flex min-h-11 w-full items-center gap-3 rounded-control px-3 text-sm font-medium text-muted hover:bg-red-50 hover:text-danger disabled:opacity-60"
     >
       <LogOut aria-hidden="true" className="h-4 w-4" />
       {isLoggingOut ? "Logging out…" : "Log out"}
@@ -110,7 +110,7 @@ export function Sidebar() {
       aria-checked={theme === "dark"}
       aria-label={`Switch to ${theme === "light" ? "dark" : "light"} theme`}
       onClick={toggleTheme}
-      className="flex min-h-11 w-full items-center gap-3 rounded-[10px] px-3 text-sm font-medium text-[var(--muted-foreground)] hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)]"
+      className="flex min-h-11 w-full items-center gap-3 rounded-control px-3 text-sm font-medium text-muted hover:bg-sidebar-accent hover:text-sidebar-foreground"
     >
       <span className="grid h-5 w-5 place-items-center">
         {theme === "light" ? (
@@ -122,11 +122,11 @@ export function Sidebar() {
       <span>{theme === "light" ? "Dark theme" : "Light theme"}</span>
       <span
         aria-hidden="true"
-        className="ml-auto h-5 w-9 rounded-full bg-[var(--muted)] p-0.5"
+        className="ml-auto h-5 w-9 rounded-full bg-canvas p-0.5"
       >
         <span
           className={cn(
-            "block h-4 w-4 rounded-full bg-[var(--foreground)] transition-transform",
+            "block h-4 w-4 rounded-full bg-foreground transition-transform",
             theme === "dark" && "translate-x-4",
           )}
         />
@@ -136,12 +136,12 @@ export function Sidebar() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 flex h-16 items-center border-b border-(--sidebar-border) bg-[color-mix(in_srgb,var(--sidebar)_90%,transparent)] px-4 text-[var(--sidebar-foreground)] backdrop-blur-lg lg:hidden">
+      <header className="sticky top-0 z-50 flex h-16 items-center border-b border-sidebar-line bg-sidebar/90 px-4 text-sidebar-foreground backdrop-blur-lg lg:hidden">
         <Link
           href="/dashboard"
           className="flex items-center gap-2 text-sm font-semibold"
         >
-          <span className="grid h-8 w-8 place-items-center rounded-[10px] bg-[var(--primary-color)] text-white">
+          <span className="grid h-8 w-8 place-items-center rounded-control bg-primary text-white">
             <LayoutDashboard className="h-4 w-4" />
           </span>
           Personal Finance
@@ -150,36 +150,36 @@ export function Sidebar() {
           type="button"
           aria-label={isOpen ? "Close navigation" : "Open navigation"}
           aria-expanded={isOpen}
-          className="ml-auto grid h-10 w-10 place-items-center rounded-[10px] hover:bg-[var(--sidebar-accent)]"
+          className="ml-auto grid h-10 w-10 place-items-center rounded-control hover:bg-sidebar-accent"
           onClick={() => setIsOpen((value) => !value)}
         >
           {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </header>
       {isOpen && (
-        <div className="fixed inset-x-0 bottom-0 top-16 z-40 flex flex-col border-r border-[var(--sidebar-border)] bg-[var(--sidebar)] p-4 text-[var(--sidebar-foreground)] lg:hidden">
+        <div className="fixed inset-x-0 bottom-0 top-16 z-40 flex flex-col border-r border-sidebar-line bg-sidebar p-4 text-sidebar-foreground lg:hidden">
           {navigation(true)}
-          <div className="mt-4 border-t border-[var(--sidebar-border)] pt-4">
+          <div className="mt-4 border-t border-sidebar-line pt-4">
             {themeSwitcher}
             {logout}
           </div>
         </div>
       )}
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-[var(--sidebar-border)] bg-[var(--sidebar)] p-4 text-[var(--sidebar-foreground)] lg:flex">
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-sidebar-line bg-sidebar p-4 text-sidebar-foreground lg:flex">
         <Link
           href="/dashboard"
           className="mb-8 flex items-center gap-3 px-2 text-sm font-semibold"
         >
-          <span className="grid h-9 w-9 place-items-center rounded-[10px] bg-[var(--primary-color)] text-white">
+          <span className="grid h-9 w-9 place-items-center rounded-control bg-primary text-white">
             <LayoutDashboard className="h-4 w-4" />
           </span>
           <span>Personal Finance</span>
         </Link>
-        <p className="mb-3 px-3 text-[10px] font-semibold uppercase tracking-[.12em] text-[var(--muted-foreground)]">
+        <p className="mb-3 px-3 text-xs font-semibold uppercase tracking-[.12em] text-muted">
           Workspace
         </p>
         {navigation()}
-        <div className="mt-4 border-t border-[var(--sidebar-border)] pt-4">
+        <div className="mt-4 border-t border-sidebar-line pt-4">
           {themeSwitcher}
           {logout}
         </div>

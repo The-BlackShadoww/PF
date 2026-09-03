@@ -125,8 +125,8 @@ export function PreferencesTab() {
   if (isLoading) {
     return (
       <div className="space-y-4 max-w-md">
-        <div className="h-10 bg-gray-100 rounded-lg animate-pulse" />
-        <div className="h-10 bg-gray-100 rounded-lg animate-pulse w-2/3" />
+        <div className="h-10 bg-gray-100 rounded-control animate-pulse" />
+        <div className="h-10 bg-gray-100 rounded-control animate-pulse w-2/3" />
       </div>
     );
   }
@@ -152,7 +152,7 @@ export function PreferencesTab() {
           <select
             {...register('timezone')}
             className={cn(
-              'w-full pl-9 pr-8 py-2 border rounded-lg text-sm bg-white',
+              'w-full pl-9 pr-8 py-2 border rounded-control text-sm bg-surface',
               'focus:outline-none focus:ring-2 focus:ring-gray-900',
               'appearance-none cursor-pointer',
               // appearance-none removes the browser's default dropdown arrow
@@ -184,7 +184,7 @@ export function PreferencesTab() {
       </div>
 
       {/* Current selection display */}
-      <div className="flex items-start gap-2 p-3 bg-blue-50 border border-blue-100 rounded-lg">
+      <div className="flex items-start gap-2 p-3 bg-blue-50 border border-blue-100 rounded-control">
         <Globe size={15} className="text-blue-500 mt-0.5 flex-shrink-0" />
         <div>
           <p className="text-xs font-medium text-blue-800">Currently selected</p>
@@ -197,7 +197,7 @@ export function PreferencesTab() {
 
       {/* API error */}
       {updateMutation.error && (
-        <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+        <div className="p-3 bg-red-50 border border-red-200 rounded-control">
           <p className="text-sm text-red-700">
             {(updateMutation.error as Error)?.message ?? 'Failed to save preferences'}
           </p>
@@ -206,7 +206,7 @@ export function PreferencesTab() {
 
       {/* Success */}
       {showSuccess && (
-        <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+        <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-control">
           <CheckCircle2 size={16} className="text-green-600 flex-shrink-0" />
           <p className="text-sm text-green-700">Timezone saved successfully</p>
         </div>
@@ -217,7 +217,7 @@ export function PreferencesTab() {
           type="submit"
           disabled={updateMutation.isPending || !isDirty}
           className={cn(
-            'px-5 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg',
+            'px-5 py-2 bg-gray-900 text-white text-sm font-medium rounded-control',
             'hover:bg-gray-800 transition-colors',
             'disabled:opacity-50 disabled:cursor-not-allowed',
           )}

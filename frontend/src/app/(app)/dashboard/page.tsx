@@ -143,22 +143,22 @@ export default function DashboardPage() {
         />
 
         {activeTab === "monthly" && (
-          <div className="inline-flex h-11 items-center rounded-full bg-white">
+          <div className="inline-flex h-11 items-center rounded-full bg-surface">
             <button
               type="button"
               aria-label="Previous month"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full text-[#454745]"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full text-muted"
               onClick={goToPreviousMonth}
             >
               <ChevronLeft aria-hidden="true" className="h-4 w-4" />
             </button>
-            <div className="min-w-36 px-4 text-center text-sm font-semibold text-[#0e0f0c]">
+            <div className="min-w-36 px-4 text-center text-sm font-semibold text-ink">
               {formatMonthYear(selectedDate)}
             </div>
             <button
               type="button"
               aria-label="Next month"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full text-[#454745]"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full text-muted"
               onClick={goToNextMonth}
             >
               <ChevronRight aria-hidden="true" className="h-4 w-4" />
@@ -168,7 +168,7 @@ export default function DashboardPage() {
       </div>
 
       <div
-        className="dashboard-tabs mb-6 flex gap-1 overflow-x-auto rounded-full bg-white p-1"
+        className="dashboard-tabs mb-6 flex gap-1 overflow-x-auto rounded-full bg-surface p-1"
         role="tablist"
         aria-label="Dashboard period"
       >
@@ -182,8 +182,8 @@ export default function DashboardPage() {
             className={cn(
               "dashboard-tab rounded-full px-4 py-2.5 text-sm font-semibold focus:outline-none",
               activeTab === tab.id
-                ? "dashboard-tab-active bg-[#9fe870] text-[#0e0f0c]"
-                : "dashboard-tab-inactive text-[#454745]",
+                ? "dashboard-tab-active bg-primary text-ink"
+                : "dashboard-tab-inactive text-muted",
             )}
           >
             {tab.label}
@@ -291,11 +291,11 @@ export default function DashboardPage() {
                             className="h-2.5 w-2.5 shrink-0 rounded-full"
                             style={{ backgroundColor: category.color }}
                           />
-                          <span className="truncate text-[#454745]">
+                          <span className="truncate text-muted">
                             {category.name}
                           </span>
                         </div>
-                        <span className="font-semibold text-[#0e0f0c]">
+                        <span className="font-semibold text-ink">
                           {formatAmount(category.total)}
                         </span>
                       </div>
@@ -362,8 +362,8 @@ function ChartPanel({
   children: React.ReactNode;
 }) {
   return (
-    <article className="rounded-3xl bg-white p-6">
-      <h2 className="text-base font-black text-[#0e0f0c]">{title}</h2>
+    <article className="rounded-card bg-surface p-6">
+      <h2 className="text-base font-black text-ink">{title}</h2>
       <div className="mt-4 h-80">
         {isLoading ? <ChartSkeleton /> : children}
       </div>
@@ -373,13 +373,13 @@ function ChartPanel({
 
 function ChartSkeleton() {
   return (
-    <div className="h-full w-full animate-pulse rounded-3xl bg-[#e8ebe6]" />
+    <div className="h-full w-full animate-pulse rounded-card bg-canvas" />
   );
 }
 
 function EmptyChartState({ message }: { message: string }) {
   return (
-    <div className="flex h-full items-center justify-center rounded-3xl border border-dashed border-[#868685] bg-[#e8ebe6] px-6 text-center text-sm font-semibold text-[#454745]">
+    <div className="flex h-full items-center justify-center rounded-card border border-dashed border-muted bg-canvas px-6 text-center text-sm font-semibold text-muted">
       {message}
     </div>
   );

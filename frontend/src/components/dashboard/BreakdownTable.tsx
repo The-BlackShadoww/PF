@@ -17,7 +17,7 @@ function SkeletonRow({ cells }: { cells: number }) {
     <tr>
       {Array.from({ length: cells }, (_value, index) => (
         <td key={index} className="px-4 py-3">
-          <div className="h-4 animate-pulse rounded bg-[#e8ebe6]" />
+          <div className="h-4 animate-pulse rounded bg-canvas" />
         </td>
       ))}
     </tr>
@@ -38,31 +38,31 @@ export function BreakdownTable({
   }
 
   return (
-    <div className="overflow-hidden rounded-3xl bg-white">
+    <div className="overflow-hidden rounded-card bg-surface">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-[#e8ebe6] bg-[#e8ebe6]">
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-normal text-[#454745]">
+            <tr className="border-b border-line bg-canvas">
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-normal text-muted">
                 Month
               </th>
-              <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-normal text-[#454745]">
+              <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-normal text-muted">
                 Income
               </th>
-              <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-normal text-[#454745]">
+              <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-normal text-muted">
                 Expenses
               </th>
-              <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-normal text-[#454745]">
+              <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-normal text-muted">
                 Savings
               </th>
               {hasComparison && (
-                <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-normal text-[#454745]">
+                <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-normal text-muted">
                   vs {comparisonYear}
                 </th>
               )}
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#e8ebe6]">
+          <tbody className="divide-y divide-line">
             {isLoading
               ? Array.from({ length: 3 }, (_value, index) => (
                   <SkeletonRow key={index} cells={hasComparison ? 5 : 4} />
@@ -81,24 +81,24 @@ export function BreakdownTable({
                       key={row.month}
                       className={cn(
                         "",
-                        index % 2 === 0 ? "bg-white" : "bg-[#e8ebe6]/35",
+                        index % 2 === 0 ? "bg-surface" : "bg-canvas/35",
                       )}
                     >
-                      <td className="px-4 py-3 font-semibold text-[#0e0f0c]">
+                      <td className="px-4 py-3 font-semibold text-ink">
                         {monthName(row.month)}
                       </td>
-                      <td className="px-4 py-3 text-right text-[#054d28]">
+                      <td className="px-4 py-3 text-right text-success">
                         {row.totalIncome > 0 ? (
                           formatDollar(row.totalIncome)
                         ) : (
-                          <span className="text-[#868685]">-</span>
+                          <span className="text-muted">-</span>
                         )}
                       </td>
-                      <td className="px-4 py-3 text-right text-[#a7000d]">
+                      <td className="px-4 py-3 text-right text-danger">
                         {row.totalExpense > 0 ? (
                           formatDollar(row.totalExpense)
                         ) : (
-                          <span className="text-[#868685]">-</span>
+                          <span className="text-muted">-</span>
                         )}
                       </td>
                       <td
@@ -113,7 +113,7 @@ export function BreakdownTable({
                             {formatDollar(row.savings)}
                           </>
                         ) : (
-                          <span className="text-[#868685]">-</span>
+                          <span className="text-muted">-</span>
                         )}
                       </td>
                       {hasComparison && (
@@ -121,12 +121,12 @@ export function BreakdownTable({
                           className={cn(
                             "px-4 py-3 text-right text-xs font-semibold",
                             savingsDiff === null
-                              ? "text-[#868685]"
+                              ? "text-muted"
                               : savingsDiff > 0
-                                ? "text-[#054d28]"
+                                ? "text-success"
                                 : savingsDiff < 0
-                                  ? "text-[#a7000d]"
-                                  : "text-[#868685]",
+                                  ? "text-danger"
+                                  : "text-muted",
                           )}
                         >
                           {savingsDiff === null ? (
@@ -147,16 +147,16 @@ export function BreakdownTable({
           </tbody>
           {!isLoading && rows.length > 1 && (
             <tfoot>
-              <tr className="border-t-2 border-[#e8ebe6] bg-[#e8ebe6]">
-                <td className="px-4 py-3 text-xs font-bold uppercase tracking-normal text-[#454745]">
+              <tr className="border-t-2 border-line bg-canvas">
+                <td className="px-4 py-3 text-xs font-bold uppercase tracking-normal text-muted">
                   Total
                 </td>
-                <td className="px-4 py-3 text-right font-bold text-[#054d28]">
+                <td className="px-4 py-3 text-right font-bold text-success">
                   {formatDollar(
                     rows.reduce((sum, row) => sum + row.totalIncome, 0),
                   )}
                 </td>
-                <td className="px-4 py-3 text-right font-bold text-[#a7000d]">
+                <td className="px-4 py-3 text-right font-bold text-danger">
                   {formatDollar(
                     rows.reduce((sum, row) => sum + row.totalExpense, 0),
                   )}

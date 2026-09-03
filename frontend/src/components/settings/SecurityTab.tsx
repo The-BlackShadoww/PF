@@ -89,7 +89,7 @@ function PasswordField({
           type={show ? 'text' : 'password'}
           placeholder={placeholder}
           className={cn(
-            'w-full pl-3 pr-10 py-2 border rounded-lg text-sm',
+            'w-full pl-3 pr-10 py-2 border rounded-control text-sm',
             'focus:outline-none focus:ring-2 focus:ring-gray-900',
             error ? 'border-red-400' : 'border-gray-300',
           )}
@@ -247,7 +247,7 @@ export function SecurityTab() {
 
             {/* API error */}
             {changePasswordMutation.error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+              <div className="p-3 bg-red-50 border border-red-200 rounded-control">
                 <p className="text-sm text-red-700">
                   {(changePasswordMutation.error as Error)?.message ?? 'Failed to change password'}
                 </p>
@@ -256,7 +256,7 @@ export function SecurityTab() {
 
             {/* Success */}
             {passwordSuccess && (
-              <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+              <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-control">
                 <CheckCircle2 size={16} className="text-green-600 flex-shrink-0" />
                 <p className="text-sm text-green-700">Password changed successfully</p>
               </div>
@@ -265,7 +265,7 @@ export function SecurityTab() {
             <button
               type="submit"
               disabled={changePasswordMutation.isPending}
-              className="px-5 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-5 py-2 bg-gray-900 text-white text-sm font-medium rounded-control hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {changePasswordMutation.isPending ? 'Changing...' : 'Change Password'}
             </button>
@@ -308,7 +308,7 @@ export function SecurityTab() {
             {!is2faEnabled ? (
               <button
                 onClick={handleSetup2fa}
-                className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-control hover:bg-gray-800 transition-colors"
               >
                 <ShieldCheck size={15} />
                 Enable Two-Factor Auth
@@ -320,7 +320,7 @@ export function SecurityTab() {
                   setTotpCode('');
                   setTwoFactorError(null);
                 }}
-                className="flex items-center gap-2 px-4 py-2 border border-red-300 text-red-600 text-sm font-medium rounded-lg hover:bg-red-50 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 border border-red-300 text-red-600 text-sm font-medium rounded-control hover:bg-red-50 transition-colors"
               >
                 <ShieldOff size={15} />
                 Disable Two-Factor Auth
@@ -340,7 +340,7 @@ export function SecurityTab() {
         {/* State: show-qr */}
         {twoFactorState === 'show-qr' && qrCodeDataUrl && (
           <div className="space-y-5">
-            <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl">
+            <div className="p-4 bg-gray-50 border border-gray-200 rounded-panel">
 
               <p className="text-sm font-medium text-gray-900 mb-1">
                 Step 1 — Scan this QR code
@@ -351,7 +351,7 @@ export function SecurityTab() {
 
               {/* QR code image */}
               <div className="flex justify-center mb-4">
-                <div className="p-3 bg-white border border-gray-200 rounded-lg inline-block">
+                <div className="p-3 bg-surface border border-gray-200 rounded-control inline-block">
                   <img
                     src={qrCodeDataUrl}
                     alt="2FA QR Code"
@@ -385,7 +385,7 @@ export function SecurityTab() {
                 }}
                 placeholder="123456"
                 className={cn(
-                  'w-full px-4 py-3 border rounded-lg text-center text-2xl font-mono tracking-widest',
+                  'w-full px-4 py-3 border rounded-control text-center text-2xl font-mono tracking-widest',
                   'focus:outline-none focus:ring-2 focus:ring-gray-900',
                   twoFactorError ? 'border-red-400' : 'border-gray-300',
                 )}
@@ -401,7 +401,7 @@ export function SecurityTab() {
               <button
                 onClick={handleEnable2fa}
                 disabled={totpCode.length !== 6}
-                className="flex-1 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 py-2 bg-gray-900 text-white text-sm font-medium rounded-control hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Verify and Enable
               </button>
@@ -412,7 +412,7 @@ export function SecurityTab() {
                   setQrCodeDataUrl(null);
                   setTwoFactorError(null);
                 }}
-                className="px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded-lg hover:bg-gray-50 transition-colors"
+                className="px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded-control hover:bg-gray-50 transition-colors"
               >
                 Cancel
               </button>
@@ -430,7 +430,7 @@ export function SecurityTab() {
 
         {/* State: enabled-success */}
         {twoFactorState === 'enabled-success' && (
-          <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+          <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-control">
             <CheckCircle2 size={16} className="text-green-600 flex-shrink-0" />
             <div>
               <p className="text-sm font-medium text-green-700">
@@ -446,7 +446,7 @@ export function SecurityTab() {
         {/* State: confirm-disable */}
         {twoFactorState === 'confirm-disable' && (
           <div className="space-y-4">
-            <div className="p-4 bg-red-50 border border-red-200 rounded-xl">
+            <div className="p-4 bg-red-50 border border-red-200 rounded-panel">
               <p className="text-sm font-medium text-red-800 mb-1">
                 Disable two-factor authentication?
               </p>
@@ -466,7 +466,7 @@ export function SecurityTab() {
                 }}
                 placeholder="123456"
                 className={cn(
-                  'w-full px-4 py-3 border rounded-lg text-center text-2xl font-mono tracking-widest',
+                  'w-full px-4 py-3 border rounded-control text-center text-2xl font-mono tracking-widest',
                   'focus:outline-none focus:ring-2 focus:ring-red-400',
                   twoFactorError ? 'border-red-400' : 'border-red-200',
                 )}
@@ -481,7 +481,7 @@ export function SecurityTab() {
               <button
                 onClick={handleDisable2fa}
                 disabled={totpCode.length !== 6}
-                className="flex-1 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 py-2 bg-red-600 text-white text-sm font-medium rounded-control hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Confirm Disable
               </button>
@@ -491,7 +491,7 @@ export function SecurityTab() {
                   setTotpCode('');
                   setTwoFactorError(null);
                 }}
-                className="px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded-lg hover:bg-gray-50 transition-colors"
+                className="px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded-control hover:bg-gray-50 transition-colors"
               >
                 Cancel
               </button>

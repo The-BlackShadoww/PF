@@ -42,7 +42,7 @@ interface IconPickerProps {
 
 export function IconPicker({ value, onChange }: IconPickerProps) {
   return (
-    <div className="grid grid-cols-6 gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200 max-h-48 overflow-y-auto">
+    <div className="grid grid-cols-6 gap-2 p-3 bg-gray-50 rounded-control border border-gray-200 max-h-48 overflow-y-auto">
       {SUPPORTED_ICONS.map((icon) => (
         <button
           key={icon}
@@ -50,11 +50,11 @@ export function IconPicker({ value, onChange }: IconPickerProps) {
           onClick={() => onChange(icon)}
           title={icon}
           className={cn(
-            'flex items-center justify-center w-9 h-9 rounded-lg transition-all',
+            'flex items-center justify-center w-9 h-9 rounded-control transition-all',
             'hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400',
             value === icon
               ? 'bg-gray-900 text-white hover:bg-gray-800'
-              : 'bg-white text-gray-600 border border-gray-200',
+              : 'bg-surface text-gray-600 border border-gray-200',
           )}
         >
           <LucideIcon name={icon} size={16} />

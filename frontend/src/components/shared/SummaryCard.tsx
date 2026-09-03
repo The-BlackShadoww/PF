@@ -11,9 +11,9 @@ type SummaryCardProps = {
 };
 
 const toneStyles: Record<SummaryCardTone, string> = {
-  income: "bg-[#edf5ff] text-[#161616]",
-  expense: "bg-[#f4f4f4] text-[#161616]",
-  savings: "bg-[#f4f4f4] text-[#161616]",
+  income: "bg-info text-ink",
+  expense: "bg-canvas text-ink",
+  savings: "bg-canvas text-ink",
 };
 
 export function SummaryCard({
@@ -24,14 +24,14 @@ export function SummaryCard({
   isLoading = false,
 }: SummaryCardProps) {
   return (
-    <article className="border border-[#e0e0e0] bg-white p-6">
+    <article className="border border-line bg-surface p-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-sm font-semibold text-[#454745]">{title}</p>
+          <p className="text-sm font-semibold text-muted">{title}</p>
           {isLoading ? (
-            <div className="mt-3 h-8 w-32 animate-pulse rounded-lg bg-[#e8ebe6]" />
+            <div className="mt-3 h-8 w-32 animate-pulse rounded-control bg-canvas" />
           ) : (
-            <p className="mt-2 text-[32px] font-normal leading-tight tracking-normal text-[#161616]">
+            <p className="mt-2 text-metric font-normal leading-tight tracking-normal text-ink">
               {formatAmount(value)}
             </p>
           )}
@@ -42,11 +42,11 @@ export function SummaryCard({
         />
       </div>
       {isLoading ? (
-        <div className="mt-4 h-4 w-24 animate-pulse rounded bg-[#e8ebe6]" />
+        <div className="mt-4 h-4 w-24 animate-pulse rounded bg-canvas" />
       ) : (
         <p
           className={cn(
-            "mt-4 inline-flex border-l-2 border-[#0f62fe] px-3 py-1 text-sm font-medium",
+            "mt-4 inline-flex border-l-2 border-primary px-3 py-1 text-sm font-medium",
             toneStyles[tone],
           )}
         >

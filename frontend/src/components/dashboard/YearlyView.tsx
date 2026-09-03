@@ -29,16 +29,16 @@ function YearlyChartTooltip({
   if (!active || !payload || payload.length === 0) return null;
 
   return (
-    <div className="border border-[#e0e0e0] bg-white p-3 text-xs">
-      <p className="mb-2 font-semibold text-[#454745]">{label}</p>
+    <div className="border border-line bg-surface p-3 text-xs">
+      <p className="mb-2 font-semibold text-muted">{label}</p>
       {payload.map((entry) => (
         <div key={entry.dataKey} className="mb-1 flex items-center gap-2">
           <span
             className="h-2 w-2 shrink-0 rounded-full"
             style={{ backgroundColor: entry.color }}
           />
-          <span className="text-[#454745]">{entry.name}:</span>
-          <span className="font-semibold text-[#0e0f0c]">
+          <span className="text-muted">{entry.name}:</span>
+          <span className="font-semibold text-ink">
             {formatDollar(Number(entry.value ?? 0))}
           </span>
         </div>
@@ -84,7 +84,7 @@ export function YearlyView() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-base font-black text-[#0e0f0c]">
+        <h3 className="text-base font-black text-ink">
           {selectedYear} Overview
         </h3>
 
@@ -92,13 +92,13 @@ export function YearlyView() {
           <button
             type="button"
             onClick={goToPreviousYear}
-            className="rounded-full p-1.5 text-[#454745]"
+            className="rounded-full p-1.5 text-muted"
             title="Previous year"
           >
             <ChevronLeft aria-hidden="true" size={16} />
           </button>
 
-          <span className="min-w-10 text-center text-sm font-semibold text-[#0e0f0c]">
+          <span className="min-w-10 text-center text-sm font-semibold text-ink">
             {selectedYear}
           </span>
 
@@ -107,10 +107,10 @@ export function YearlyView() {
             onClick={goToNextYear}
             disabled={selectedYear >= currentYear}
             className={cn(
-              "rounded-lg p-1.5",
+              "rounded-control p-1.5",
               selectedYear >= currentYear
-                ? "cursor-not-allowed text-[#868685] opacity-40"
-                : "text-[#454745]",
+                ? "cursor-not-allowed text-muted opacity-40"
+                : "text-muted",
             )}
             title={
               selectedYear >= currentYear
@@ -124,7 +124,7 @@ export function YearlyView() {
       </div>
 
       {error && (
-        <div className="rounded-3xl bg-[#320707] p-4 text-sm font-semibold text-white">
+        <div className="rounded-card bg-danger-surface p-4 text-sm font-semibold text-white">
           Failed to load yearly data. Please try again.
         </div>
       )}
@@ -142,8 +142,8 @@ export function YearlyView() {
         hasPriorYear &&
         priorSummary &&
         summary && (
-          <div className="flex flex-wrap gap-4 rounded-3xl bg-white p-4 text-sm">
-            <span className="w-full text-xs font-semibold uppercase tracking-normal text-[#454745]">
+          <div className="flex flex-wrap gap-4 rounded-card bg-surface p-4 text-sm">
+            <span className="w-full text-xs font-semibold uppercase tracking-normal text-muted">
               Compared to {selectedYear - 1}
             </span>
             <ComparisonPill
@@ -166,10 +166,10 @@ export function YearlyView() {
 
       {!isLoading && chartData.length > 0 && (
         <div>
-          <h4 className="mb-3 text-sm font-semibold text-[#454745]">
+          <h4 className="mb-3 text-sm font-semibold text-muted">
             Income vs Expenses - {selectedYear}
           </h4>
-          <div className="rounded-3xl bg-white p-5">
+          <div className="rounded-card bg-surface p-5">
             <ResponsiveContainer width="100%" height={260}>
               <BarChart
                 data={chartData}
@@ -210,11 +210,11 @@ export function YearlyView() {
 
       <div>
         <div className="mb-3 flex items-center justify-between gap-4">
-          <h4 className="text-sm font-semibold text-[#454745]">
+          <h4 className="text-sm font-semibold text-muted">
             Monthly Breakdown
           </h4>
           {hasPriorYear && (
-            <span className="text-xs text-[#868685]">
+            <span className="text-xs text-muted">
               Savings vs {selectedYear - 1} shown in last column
             </span>
           )}
@@ -231,7 +231,7 @@ export function YearlyView() {
       </div>
 
       {!isLoading && summary && (
-        <p className="text-right text-xs text-[#868685]">
+        <p className="text-right text-xs text-muted">
           {summary.transactionCount?.toLocaleString() ?? 0} transactions in{" "}
           {selectedYear}
         </p>
@@ -253,11 +253,11 @@ function ComparisonPill({
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-xs text-[#454745]">{label}</span>
+      <span className="text-xs text-muted">{label}</span>
       <span
         className={cn(
           "text-xs font-semibold",
-          isBetter ? "text-[#054d28]" : "text-[#a7000d]",
+          isBetter ? "text-success" : "text-danger",
         )}
       >
         {diff >= 0 ? "Up" : "Down"} {formatDollar(Math.abs(diff))}
