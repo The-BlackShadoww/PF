@@ -31,7 +31,7 @@
   --ds-sidebar-foreground: #0a0a0a;
   --ds-sidebar-accent: #f5f5f5;
   --ds-sidebar-line: #e5e5e5;
-  --ds-radius: 0.75rem;
+  --ds-radius: 0.5rem;
 }
 
 .dark {
@@ -80,8 +80,10 @@
   --color-sidebar-foreground: var(--ds-sidebar-foreground);
   --color-sidebar-accent: var(--ds-sidebar-accent);
   --color-sidebar-line: var(--ds-sidebar-line);
-  --radius-control: 10px;
-  --radius-card: 1rem;
+  /* Keep the interface crisp: controls are subtly rounded and cards only
+     slightly softer than their contents. */
+  --radius-control: 6px;
+  --radius-card: 8px;
   --radius-panel: var(--ds-radius);
   --text-metric: 27px;
   --text-display: 34px;
@@ -146,7 +148,7 @@
   textarea {
     min-height: 42px;
     border: 1px solid var(--ds-line);
-    border-radius: 10px;
+    border-radius: 6px;
     background: var(--ds-background);
     color: var(--ds-foreground);
     transition:
