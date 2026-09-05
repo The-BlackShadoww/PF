@@ -99,4 +99,15 @@ export const transactionsApi = {
 
     return response.data;
   },
+
+  async delete(id: string) {
+    const response = await apiClient<ApiResponse<{ success: boolean }>>(
+      `/transactions/${id}`,
+      {
+        method: "DELETE",
+      },
+    );
+
+    return response.data;
+  },
 };
