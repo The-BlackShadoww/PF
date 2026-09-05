@@ -26,6 +26,7 @@ import type {
   TransactionType,
 } from "@/lib/api/transactions";
 import { useTransactions } from "@/lib/hooks/useTransactions";
+import { useDeleteTransaction } from "@/lib/hooks/useDeleteTransaction";
 import { formatCurrency } from "@/lib/utils/currency";
 
 const PAGE_SIZE = 10;
@@ -42,6 +43,8 @@ export default function TransactionsPage() {
     null,
   );
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+  const [transactionToDelete, setTransactionToDelete] =
+    useState<Transaction | null>(null);
 
   const filters = useMemo<TransactionFilters>(
     () => ({
@@ -58,6 +61,7 @@ export default function TransactionsPage() {
   );
 
   const { data, isLoading, isFetching } = useTransactions(filters);
+  const deleteTransaction = useDeleteTransaction();
   const transactions = data?.data ?? [];
   const total = data?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
@@ -96,6 +100,21 @@ export default function TransactionsPage() {
   function closeFormModal() {
     setIsFormModalOpen(false);
     setFormTransaction(null);
+  }
+
+  function confirmDelete() {
+    if (!transactionToDelete) {
+      return;
+    }
+
+    deleteTransaction.mutate(transactionToDelete.id, {
+      onSuccess: () => {
+        if (transactions.length === 1 && page > 1) {
+          setPage((current) => current - 1);
+        }
+        setTransactionToDelete(null);
+      },
+    });
   }
 
   return (
@@ -257,6 +276,7 @@ export default function TransactionsPage() {
                       type="button"
                       aria-label="Delete transaction"
                       className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted transition hover:bg-danger-surface hover:text-white"
+                      onClick={() => setTransactionToDelete(transaction)}
                     >
                       <Trash2 aria-hidden="true" className="h-4 w-4" />
                     </button>
@@ -304,6 +324,41 @@ export default function TransactionsPage() {
           onCancel={closeFormModal}
           onSuccess={closeFormModal}
         />
+      </Modal>
+
+      <Modal
+        open={transactionToDelete !== null}
+        title="Delete transaction?"
+        onClose={() => {
+          if (!deleteTransaction.isPending) {
+            setTransactionToDelete(null);
+          }
+        }}
+      >
+        <p className="text-sm text-muted">
+          This will remove the {transactionToDelete?.type} transaction for{" "}
+          {transactionToDelete
+            ? formatCurrency(transactionToDelete.amountCents)
+            : ""}. This action cannot be undone from the app.
+        </p>
+        <div className="mt-6 flex justify-end gap-3">
+          <button
+            type="button"
+            className="h-10 rounded-card border border-ink px-4 text-sm font-semibold text-ink transition hover:bg-canvas disabled:cursor-not-allowed disabled:opacity-50"
+            disabled={deleteTransaction.isPending}
+            onClick={() => setTransactionToDelete(null)}
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            className="h-10 rounded-card bg-danger px-4 text-sm font-semibold text-white transition hover:bg-danger/90 disabled:cursor-not-allowed disabled:opacity-50"
+            disabled={deleteTransaction.isPending}
+            onClick={confirmDelete}
+          >
+            {deleteTransaction.isPending ? "Deleting..." : "Delete transaction"}
+          </button>
+        </div>
       </Modal>
     </div>
   );
