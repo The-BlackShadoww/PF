@@ -63,7 +63,7 @@ A modern, full-stack personal finance application for tracking income and expens
 - Reports: **@react-pdf/renderer**, **fast-csv**
 
 **Infrastructure**
-- **Local**: Docker Compose (Postgres & Redis)
+- **Docker**: Docker Compose runs the complete stack (Next.js, NestJS, PostgreSQL, and Redis)
 - **Production**: Frontend on **Vercel**, backend on **Render**, database on **Neon** (PostgreSQL)
 
 ---
@@ -83,7 +83,29 @@ PF/
 
 ---
 
-## Getting Started (Development)
+## Run without Docker (development)
+
+## Run the complete app with Docker
+
+Install Docker Desktop, then from the repository root copy the Docker environment
+template and start the stack:
+
+```bash
+cp .env.example .env
+docker compose up --build
+```
+
+On PowerShell, use `Copy-Item .env.example .env` for the first command. Change the
+placeholder secrets in `.env` before using the app outside local development. The
+Docker setup runs database migrations automatically, and persists database and Redis
+data in named Docker volumes.
+
+- App: `http://localhost:3000`
+- API: `http://localhost:3001/api/v1`
+- API docs: `http://localhost:3001/api/docs`
+
+To stop the stack, run `docker compose down`. Add `-v` only when you deliberately
+want to remove the persisted local database and Redis data.
 
 ### 1. Start infrastructure
 
