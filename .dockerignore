@@ -1,0 +1,13 @@
+.git
+.agents
+**/node_modules
+**/dist
+**/.next
+**/coverage
+**/.env
+*.log
+README.md
+ARCHITECTURE.md
+DESIGN.md
+WIKI.md
+E2E_QA_TICKET.md
