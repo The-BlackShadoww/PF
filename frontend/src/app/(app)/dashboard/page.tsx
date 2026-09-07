@@ -168,7 +168,7 @@ export default function DashboardPage() {
       </div>
 
       <div
-        className="dashboard-tabs mb-6 flex gap-1 overflow-x-auto rounded-full bg-surface p-1"
+        className="dashboard-tabs mb-6 inline-flex gap-1 overflow-x-auto rounded-full p-1 border border-line backdrop-blur-2xl"
         role="tablist"
         aria-label="Dashboard period"
       >
@@ -180,7 +180,7 @@ export default function DashboardPage() {
             role="tab"
             aria-selected={activeTab === tab.id}
             className={cn(
-              "dashboard-tab rounded-full px-4 py-2.5 text-sm font-semibold focus:outline-none",
+              "dashboard-tab rounded-full px-4 py-2 text-sm font-semibold focus:outline-none",
               activeTab === tab.id
                 ? "dashboard-tab-active bg-primary text-ink"
                 : "dashboard-tab-inactive text-muted",
@@ -193,7 +193,7 @@ export default function DashboardPage() {
 
       {activeTab === "monthly" && (
         <>
-          <section className="grid gap-4 md:grid-cols-3">
+          <section className="grid md:grid-cols-3 border border-line">
             <SummaryCard
               title="Total Income"
               value={monthlySummary.data?.totalIncome ?? 0}
@@ -217,7 +217,7 @@ export default function DashboardPage() {
             />
           </section>
 
-          <section className="grid gap-6 xl:grid-cols-2">
+          <section className="grid xl:grid-cols-3 mt-30">
             <ChartPanel
               title="Monthly Income vs Expense"
               isLoading={isYearlyLoading}
@@ -362,9 +362,9 @@ function ChartPanel({
   children: React.ReactNode;
 }) {
   return (
-    <article className="rounded-card bg-surface p-6">
+    <article className="rounded-card bg-surface">
       <h2 className="text-base font-black text-ink">{title}</h2>
-      <div className="mt-4 h-80">
+      <div className="mt-4 p-6 h-80 border border-line">
         {isLoading ? <ChartSkeleton /> : children}
       </div>
     </article>

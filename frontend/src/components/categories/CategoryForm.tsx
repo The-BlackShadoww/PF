@@ -8,6 +8,7 @@ import { IconPicker } from './IconPicker';
 import { ColorPicker, PRESET_COLORS } from './ColorPicker';
 import { Category, CategoryType } from '../../lib/api/categories';
 import { cn } from '../../lib/utils/cn';
+import { Button } from '@/components/ui/Button';
 
 const categorySchema = z.object({
   name: z.string().min(1, 'Name is required').max(100, 'Name is too long'),
@@ -150,17 +151,17 @@ export function CategoryForm({
         <button
           type="button"
           onClick={onCancel}
-          className="flex-1 py-2 px-4 border border-gray-300 rounded-control text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+          className="flex-1 inline-flex h-8 items-center justify-center rounded-full border border-gray-300 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
         >
           Cancel
         </button>
-        <button
+        <Button
           type="submit"
           disabled={isLoading}
-          className="flex-1 py-2 px-4 bg-gray-900 text-white rounded-control text-sm font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1"
         >
           {isLoading ? 'Saving...' : isEditing ? 'Save Changes' : 'Create Category'}
-        </button>
+        </Button>
       </div>
 
     </form>

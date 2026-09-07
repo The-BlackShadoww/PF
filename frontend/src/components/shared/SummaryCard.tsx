@@ -24,7 +24,7 @@ export function SummaryCard({
   isLoading = false,
 }: SummaryCardProps) {
   return (
-    <article className="border border-line bg-surface p-6">
+    <article className="border-r border-line bg-surface p-6">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-sm font-semibold text-muted">{title}</p>

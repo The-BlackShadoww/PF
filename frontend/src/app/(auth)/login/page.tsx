@@ -7,6 +7,7 @@ import { Suspense, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { Button } from "@/components/ui/Button";
 import { Spinner } from "@/components/ui/Spinner";
 import { authApi } from "@/lib/api/auth";
 import { ApiError, setAccessToken } from "@/lib/api/client";
@@ -154,14 +155,14 @@ function LoginForm({ registered }: LoginFormProps) {
           ) : null}
         </div>
 
-        <button
+        <Button
           type="submit"
           disabled={isSubmitting}
-          className="flex w-full items-center justify-center gap-2 rounded-card bg-primary px-4 py-3 text-sm font-semibold text-ink transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-70"
+          className="w-full h-11 px-4 text-sm font-semibold"
         >
           {isSubmitting ? <Spinner /> : null}
           {isSubmitting ? "Logging in..." : "Log in"}
-        </button>
+        </Button>
       </form>
 
       <p className="text-center text-sm text-muted">

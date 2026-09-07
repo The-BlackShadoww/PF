@@ -7,6 +7,7 @@ import { AccountSettingsTab } from "@/components/settings/AccountSettingsTab";
 import { CategoryForm } from "@/components/categories/CategoryForm";
 import { CategoryRow } from "@/components/categories/CategoryRow";
 import { PageHeader } from "@/components/layouts/PageHeader";
+import { Button } from "@/components/ui/Button";
 import { PreferencesTab } from "@/components/settings/PreferencesTab";
 import { ProfileTab } from "@/components/settings/ProfileTab";
 import { SecurityTab } from "@/components/settings/SecurityTab";
@@ -156,13 +157,12 @@ export default function SettingsPage() {
                 />
               </div>
             ) : (
-              <button
+              <Button
                 onClick={() => setShowCreateForm(true)}
-                className="flex items-center gap-2 rounded-card bg-primary px-5 py-3 text-sm font-semibold text-ink transition hover:bg-primary-hover"
               >
                 <Plus size={16} />
                 New category
-              </button>
+              </Button>
             )}
 
             {isLoading ? (

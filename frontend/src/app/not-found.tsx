@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { acebuilderButtonClass } from "@/components/ui/Button";
+import { cn } from "@/lib/utils/cn";
 
 export default function NotFound() {
   return (
@@ -13,7 +15,8 @@ export default function NotFound() {
         </p>
         <Link
           href="/dashboard"
-          className="mt-6 inline-flex rounded-card bg-primary px-5 py-3 text-sm font-semibold text-ink transition hover:bg-primary-hover"
+          data-slot="button"
+          className={cn(acebuilderButtonClass, "mt-6")}
         >
           Go to dashboard
         </Link>

@@ -3,6 +3,7 @@ import { Pencil, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ColorPicker } from "@/components/categories/ColorPicker";
 import { IconPicker, LucideIcon } from "@/components/categories/IconPicker";
+import { Button } from "@/components/ui/Button";
 import type { SectorAllocation } from "@/lib/api/account";
 import {
   useAccountSummary,
@@ -100,12 +101,12 @@ export function AccountSettingsTab() {
             value={threshold}
             onChange={setThreshold}
           />
-          <button
+          <Button
+            type="submit"
             disabled={setup.isPending}
-            className="w-fit rounded-card bg-primary px-5 py-3 text-sm font-semibold disabled:opacity-60"
           >
             {setup.isPending ? "Saving…" : "Save configuration"}
-          </button>
+          </Button>
         </form>
       </section>
       <section className="border-t border-line pt-8">
@@ -116,17 +117,16 @@ export function AccountSettingsTab() {
               Cash is calculated as the remainder.
             </p>
           </div>
-          <button
+          <Button
             onClick={() => {
               setEditing(null);
               setSector(blank);
             }}
             disabled={available <= 0}
-            className="inline-flex items-center gap-2 rounded-card bg-primary px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
           >
             <Plus size={16} />
             New sector
-          </button>
+          </Button>
         </div>
         <div className="mt-4 rounded-panel bg-canvas p-3 text-sm">
           Allocated: <strong>{total}% / 99%</strong> · Cash receives{" "}
@@ -228,16 +228,16 @@ export function AccountSettingsTab() {
                   setSector(null);
                   setEditing(null);
                 }}
-                className="rounded-card border border-ink px-4 py-2 text-sm font-semibold"
+                className="inline-flex h-8 items-center justify-center rounded-full border border-ink px-3.5 text-sm font-semibold text-ink transition hover:bg-canvas"
               >
                 Cancel
               </button>
-              <button
+              <Button
+                type="submit"
                 disabled={create.isPending || update.isPending}
-                className="rounded-card bg-primary px-4 py-2 text-sm font-semibold"
               >
                 Save sector
-              </button>
+              </Button>
             </div>
           </form>
         )}
