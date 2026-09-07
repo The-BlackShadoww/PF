@@ -11,6 +11,7 @@ import { useMemo, useState } from "react";
 
 import { TransactionForm } from "@/components/forms/TransactionForm";
 import { PageHeader } from "@/components/layouts/PageHeader";
+import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
 import {
   Table,
@@ -124,14 +125,13 @@ export default function TransactionsPage() {
           title="Transactions"
           description="Review and filter your income and expenses."
         />
-        <button
+        <Button
           type="button"
-          className="inline-flex h-12 items-center justify-center gap-2 rounded-card bg-primary px-5 text-sm font-semibold text-ink transition hover:bg-primary-hover"
           onClick={openAddModal}
         >
           <Plus aria-hidden="true" className="h-4 w-4" />
           Add Transaction
-        </button>
+        </Button>
       </div>
 
       <section className="rounded-card bg-surface p-5">

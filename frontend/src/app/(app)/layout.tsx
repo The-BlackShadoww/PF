@@ -11,11 +11,23 @@ export default function AppLayout({ children }: AppLayoutProps) {
     <div className="min-h-screen bg-surface">
       <Sidebar />
       <div className="lg:pl-64">
+        <header className="border-b border-line px-4 py-5 text-xs text-muted md:px-8">
+          <div className="mx-auto flex max-w-[1580px] flex-col gap-1 sm:flex-row sm:justify-between">
+            <span className="font-medium text-foreground">
+              Personal Finance
+            </span>
+            <span>Clear financial decisions, in one place.</span>
+          </div>
+        </header>
         <main className="min-h-[calc(100vh-4rem)] px-4 py-8 text-foreground md:px-8 md:py-10">
-          <div className="mx-auto max-w-[1440px]">{children}</div>
+          <div className="mx-auto w-full max-w-[1580px]">{children}</div>
         </main>
         <footer className="border-t border-line px-4 py-5 text-xs text-muted md:px-8">
-          <div className="mx-auto flex max-w-[1440px] flex-col gap-1 sm:flex-row sm:justify-between"><span className="font-medium text-foreground">Personal Finance</span><span>Clear financial decisions, in one place.</span></div>
+          <div className="mx-auto flex max-w-[1580px] justify-center items-center text-center">
+            <span className="font-medium text-muted">
+              @Personal Finance
+            </span>
+          </div>
         </footer>
       </div>
     </div>

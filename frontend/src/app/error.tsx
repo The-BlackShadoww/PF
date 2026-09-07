@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "@/components/ui/Button";
+
 type ErrorPageProps = {
   error: Error & { digest?: string };
   reset: () => void;
@@ -14,13 +16,13 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
           Unable to load this page
         </h1>
         <p className="mt-2 text-sm text-muted">{error.message}</p>
-        <button
+        <Button
           type="button"
           onClick={reset}
-          className="mt-6 rounded-card bg-primary px-5 py-3 text-sm font-semibold text-ink transition hover:bg-primary-hover"
+          className="mt-6"
         >
           Try again
-        </button>
+        </Button>
       </div>
     </main>
   );

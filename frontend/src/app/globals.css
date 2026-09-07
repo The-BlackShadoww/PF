@@ -5,7 +5,7 @@
    text-ink, border-line, bg-primary, and text-success. */
 :root {
   color-scheme: light;
-  --ds-background: #fff;
+  --ds-background: #fafaf9;
   --ds-foreground: #0a0a0a;
   --ds-surface: #fff;
   --ds-canvas: #f0f0f0;
@@ -32,6 +32,11 @@
   --ds-sidebar-accent: #f5f5f5;
   --ds-sidebar-line: #e5e5e5;
   --ds-radius: 0.5rem;
+  --primary-color: #2667ff;
+  --tertiary-color: #2176ff;
+  --tertiary: #2176ff;
+  --ring: #a1a1a1;
+  --destructive: #e7000b;
 }
 
 .dark {
@@ -50,10 +55,16 @@
   --ds-sidebar-foreground: #fafafa;
   --ds-sidebar-accent: #262626;
   --ds-sidebar-line: #383838;
+  --primary-color: #2667ff;
+  --tertiary-color: #2176ff;
+  --tertiary: #2176ff;
+  --ring: #737373;
+  --destructive: #ff6467;
 }
 
 @theme inline {
   --font-sans: Inter, sans-serif;
+  --font-display: Inter, sans-serif;
   --color-background: var(--ds-background);
   --color-foreground: var(--ds-foreground);
   --color-surface: var(--ds-surface);
@@ -62,12 +73,14 @@
   --color-accent: var(--ds-accent);
   --color-primary: var(--ds-primary);
   --color-primary-hover: var(--ds-primary-hover);
+  --color-tertiary: var(--tertiary-color);
   --color-ink: var(--ds-ink);
   --color-muted: var(--ds-muted);
   --color-success: var(--ds-success);
   --color-success-bright: var(--ds-success-bright);
   --color-danger: var(--ds-danger);
   --color-danger-surface: var(--ds-danger-surface);
+  --color-destructive: var(--destructive);
   --color-warning: var(--ds-warning);
   --color-warning-ink: var(--ds-warning-ink);
   --color-info: var(--ds-info);
@@ -181,8 +194,8 @@
 }
 
 @layer components {
-  .dashboard-page button:hover,
-  .dashboard-page a:hover,
+  .dashboard-page button:not([data-slot="button"]):hover,
+  .dashboard-page a:not([data-slot="button"]):hover,
   .dashboard-page article:hover,
   .dashboard-page .rounded-card:hover,
   .dashboard-page .rounded-panel:hover {
@@ -196,7 +209,7 @@
 }
 @utility dashboard-tab-active {
   background-color: var(--ds-primary);
-  color: #fff;
+  color: var(--ds-surface);
 }
 @utility dashboard-tab-inactive {
   color: var(--ds-foreground);

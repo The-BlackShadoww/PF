@@ -11,6 +11,8 @@ import {
   WalletCards,
 } from "lucide-react";
 import Link from "next/link";
+import { acebuilderButtonClass } from "@/components/ui/Button";
+import { cn } from "@/lib/utils/cn";
 
 const features = [
   {
@@ -80,7 +82,8 @@ export default function HomePage() {
 
           <Link
             href="/dashboard"
-            className="inline-flex h-12 items-center justify-center gap-2 rounded-card bg-primary px-5 text-sm font-semibold text-ink transition hover:bg-primary-hover"
+            data-slot="button"
+            className={acebuilderButtonClass}
           >
             Open app
             <ArrowRight aria-hidden="true" className="h-4 w-4" />
@@ -107,14 +110,15 @@ export default function HomePage() {
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/dashboard"
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-card bg-primary px-6 text-sm font-semibold text-ink transition hover:bg-primary-hover"
+                data-slot="button"
+                className={cn(acebuilderButtonClass, "h-11 px-6")}
               >
                 Go to dashboard
                 <ArrowRight aria-hidden="true" className="h-4 w-4" />
               </Link>
               <Link
                 href="/register"
-                className="inline-flex h-12 items-center justify-center rounded-card border border-ink bg-surface px-6 text-sm font-semibold text-ink transition hover:bg-accent"
+                className="inline-flex h-11 items-center justify-center rounded-full border border-ink bg-surface px-6 text-sm font-semibold text-ink transition hover:bg-accent"
               >
                 Create account
               </Link>

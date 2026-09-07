@@ -11,6 +11,7 @@ import { useCategories } from "@/lib/hooks/useCategories";
 import { useCreateTransaction } from "@/lib/hooks/useCreateTransaction";
 import { useUpdateTransaction } from "@/lib/hooks/useUpdateTransaction";
 import { cn } from "@/lib/utils/cn";
+import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
 import { apiClient } from "@/lib/api/client";
 
@@ -273,15 +274,14 @@ export function TransactionForm({
       <div className="flex justify-end gap-2 border-t border-line pt-5">
         <button
           type="button"
-          className="inline-flex h-11 items-center justify-center rounded-card border border-ink px-5 text-sm font-semibold text-ink transition hover:bg-canvas"
+          className="inline-flex h-8 items-center justify-center rounded-full border border-ink px-3.5 text-sm font-semibold text-ink transition hover:bg-canvas"
           onClick={onCancel}
           disabled={submitting}
         >
           Cancel
         </button>
-        <button
+        <Button
           type="submit"
-          className="inline-flex h-11 items-center justify-center rounded-card bg-primary px-5 text-sm font-semibold text-ink transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
           disabled={submitting}
         >
           {submitting
@@ -289,7 +289,7 @@ export function TransactionForm({
             : isEditing
               ? "Save Transaction"
               : "Add Transaction"}
-        </button>
+        </Button>
       </div>
     </form>
   );
