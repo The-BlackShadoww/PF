@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 
 import { useQuarterlySummary } from "@/lib/hooks/useQuarterlySummary";
+import { acebuilderActiveClasses } from "@/components/ui/Button";
 import { cn } from "@/lib/utils/cn";
 
 import { BreakdownTable } from "./BreakdownTable";
@@ -58,7 +59,7 @@ export function QuarterlyView() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 rounded-card bg-surface p-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="inline-flex rounded-full bg-canvas p-1">
+        <div className="inline-flex rounded-full bg-canvas p-1 border border-line">
           {QUARTERS.map(({ q, label, months }) => {
             const isFutureQuarter =
               selectedYear === currentYear && q > currentQuarter;
@@ -67,15 +68,16 @@ export function QuarterlyView() {
               <button
                 key={q}
                 type="button"
+                data-slot="button"
                 onClick={() => setSelectedQuarter(q)}
                 disabled={isFutureQuarter}
                 className={cn(
-                  "flex min-w-16 flex-col items-center rounded-full px-3 py-1.5 text-xs font-semibold",
+                  "flex min-w-16 flex-col items-center rounded-full px-3 py-1.5 text-xs font-medium cursor-pointer font-display transition-all duration-200 active:scale-[0.98] outline-none",
                   selectedQuarter === q
-                    ? "bg-primary text-ink"
-                    : "text-muted",
+                    ? acebuilderActiveClasses
+                    : "text-muted hover:text-ink hover:bg-canvas/80",
                   isFutureQuarter &&
-                    "cursor-not-allowed text-muted opacity-50",
+                    "cursor-not-allowed text-muted opacity-40 pointer-events-none",
                 )}
                 title={
                   isFutureQuarter
@@ -83,12 +85,11 @@ export function QuarterlyView() {
                     : months
                 }
               >
-                {label}
+                <span className="font-semibold">{label}</span>
                 <span
                   className={cn(
-                    "mt-0.5 text-xs font-normal",
-                    selectedQuarter === q ? "text-muted" : "text-muted",
-                    isFutureQuarter && "text-muted",
+                    "mt-0.5 text-[10px]",
+                    selectedQuarter === q ? "text-white/80" : "text-muted",
                   )}
                 >
                   {months.replace(" - ", "-")}
