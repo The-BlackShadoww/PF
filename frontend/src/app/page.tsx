@@ -11,7 +11,10 @@ import {
   WalletCards,
 } from "lucide-react";
 import Link from "next/link";
-import { acebuilderButtonClass } from "@/components/ui/Button";
+import {
+  acebuilderButtonClass,
+  acebuilderActiveClasses,
+} from "@/components/ui/Button";
 import { cn } from "@/lib/utils/cn";
 
 const features = [
@@ -147,11 +150,11 @@ export default function HomePage() {
                   Income, expenses, and savings
                 </p>
               </div>
-              <div className="inline-flex w-fit rounded-full bg-canvas p-1 text-xs font-semibold text-muted">
-                <span className="rounded-full bg-surface px-3 py-1 text-ink">
+              <div className="inline-flex w-fit rounded-full bg-canvas p-1 text-xs font-medium text-muted border border-line">
+                <span className={cn("rounded-full px-3 py-1 font-display", acebuilderActiveClasses)}>
                   Monthly
                 </span>
-                <span className="px-3 py-1">Yearly</span>
+                <span className="px-3 py-1 font-display">Yearly</span>
               </div>
             </div>
 

@@ -27,6 +27,7 @@ import type { YearlySummary } from "@/lib/api/calculations";
 import { useCategoryBreakdown } from "@/lib/hooks/useCategoryBreakdown";
 import { useMonthlySummary } from "@/lib/hooks/useMonthlySummary";
 import { useYearlySummary } from "@/lib/hooks/useYearlySummary";
+import { acebuilderActiveClasses } from "@/components/ui/Button";
 import { cn } from "@/lib/utils/cn";
 
 const MONTH_LABELS = [
@@ -176,14 +177,15 @@ export default function DashboardPage() {
           <button
             key={tab.id}
             type="button"
+            data-slot="button"
             onClick={() => setActiveTab(tab.id)}
             role="tab"
             aria-selected={activeTab === tab.id}
             className={cn(
-              "dashboard-tab rounded-full px-4 py-2 text-sm font-semibold focus:outline-none",
+              "dashboard-tab inline-flex cursor-pointer font-display items-center justify-center whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 active:scale-[0.98] outline-none",
               activeTab === tab.id
-                ? "dashboard-tab-active bg-primary text-ink"
-                : "dashboard-tab-inactive text-muted",
+                ? `dashboard-tab-active ${acebuilderActiveClasses}`
+                : "dashboard-tab-inactive text-muted hover:text-ink hover:bg-canvas/60",
             )}
           >
             {tab.label}

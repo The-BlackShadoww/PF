@@ -208,11 +208,12 @@
   background-color: var(--ds-canvas);
 }
 @utility dashboard-tab-active {
-  background-color: var(--ds-primary);
-  color: var(--ds-surface);
+  background: linear-gradient(to bottom, var(--tertiary-color), var(--primary-color));
+  color: #fff;
+  box-shadow: 0px 0px 10px 0px rgba(255, 255, 255, 0.2) inset;
 }
 @utility dashboard-tab-inactive {
-  color: var(--ds-foreground);
+  color: var(--ds-muted);
 }
 @utility surface-card {
   border: 1px solid var(--ds-line);

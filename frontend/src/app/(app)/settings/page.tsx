@@ -7,7 +7,7 @@ import { AccountSettingsTab } from "@/components/settings/AccountSettingsTab";
 import { CategoryForm } from "@/components/categories/CategoryForm";
 import { CategoryRow } from "@/components/categories/CategoryRow";
 import { PageHeader } from "@/components/layouts/PageHeader";
-import { Button } from "@/components/ui/Button";
+import { Button, acebuilderActiveClasses } from "@/components/ui/Button";
 import { PreferencesTab } from "@/components/settings/PreferencesTab";
 import { ProfileTab } from "@/components/settings/ProfileTab";
 import { SecurityTab } from "@/components/settings/SecurityTab";
@@ -101,15 +101,17 @@ export default function SettingsPage() {
         description="Manage your account, security, preferences, and categories."
       />
 
-      <div className="flex gap-1 overflow-x-auto rounded-full bg-surface p-1">
+      <div className="flex gap-1 overflow-x-auto rounded-full bg-surface p-1 border border-line">
         {TABS.map((tab) => (
           <button
             key={tab.id}
+            type="button"
+            data-slot="button"
             onClick={() => setActiveTab(tab.id)}
             className={cn(
-              "whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition-colors focus:outline-none",
+              "inline-flex cursor-pointer font-display items-center justify-center whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 active:scale-[0.98] outline-none",
               activeTab === tab.id
-                ? "bg-primary text-ink"
+                ? acebuilderActiveClasses
                 : "text-muted hover:bg-canvas hover:text-ink",
             )}
           >

@@ -11,7 +11,7 @@ import { useCategories } from "@/lib/hooks/useCategories";
 import { useCreateTransaction } from "@/lib/hooks/useCreateTransaction";
 import { useUpdateTransaction } from "@/lib/hooks/useUpdateTransaction";
 import { cn } from "@/lib/utils/cn";
-import { Button } from "@/components/ui/Button";
+import { Button, acebuilderActiveClasses } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
 import { apiClient } from "@/lib/api/client";
 
@@ -181,10 +181,11 @@ export function TransactionForm({
             <button
               key={transactionType}
               type="button"
+              data-slot="button"
               className={cn(
-                "h-11 rounded-card text-sm font-semibold capitalize transition",
+                "h-10 rounded-full text-sm font-medium capitalize cursor-pointer font-display transition-all duration-200 active:scale-[0.98] outline-none",
                 selectedType === transactionType
-                  ? "bg-primary text-ink"
+                  ? acebuilderActiveClasses
                   : "border border-ink bg-surface text-ink hover:bg-canvas",
               )}
               onClick={() => handleTypeChange(transactionType)}
