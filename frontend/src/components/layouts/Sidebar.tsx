@@ -175,7 +175,7 @@ export function Sidebar() {
           </span>
           <span>Personal Finance</span>
         </Link>
-        <p className="mb-3 px-3 text-xs font-semibold uppercase tracking-[.12em] text-muted">
+        <p className="mb-3 px-3 text-xs font-medium text-muted">
           Workspace
         </p>
         {navigation()}

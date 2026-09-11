@@ -38,25 +38,25 @@ export function BreakdownTable({
   }
 
   return (
-    <div className="overflow-hidden rounded-card bg-surface">
+    <div className="overflow-hidden rounded-card surface-card bg-surface">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-line bg-canvas">
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-normal text-muted">
+              <th className="px-4 py-3 text-left text-xs font-semibold text-muted">
                 Month
               </th>
-              <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-normal text-muted">
+              <th className="px-4 py-3 text-right text-xs font-semibold text-muted">
                 Income
               </th>
-              <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-normal text-muted">
+              <th className="px-4 py-3 text-right text-xs font-semibold text-muted">
                 Expenses
               </th>
-              <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-normal text-muted">
+              <th className="px-4 py-3 text-right text-xs font-semibold text-muted">
                 Savings
               </th>
               {hasComparison && (
-                <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-normal text-muted">
+                <th className="px-4 py-3 text-right text-xs font-semibold text-muted">
                   vs {comparisonYear}
                 </th>
               )}
@@ -80,30 +80,30 @@ export function BreakdownTable({
                     <tr
                       key={row.month}
                       className={cn(
-                        "",
-                        index % 2 === 0 ? "bg-surface" : "bg-canvas/35",
+                        "transition-colors hover:bg-accent/30",
+                        index % 2 === 0 ? "bg-surface" : "bg-canvas/20",
                       )}
                     >
-                      <td className="px-4 py-3 font-semibold text-ink">
+                      <td className="px-4 py-3 font-medium text-ink">
                         {monthName(row.month)}
                       </td>
                       <td className="px-4 py-3 text-right text-success">
                         {row.totalIncome > 0 ? (
                           formatDollar(row.totalIncome)
                         ) : (
-                          <span className="text-muted">-</span>
+                          <span className="text-muted">—</span>
                         )}
                       </td>
                       <td className="px-4 py-3 text-right text-danger">
                         {row.totalExpense > 0 ? (
                           formatDollar(row.totalExpense)
                         ) : (
-                          <span className="text-muted">-</span>
+                          <span className="text-muted">—</span>
                         )}
                       </td>
                       <td
                         className={cn(
-                          "px-4 py-3 text-right font-semibold",
+                          "px-4 py-3 text-right font-medium",
                           savingsColorClass(row.savings),
                         )}
                       >
@@ -113,13 +113,13 @@ export function BreakdownTable({
                             {formatDollar(row.savings)}
                           </>
                         ) : (
-                          <span className="text-muted">-</span>
+                          <span className="text-muted">—</span>
                         )}
                       </td>
                       {hasComparison && (
                         <td
                           className={cn(
-                            "px-4 py-3 text-right text-xs font-semibold",
+                            "px-4 py-3 text-right text-xs font-medium",
                             savingsDiff === null
                               ? "text-muted"
                               : savingsDiff > 0
@@ -130,7 +130,7 @@ export function BreakdownTable({
                           )}
                         >
                           {savingsDiff === null ? (
-                            "-"
+                            "—"
                           ) : savingsDiff === 0 ? (
                             "No change"
                           ) : (
@@ -148,22 +148,22 @@ export function BreakdownTable({
           {!isLoading && rows.length > 1 && (
             <tfoot>
               <tr className="border-t-2 border-line bg-canvas">
-                <td className="px-4 py-3 text-xs font-bold uppercase tracking-normal text-muted">
+                <td className="px-4 py-3 text-xs font-semibold text-muted">
                   Total
                 </td>
-                <td className="px-4 py-3 text-right font-bold text-success">
+                <td className="px-4 py-3 text-right font-semibold text-success">
                   {formatDollar(
                     rows.reduce((sum, row) => sum + row.totalIncome, 0),
                   )}
                 </td>
-                <td className="px-4 py-3 text-right font-bold text-danger">
+                <td className="px-4 py-3 text-right font-semibold text-danger">
                   {formatDollar(
                     rows.reduce((sum, row) => sum + row.totalExpense, 0),
                   )}
                 </td>
                 <td
                   className={cn(
-                    "px-4 py-3 text-right font-bold",
+                    "px-4 py-3 text-right font-semibold",
                     savingsColorClass(totalSavings),
                   )}
                 >

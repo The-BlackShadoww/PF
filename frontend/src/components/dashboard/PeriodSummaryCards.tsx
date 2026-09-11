@@ -1,6 +1,6 @@
 "use client";
 
-import { Percent, TrendingDown, TrendingUp, Wallet } from "lucide-react";
+import { TrendingDown, TrendingUp, Wallet, Percent } from "lucide-react";
 
 import { cn } from "@/lib/utils/cn";
 import { formatDollar } from "@/lib/utils/format";
@@ -15,10 +15,9 @@ interface PeriodSummaryCardsProps {
 
 function SkeletonCard() {
   return (
-    <div className="space-y-3 rounded-card bg-surface p-5">
+    <div className="surface-card space-y-3 rounded-card bg-surface p-5">
       <div className="h-3 w-1/2 animate-pulse rounded bg-canvas" />
       <div className="h-7 w-2/3 animate-pulse rounded bg-canvas" />
-      <div className="h-2 w-1/3 animate-pulse rounded bg-canvas" />
     </div>
   );
 }
@@ -32,7 +31,7 @@ export function PeriodSummaryCards({
 }: PeriodSummaryCardsProps) {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {Array.from({ length: 4 }, (_value, index) => (
           <SkeletonCard key={index} />
         ))}
@@ -42,56 +41,59 @@ export function PeriodSummaryCards({
 
   const cards = [
     {
-      label: "Total Income",
+      label: "Total income",
       value: formatDollar(totalIncome),
       icon: TrendingUp,
       iconColor: "text-success-bright",
-      valueColor: "text-success",
-      bg: "bg-accent",
+      valueColor: "text-ink",
+      accent: "border-l-success-bright",
     },
     {
-      label: "Total Expenses",
+      label: "Total expenses",
       value: formatDollar(totalExpense),
       icon: TrendingDown,
       iconColor: "text-danger",
-      valueColor: "text-danger",
-      bg: "bg-surface",
+      valueColor: "text-ink",
+      accent: "border-l-danger",
     },
     {
-      label: "Net Savings",
-      value: (savings < 0 ? "-" : "") + formatDollar(savings),
+      label: "Net savings",
+      value: (savings < 0 ? "-" : "") + formatDollar(Math.abs(savings)),
       icon: Wallet,
       iconColor: savings >= 0 ? "text-success" : "text-warning",
-      valueColor: savings >= 0 ? "text-success" : "text-warning-ink",
-      bg: savings >= 0 ? "bg-chart-peach" : "bg-chart-yellow",
+      valueColor: savings >= 0 ? "text-ink" : "text-warning-ink",
+      accent: savings >= 0 ? "border-l-success" : "border-l-warning",
     },
     {
-      label: "Savings Rate",
+      label: "Savings rate",
       value: `${savingsRate}%`,
       icon: Percent,
-      iconColor: "text-ink",
+      iconColor: "text-primary",
       valueColor: "text-ink",
-      bg: "bg-surface",
+      accent: "border-l-primary",
     },
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
       {cards.map((card) => {
         const Icon = card.icon;
 
         return (
           <div
             key={card.label}
-            className={cn("space-y-2 rounded-card p-5", card.bg)}
+            className={cn(
+              "surface-card rounded-card border-l-[3px] bg-surface p-5",
+              card.accent,
+            )}
           >
             <div className="flex items-center gap-2">
-              <Icon aria-hidden="true" className={card.iconColor} size={15} />
-              <span className="text-xs font-semibold text-muted">
+              <Icon aria-hidden="true" className={cn("shrink-0", card.iconColor)} size={14} />
+              <span className="text-xs font-medium text-muted">
                 {card.label}
               </span>
             </div>
-            <p className={cn("text-2xl font-black", card.valueColor)}>
+            <p className={cn("mt-2 text-2xl font-semibold tracking-tight", card.valueColor)}>
               {card.value}
             </p>
           </div>
