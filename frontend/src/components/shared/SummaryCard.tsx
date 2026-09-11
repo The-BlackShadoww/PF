@@ -10,10 +10,10 @@ type SummaryCardProps = {
   isLoading?: boolean;
 };
 
-const toneStyles: Record<SummaryCardTone, string> = {
-  income: "bg-info text-ink",
-  expense: "bg-canvas text-ink",
-  savings: "bg-canvas text-ink",
+const toneAccent: Record<SummaryCardTone, string> = {
+  income: "border-l-success-bright",
+  expense: "border-l-danger",
+  savings: "border-l-primary",
 };
 
 export function SummaryCard({
@@ -24,32 +24,24 @@ export function SummaryCard({
   isLoading = false,
 }: SummaryCardProps) {
   return (
-    <article className="border-r border-line bg-surface p-6">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-sm font-semibold text-muted">{title}</p>
-          {isLoading ? (
-            <div className="mt-3 h-8 w-32 animate-pulse rounded-control bg-canvas" />
-          ) : (
-            <p className="mt-2 text-metric font-normal leading-tight tracking-normal text-ink">
-              {formatAmount(value)}
-            </p>
-          )}
-        </div>
-        <span
-          aria-hidden="true"
-          className={cn("h-3 w-3", toneStyles[tone])}
-        />
-      </div>
+    <article
+      className={cn(
+        "surface-card rounded-card border-l-[3px] bg-surface p-5",
+        toneAccent[tone],
+      )}
+    >
+      <p className="text-xs font-medium text-muted">{title}</p>
       {isLoading ? (
-        <div className="mt-4 h-4 w-24 animate-pulse rounded bg-canvas" />
+        <div className="mt-3 h-8 w-32 animate-pulse rounded-control bg-canvas" />
       ) : (
-        <p
-          className={cn(
-            "mt-4 inline-flex border-l-2 border-primary px-3 py-1 text-sm font-medium",
-            toneStyles[tone],
-          )}
-        >
+        <p className="mt-2 text-metric font-semibold leading-tight tracking-tight text-ink">
+          {formatAmount(value)}
+        </p>
+      )}
+      {isLoading ? (
+        <div className="mt-3 h-4 w-24 animate-pulse rounded bg-canvas" />
+      ) : (
+        <p className="mt-3 text-xs text-muted">
           {subtitle}
         </p>
       )}

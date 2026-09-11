@@ -59,7 +59,7 @@ export function TableHead({
   return (
     <th
       className={cn(
-        "h-12 whitespace-nowrap px-4 text-left text-xs font-semibold uppercase tracking-normal text-muted",
+        "h-12 whitespace-nowrap px-4 text-left text-xs font-semibold text-muted",
         className,
       )}
       {...props}

@@ -37,6 +37,11 @@
   --tertiary: #2176ff;
   --ring: #a1a1a1;
   --destructive: #e7000b;
+  /* Chart tokens */
+  --ds-chart-grid: #f0f0f0;
+  --ds-chart-tick: #a1a1a1;
+  --ds-chart-tooltip-bg: #fff;
+  --ds-chart-tooltip-border: #e5e5e5;
 }
 
 .dark {
@@ -60,6 +65,11 @@
   --tertiary: #2176ff;
   --ring: #737373;
   --destructive: #ff6467;
+  /* Chart tokens dark */
+  --ds-chart-grid: #2a2a2a;
+  --ds-chart-tick: #737373;
+  --ds-chart-tooltip-bg: #191919;
+  --ds-chart-tooltip-border: #383838;
 }
 
 @theme inline {
@@ -93,6 +103,8 @@
   --color-sidebar-foreground: var(--ds-sidebar-foreground);
   --color-sidebar-accent: var(--ds-sidebar-accent);
   --color-sidebar-line: var(--ds-sidebar-line);
+  --color-chart-grid: var(--ds-chart-grid);
+  --color-chart-tick: var(--ds-chart-tick);
   /* Keep the interface crisp: controls are subtly rounded and cards only
      slightly softer than their contents. */
   --radius-control: 6px;
@@ -194,11 +206,45 @@
 }
 
 @layer components {
+  /* Recharts custom tooltip */
+  .recharts-custom-tooltip {
+    background: var(--ds-chart-tooltip-bg);
+    border: 1px solid var(--ds-chart-tooltip-border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    box-shadow: 0 4px 12px rgb(0 0 0 / 8%);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .recharts-custom-tooltip .tooltip-label {
+    font-weight: 600;
+    color: var(--ds-muted);
+    margin-bottom: 6px;
+  }
+  .recharts-custom-tooltip .tooltip-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 2px 0;
+  }
+  .recharts-custom-tooltip .tooltip-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .recharts-custom-tooltip .tooltip-name {
+    color: var(--ds-muted);
+  }
+  .recharts-custom-tooltip .tooltip-value {
+    font-weight: 600;
+    color: var(--ds-ink);
+    margin-left: auto;
+  }
+
+  /* Suppress hover transforms on dashboard interactive elements */
   .dashboard-page button:not([data-slot="button"]):hover,
-  .dashboard-page a:not([data-slot="button"]):hover,
-  .dashboard-page article:hover,
-  .dashboard-page .rounded-card:hover,
-  .dashboard-page .rounded-panel:hover {
+  .dashboard-page a:not([data-slot="button"]):hover {
     transform: none;
     box-shadow: none;
   }
