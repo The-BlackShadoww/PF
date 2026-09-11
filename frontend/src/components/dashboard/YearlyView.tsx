@@ -5,8 +5,6 @@ import { useState } from "react";
 import {
   Bar,
   BarChart,
-  CartesianGrid,
-  Legend,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -29,16 +27,16 @@ function YearlyChartTooltip({
   if (!active || !payload || payload.length === 0) return null;
 
   return (
-    <div className="border border-line bg-surface p-3 text-xs">
-      <p className="mb-2 font-semibold text-muted">{label}</p>
+    <div className="recharts-custom-tooltip">
+      <p className="tooltip-label">{label}</p>
       {payload.map((entry) => (
-        <div key={entry.dataKey} className="mb-1 flex items-center gap-2">
+        <div key={entry.dataKey} className="tooltip-row">
           <span
-            className="h-2 w-2 shrink-0 rounded-full"
+            className="tooltip-dot"
             style={{ backgroundColor: entry.color }}
           />
-          <span className="text-muted">{entry.name}:</span>
-          <span className="font-semibold text-ink">
+          <span className="tooltip-name">{entry.name}</span>
+          <span className="tooltip-value">
             {formatDollar(Number(entry.value ?? 0))}
           </span>
         </div>
@@ -84,21 +82,21 @@ export function YearlyView() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-base font-black text-ink">
-          {selectedYear} Overview
+        <h3 className="text-base font-semibold text-ink">
+          {selectedYear} overview
         </h3>
 
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={goToPreviousYear}
-            className="rounded-full p-1.5 text-muted"
+            className="rounded-full p-1.5 text-muted hover:text-ink"
             title="Previous year"
           >
             <ChevronLeft aria-hidden="true" size={16} />
           </button>
 
-          <span className="min-w-10 text-center text-sm font-semibold text-ink">
+          <span className="min-w-10 text-center text-sm font-medium text-ink">
             {selectedYear}
           </span>
 
@@ -107,10 +105,10 @@ export function YearlyView() {
             onClick={goToNextYear}
             disabled={selectedYear >= currentYear}
             className={cn(
-              "rounded-control p-1.5",
+              "rounded-full p-1.5",
               selectedYear >= currentYear
                 ? "cursor-not-allowed text-muted opacity-40"
-                : "text-muted",
+                : "text-muted hover:text-ink",
             )}
             title={
               selectedYear >= currentYear
@@ -124,7 +122,7 @@ export function YearlyView() {
       </div>
 
       {error && (
-        <div className="rounded-card bg-danger-surface p-4 text-sm font-semibold text-white">
+        <div className="rounded-card bg-danger-surface p-4 text-sm font-medium text-white">
           Failed to load yearly data. Please try again.
         </div>
       )}
@@ -142,8 +140,8 @@ export function YearlyView() {
         hasPriorYear &&
         priorSummary &&
         summary && (
-          <div className="flex flex-wrap gap-4 rounded-card bg-surface p-4 text-sm">
-            <span className="w-full text-xs font-semibold uppercase tracking-normal text-muted">
+          <div className="flex flex-wrap gap-4 surface-card rounded-card bg-surface p-4 text-sm">
+            <span className="w-full text-xs font-medium text-muted">
               Compared to {selectedYear - 1}
             </span>
             <ComparisonPill
@@ -166,42 +164,55 @@ export function YearlyView() {
 
       {!isLoading && chartData.length > 0 && (
         <div>
-          <h4 className="mb-3 text-sm font-semibold text-muted">
-            Income vs Expenses - {selectedYear}
+          <h4 className="mb-3 text-sm font-medium text-muted">
+            Income vs expenses – {selectedYear}
           </h4>
-          <div className="rounded-card bg-surface p-5">
+          <div className="surface-card rounded-card bg-surface p-5">
+            <div className="mb-3 flex items-center gap-4">
+              <div className="flex items-center gap-1.5 text-xs text-muted">
+                <span className="inline-block h-2 w-2 rounded-full bg-primary" />
+                Income
+              </div>
+              <div className="flex items-center gap-1.5 text-xs text-muted">
+                <span className="inline-block h-2 w-2 rounded-full bg-danger" />
+                Expenses
+              </div>
+            </div>
             <ResponsiveContainer width="100%" height={260}>
               <BarChart
                 data={chartData}
                 margin={{ top: 4, right: 8, left: 8, bottom: 0 }}
-                barGap={2}
+                barGap={3}
                 barSize={16}
               >
-                <CartesianGrid
-                  stroke="#e0e0e0"
-                  strokeDasharray="3 3"
-                  vertical={false}
-                />
                 <XAxis
                   dataKey="month"
-                  tick={{ fontSize: 11, fill: "#8c8c8c" }}
+                  tick={{ fontSize: 11, fill: "var(--ds-chart-tick)" }}
                   axisLine={false}
                   tickLine={false}
                 />
                 <YAxis
-                  tick={{ fontSize: 11, fill: "#8c8c8c" }}
+                  tick={{ fontSize: 11, fill: "var(--ds-chart-tick)" }}
                   axisLine={false}
                   tickLine={false}
                   tickFormatter={(value) =>
                     `$${(Number(value) / 1000).toFixed(0)}k`
                   }
                 />
-                <Tooltip content={<YearlyChartTooltip />} />
-                <Legend
-                  wrapperStyle={{ fontSize: "12px", paddingTop: "16px" }}
+                <Tooltip
+                  content={<YearlyChartTooltip />}
+                  cursor={{ fill: "var(--ds-canvas)", opacity: 0.5 }}
                 />
-                <Bar dataKey="Income" fill="#0f62fe" radius={0} />
-                <Bar dataKey="Expenses" fill="#da1e28" radius={0} />
+                <Bar
+                  dataKey="Income"
+                  fill="var(--ds-primary)"
+                  radius={[4, 4, 0, 0]}
+                />
+                <Bar
+                  dataKey="Expenses"
+                  fill="var(--ds-danger)"
+                  radius={[4, 4, 0, 0]}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -210,8 +221,8 @@ export function YearlyView() {
 
       <div>
         <div className="mb-3 flex items-center justify-between gap-4">
-          <h4 className="text-sm font-semibold text-muted">
-            Monthly Breakdown
+          <h4 className="text-sm font-medium text-muted">
+            Monthly breakdown
           </h4>
           {hasPriorYear && (
             <span className="text-xs text-muted">
@@ -256,7 +267,7 @@ function ComparisonPill({
       <span className="text-xs text-muted">{label}</span>
       <span
         className={cn(
-          "text-xs font-semibold",
+          "text-xs font-medium",
           isBetter ? "text-success" : "text-danger",
         )}
       >

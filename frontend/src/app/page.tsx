@@ -2,10 +2,8 @@ import {
   ArrowRight,
   BarChart3,
   CalendarRange,
-  CheckCircle2,
   FileDown,
   LockKeyhole,
-  PieChart,
   ReceiptText,
   ShieldCheck,
   WalletCards,
@@ -23,21 +21,18 @@ const features = [
     description:
       "Filter income and expenses by date, type, and category with a clean table built for day-to-day review.",
     icon: ReceiptText,
-    surface: "bg-canvas",
   },
   {
     title: "Read your cash flow",
     description:
       "Monthly, quarterly, and yearly summaries show income, expense, savings, and category trends in one place.",
     icon: BarChart3,
-    surface: "bg-accent",
   },
   {
     title: "Export reports",
     description:
       "Generate CSV or PDF reports for any date range when you need records for planning, sharing, or tax season.",
     icon: FileDown,
-    surface: "bg-ink text-primary",
   },
 ];
 
@@ -50,12 +45,13 @@ const workflowItems = [
 const stats = [
   { label: "Monthly income", value: "$8,420", tone: "text-success" },
   { label: "Expenses", value: "$4,180", tone: "text-danger" },
-  { label: "Savings rate", value: "50.4%", tone: "text-ink" },
+  { label: "Savings rate", value: "50.4%", tone: "text-primary" },
 ];
 
 export default function HomePage() {
   return (
     <main className="min-h-screen bg-surface text-ink">
+      {/* ─── Navigation ─── */}
       <header className="sticky top-0 z-30 border-b border-line bg-surface/95 backdrop-blur">
         <nav
           aria-label="Primary navigation"
@@ -63,22 +59,22 @@ export default function HomePage() {
         >
           <Link
             href="/"
-            className="inline-flex items-center gap-3 text-sm font-black text-ink"
+            className="inline-flex items-center gap-3 text-sm font-semibold text-ink"
           >
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-primary text-ink">
-              <WalletCards aria-hidden="true" className="h-5 w-5" />
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-primary text-white">
+              <WalletCards aria-hidden="true" className="h-4 w-4" />
             </span>
             Personal Finance
           </Link>
 
-          <div className="hidden items-center gap-7 text-sm font-semibold text-ink md:flex">
-            <a href="#features" className="transition hover:text-success">
+          <div className="hidden items-center gap-7 text-sm font-medium text-muted md:flex">
+            <a href="#features" className="transition hover:text-ink">
               Features
             </a>
-            <a href="#security" className="transition hover:text-success">
+            <a href="#security" className="transition hover:text-ink">
               Security
             </a>
-            <a href="#reports" className="transition hover:text-success">
+            <a href="#reports" className="transition hover:text-ink">
               Reports
             </a>
           </div>
@@ -94,20 +90,22 @@ export default function HomePage() {
         </nav>
       </header>
 
-      <section className="bg-canvas px-4 py-12 sm:px-6 lg:px-8">
-        <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[0.95fr_1.05fr]">
-          <div className="max-w-2xl">
-            <p className="inline-flex items-center gap-2 rounded-full bg-surface px-4 py-2 text-sm font-semibold text-success">
-              <ShieldCheck aria-hidden="true" className="h-4 w-4" />
-              Private planning for everyday money decisions
-            </p>
-            <h1 className="mt-6 max-w-4xl text-6xl font-black leading-[0.9] tracking-normal text-ink sm:text-7xl lg:text-8xl">
-              Personal Finance
+      {/* ─── Hero ─── */}
+      <section className="bg-canvas px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+        <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1fr_1.1fr]">
+          <div className="max-w-xl">
+            <div className="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1.5 text-xs font-medium text-success">
+              <ShieldCheck aria-hidden="true" className="h-3.5 w-3.5" />
+              Private financial planning
+            </div>
+            <h1 className="mt-6 text-5xl font-semibold leading-[1.1] tracking-tight text-ink sm:text-6xl lg:text-7xl">
+              Your money,
+              <br />
+              clearly organized
             </h1>
-            <p className="mt-6 max-w-xl text-lg leading-8 text-muted">
-              Turn transactions into a clear money picture with dashboards,
-              category breakdowns, budgets, and exportable reports that are
-              ready when you are.
+            <p className="mt-5 max-w-md text-base leading-relaxed text-muted">
+              Turn transactions into a clear financial picture with dashboards,
+              category breakdowns, budgets, and exportable reports.
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -121,32 +119,32 @@ export default function HomePage() {
               </Link>
               <Link
                 href="/register"
-                className="inline-flex h-11 items-center justify-center rounded-full border border-ink bg-surface px-6 text-sm font-semibold text-ink transition hover:bg-accent"
+                className="inline-flex h-11 items-center justify-center rounded-full border border-line bg-surface px-6 text-sm font-medium text-ink transition hover:bg-canvas"
               >
                 Create account
               </Link>
             </div>
 
-            <div className="mt-8 grid gap-3 text-sm font-medium text-muted">
+            <div className="mt-8 grid gap-2.5 text-sm text-muted">
               {workflowItems.map((item) => (
-                <div key={item} className="flex items-center gap-3">
-                  <CheckCircle2
-                    aria-hidden="true"
-                    className="h-5 w-5 shrink-0 text-success-bright"
-                  />
+                <div key={item} className="flex items-center gap-2.5">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-success-bright/10">
+                    <span className="h-1.5 w-1.5 rounded-full bg-success-bright" />
+                  </span>
                   <span>{item}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="rounded-card border border-ink bg-surface p-5">
-            <div className="flex flex-col gap-3 border-b border-line pb-5 sm:flex-row sm:items-center sm:justify-between">
+          {/* ─── Hero preview card ─── */}
+          <div className="surface-card rounded-card bg-surface p-5">
+            <div className="flex flex-col gap-3 border-b border-line pb-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <p className="text-sm font-black text-ink">
+                <p className="text-sm font-semibold text-ink">
                   August overview
                 </p>
-                <p className="text-xs text-muted">
+                <p className="mt-0.5 text-xs text-muted">
                   Income, expenses, and savings
                 </p>
               </div>
@@ -158,82 +156,95 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="mt-5 grid gap-3 sm:grid-cols-3">
+            {/* Stats row */}
+            <div className="mt-4 grid gap-3 sm:grid-cols-3">
               {stats.map((stat) => (
-                <div key={stat.label} className="rounded-card bg-canvas p-4">
-                  <p className="text-xs font-semibold text-muted">
+                <div key={stat.label} className="rounded-card border border-line bg-canvas/50 p-4">
+                  <p className="text-xs font-medium text-muted">
                     {stat.label}
                   </p>
-                  <p className={`mt-2 text-3xl font-black ${stat.tone}`}>
+                  <p className={`mt-1.5 text-2xl font-semibold tracking-tight ${stat.tone}`}>
                     {stat.value}
                   </p>
                 </div>
               ))}
             </div>
 
-            <div className="mt-5 grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
-              <div className="rounded-card bg-accent p-5">
+            {/* Bento chart area: bar chart left, categories right */}
+            <div className="mt-4 grid gap-3 lg:grid-cols-[1.2fr_0.8fr]">
+              {/* Bar chart */}
+              <div className="rounded-card bg-canvas/50 border border-line p-5">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-black text-ink">
+                  <p className="text-sm font-semibold text-ink">
                     Cash flow
                   </p>
-                  <BarChart3
-                    aria-hidden="true"
-                    className="h-4 w-4 text-muted"
-                  />
+                  <div className="flex items-center gap-3 text-xs text-muted">
+                    <span className="flex items-center gap-1">
+                      <span className="inline-block h-2 w-2 rounded-full bg-success-bright" />
+                      Income
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <span className="inline-block h-2 w-2 rounded-full bg-danger" />
+                      Expense
+                    </span>
+                  </div>
                 </div>
-                <div className="mt-6 flex h-52 items-end gap-3">
+                <div className="mt-5 flex h-44 items-end gap-2.5">
                   {[48, 64, 42, 72, 56, 86].map((height, index) => (
                     <div
-                      key={height}
-                      className="flex flex-1 items-end gap-1 rounded-t-lg"
+                      key={`bar-${index}`}
+                      className="flex flex-1 items-end gap-1"
                     >
                       <span
-                        className="w-full rounded-t-lg bg-success-bright"
+                        className="w-full rounded-t-md bg-success-bright"
                         style={{ height: `${height}%` }}
                       />
                       <span
-                        className="w-full rounded-t-lg bg-danger"
+                        className="w-full rounded-t-md bg-danger"
                         style={{ height: `${Math.max(24, height - 18)}%` }}
                       />
-                      <span className="sr-only">Month {index + 1}</span>
                     </div>
+                  ))}
+                </div>
+                <div className="mt-3 flex justify-between text-[10px] text-muted">
+                  {["Mar", "Apr", "May", "Jun", "Jul", "Aug"].map((m) => (
+                    <span key={m}>{m}</span>
                   ))}
                 </div>
               </div>
 
+              {/* Category donut */}
               <div className="rounded-card bg-ink p-5 text-white">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-black text-primary">
+                  <p className="text-sm font-semibold text-white/90">
                     Categories
                   </p>
-                  <PieChart
-                    aria-hidden="true"
-                    className="h-4 w-4 text-primary"
-                  />
                 </div>
-                <div className="mt-6 flex items-center justify-center">
-                  <div className="h-36 w-36 rounded-full chart-distribution p-5">
-                    <div className="flex h-full w-full items-center justify-center rounded-full bg-ink text-center text-xs font-semibold text-white">
+                <div className="mt-5 flex items-center justify-center">
+                  <div className="h-32 w-32 rounded-full chart-distribution p-4">
+                    <div className="flex h-full w-full items-center justify-center rounded-full bg-ink text-center text-[10px] font-medium text-white/70">
                       Expense
                       <br />
                       mix
                     </div>
                   </div>
                 </div>
-                <div className="mt-6 space-y-3">
-                  {["Housing", "Groceries", "Transport"].map((item) => (
+                <div className="mt-5 space-y-2.5">
+                  {[
+                    { name: "Housing", amount: "$1,420", color: "bg-primary" },
+                    { name: "Groceries", amount: "$640", color: "bg-chart-blue" },
+                    { name: "Transport", amount: "$310", color: "bg-chart-peach" },
+                  ].map((item) => (
                     <div
-                      key={item}
-                      className="flex items-center justify-between text-sm"
+                      key={item.name}
+                      className="flex items-center justify-between text-xs"
                     >
-                      <span className="text-canvas">{item}</span>
-                      <span className="font-semibold text-white">
-                        {item === "Housing"
-                          ? "$1,420"
-                          : item === "Groceries"
-                            ? "$640"
-                            : "$310"}
+                      <span className="flex items-center gap-2 text-white/70">
+                        <span className={cn("h-2 w-2 rounded-full", item.color)} />
+                        {item.name}
+                      </span>
+                      <span className="font-medium text-white">
+                        {item.amount}
                       </span>
                     </div>
                   ))}
@@ -244,64 +255,91 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ─── Features — bento layout ─── */}
       <section id="features" className="bg-surface px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <div className="max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-normal text-success">
+          <div className="max-w-lg">
+            <p className="text-sm font-medium text-success">
               Built around your workflow
             </p>
-            <h2 className="mt-3 text-4xl font-black leading-[0.95] text-ink sm:text-5xl">
+            <h2 className="mt-3 text-3xl font-semibold leading-tight tracking-tight text-ink sm:text-4xl">
               From raw entries to decisions you can act on.
             </h2>
           </div>
 
-          <div className="mt-10 grid gap-4 md:grid-cols-3">
-            {features.map((feature) => {
-              const Icon = feature.icon;
+          {/* Asymmetric bento: large card left, two smaller right */}
+          {(() => {
+            const Icon0 = features[0].icon;
+            const Icon1 = features[1].icon;
+            const Icon2 = features[2].icon;
 
-              return (
-                <article
-                  key={feature.title}
-                  className={`rounded-card p-6 ${feature.surface}`}
-                >
-                  <Icon aria-hidden="true" className="h-6 w-6" />
-                  <h3 className="mt-5 text-xl font-black">{feature.title}</h3>
-                  <p className="mt-3 text-sm leading-6 text-inherit opacity-80">
-                    {feature.description}
+            return (
+              <div className="mt-10 grid gap-3 md:grid-cols-[1.2fr_0.8fr] md:grid-rows-2">
+                {/* Large feature card — spans 2 rows */}
+                <article className="surface-card row-span-2 flex flex-col justify-end rounded-card bg-canvas p-8">
+                  <Icon0 aria-hidden="true" className="h-6 w-6 text-ink" />
+                  <h3 className="mt-5 text-xl font-semibold text-ink">
+                    {features[0].title}
+                  </h3>
+                  <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted">
+                    {features[0].description}
                   </p>
                 </article>
-              );
-            })}
-          </div>
+
+                {/* Top right */}
+                <article className="surface-card flex flex-col justify-end rounded-card bg-accent p-6">
+                  <Icon1 aria-hidden="true" className="h-5 w-5 text-ink" />
+                  <h3 className="mt-4 text-lg font-semibold text-ink">
+                    {features[1].title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted">
+                    {features[1].description}
+                  </p>
+                </article>
+
+                {/* Bottom right */}
+                <article className="surface-card flex flex-col justify-end rounded-card bg-ink p-6 text-white">
+                  <Icon2 aria-hidden="true" className="h-5 w-5 text-white" />
+                  <h3 className="mt-4 text-lg font-semibold text-white">
+                    {features[2].title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-white/70">
+                    {features[2].description}
+                  </p>
+                </article>
+              </div>
+            );
+          })()}
         </div>
       </section>
 
+      {/* ─── Security + Reports ─── */}
       <section className="bg-canvas px-4 py-20 sm:px-6 lg:px-8">
-        <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-2">
-          <div id="security" className="rounded-card bg-surface p-8">
+        <div className="mx-auto grid max-w-7xl gap-3 lg:grid-cols-2">
+          <div id="security" className="surface-card rounded-card bg-surface p-8">
             <LockKeyhole
               aria-hidden="true"
-              className="h-7 w-7 text-ink"
+              className="h-6 w-6 text-ink"
             />
-            <h2 className="mt-5 text-3xl font-black leading-tight text-ink">
+            <h2 className="mt-5 text-2xl font-semibold leading-tight text-ink sm:text-3xl">
               Secure session handling without friction.
             </h2>
-            <p className="mt-4 text-sm leading-6 text-muted">
+            <p className="mt-4 max-w-md text-sm leading-relaxed text-muted">
               The app uses protected routes and refresh-token based navigation,
               so the dashboard link takes signed-in users straight to their
               workspace and routes new visitors to login.
             </p>
           </div>
 
-          <div id="reports" className="rounded-card bg-accent p-8">
+          <div id="reports" className="surface-card rounded-card bg-surface p-8">
             <CalendarRange
               aria-hidden="true"
-              className="h-7 w-7 text-ink"
+              className="h-6 w-6 text-ink"
             />
-            <h2 className="mt-5 text-3xl font-black leading-tight text-ink">
+            <h2 className="mt-5 text-2xl font-semibold leading-tight text-ink sm:text-3xl">
               Reports for the exact period you care about.
             </h2>
-            <p className="mt-4 text-sm leading-6 text-muted">
+            <p className="mt-4 max-w-md text-sm leading-relaxed text-muted">
               Pick a start date, end date, and output format to create a
               downloadable record from the same data you use in the dashboard.
             </p>
