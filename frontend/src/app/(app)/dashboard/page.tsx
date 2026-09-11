@@ -3,21 +3,21 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
+  Area,
   Bar,
   BarChart,
-  CartesianGrid,
   Cell,
-  Legend,
+  ComposedChart,
   Line,
   LineChart,
   Pie,
   PieChart,
-  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
+import type { TooltipProps } from "recharts";
 
 import { QuarterlyView } from "@/components/dashboard/QuarterlyView";
 import { YearlyView } from "@/components/dashboard/YearlyView";
@@ -31,27 +31,12 @@ import { acebuilderActiveClasses } from "@/components/ui/Button";
 import { cn } from "@/lib/utils/cn";
 
 const MONTH_LABELS = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
 ];
 
 const DEFAULT_CATEGORY_COLORS = [
-  "#0f62fe",
-  "#525252",
-  "#8d8d8d",
-  "#a6a6a6",
-  "#c6c6c6",
-  "#e0e0e0",
+  "#2667ff", "#38c8ff", "#ffc091", "#2ead4b", "#a78bfa", "#f472b6",
 ];
 
 type MonthPoint = {
@@ -71,6 +56,85 @@ const DASHBOARD_TABS: Array<{ id: DashboardTab; label: string }> = [
   { id: "yearly", label: "Yearly" },
 ];
 
+/* ─── Custom tooltip ─── */
+function ChartTooltip({
+  active,
+  payload,
+  label,
+}: TooltipProps<number, string>) {
+  if (!active || !payload || payload.length === 0) return null;
+
+  return (
+    <div className="recharts-custom-tooltip">
+      <p className="tooltip-label">{label}</p>
+      {payload.map((entry) => (
+        <div key={entry.dataKey} className="tooltip-row">
+          <span
+            className="tooltip-dot"
+            style={{ backgroundColor: entry.color }}
+          />
+          <span className="tooltip-name">{entry.name}</span>
+          <span className="tooltip-value">
+            {formatAmount(Number(entry.value ?? 0))}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function SavingsTooltip({
+  active,
+  payload,
+  label,
+}: TooltipProps<number, string>) {
+  if (!active || !payload || payload.length === 0) return null;
+
+  return (
+    <div className="recharts-custom-tooltip">
+      <p className="tooltip-label">{label}</p>
+      {payload
+        .filter((entry) => entry.dataKey === "savingsRate")
+        .map((entry) => (
+          <div key={entry.dataKey} className="tooltip-row">
+            <span
+              className="tooltip-dot"
+              style={{ backgroundColor: entry.color }}
+            />
+            <span className="tooltip-name">{entry.name}</span>
+            <span className="tooltip-value">
+              {formatPercent(Number(entry.value ?? 0))}
+            </span>
+          </div>
+        ))}
+    </div>
+  );
+}
+
+function CategoryTooltip({
+  active,
+  payload,
+}: TooltipProps<number, string>) {
+  if (!active || !payload || payload.length === 0) return null;
+  const entry = payload[0];
+
+  return (
+    <div className="recharts-custom-tooltip">
+      <div className="tooltip-row">
+        <span
+          className="tooltip-dot"
+          style={{ backgroundColor: entry.payload?.color }}
+        />
+        <span className="tooltip-name">{entry.name}</span>
+        <span className="tooltip-value">
+          {formatAmount(Number(entry.value ?? 0))}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Main page ─── */
 export default function DashboardPage() {
   const today = new Date();
   const [activeTab, setActiveTab] = useState<DashboardTab>("monthly");
@@ -112,6 +176,11 @@ export default function DashboardPage() {
     [categoryBreakdown.data],
   );
 
+  const totalExpenseForPie = useMemo(
+    () => expenseCategories.reduce((sum, c) => sum + c.total, 0),
+    [expenseCategories],
+  );
+
   const isYearlyLoading =
     yearlySummary.isLoading ||
     yearlySummary.isFetching ||
@@ -144,22 +213,22 @@ export default function DashboardPage() {
         />
 
         {activeTab === "monthly" && (
-          <div className="inline-flex h-11 items-center rounded-full bg-surface">
+          <div className="inline-flex h-10 items-center rounded-full border border-line bg-surface">
             <button
               type="button"
               aria-label="Previous month"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full text-muted"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full text-muted hover:text-ink"
               onClick={goToPreviousMonth}
             >
               <ChevronLeft aria-hidden="true" className="h-4 w-4" />
             </button>
-            <div className="min-w-36 px-4 text-center text-sm font-semibold text-ink">
+            <div className="min-w-36 px-4 text-center text-sm font-medium text-ink">
               {formatMonthYear(selectedDate)}
             </div>
             <button
               type="button"
               aria-label="Next month"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full text-muted"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full text-muted hover:text-ink"
               onClick={goToNextMonth}
             >
               <ChevronRight aria-hidden="true" className="h-4 w-4" />
@@ -169,7 +238,7 @@ export default function DashboardPage() {
       </div>
 
       <div
-        className="dashboard-tabs mb-6 inline-flex gap-1 overflow-x-auto rounded-full p-1 border border-line backdrop-blur-2xl"
+        className="dashboard-tabs mb-4 inline-flex gap-1 overflow-x-auto rounded-full p-1 border border-line backdrop-blur-2xl"
         role="tablist"
         aria-label="Dashboard period"
       >
@@ -195,23 +264,24 @@ export default function DashboardPage() {
 
       {activeTab === "monthly" && (
         <>
-          <section className="grid md:grid-cols-3 border border-line">
+          {/* Summary cards */}
+          <section className="grid gap-3 md:grid-cols-3">
             <SummaryCard
-              title="Total Income"
+              title="Total income"
               value={monthlySummary.data?.totalIncome ?? 0}
               subtitle="This month"
               tone="income"
               isLoading={isMonthlyLoading}
             />
             <SummaryCard
-              title="Total Expenses"
+              title="Total expenses"
               value={monthlySummary.data?.totalExpense ?? 0}
               subtitle="This month"
               tone="expense"
               isLoading={isMonthlyLoading}
             />
             <SummaryCard
-              title="Net Savings"
+              title="Net savings"
               value={monthlySummary.data?.savings ?? 0}
               subtitle={`${formatPercent(savingsRate)} savings rate`}
               tone="savings"
@@ -219,85 +289,116 @@ export default function DashboardPage() {
             />
           </section>
 
-          <section className="grid xl:grid-cols-3 mt-30">
+          {/* Charts — bento layout: bar+pie row, then savings full-width */}
+          <section className="grid gap-4 xl:grid-cols-[2fr_1fr]">
+            {/* Bar chart — income vs expense */}
             <ChartPanel
-              title="Monthly Income vs Expense"
+              title="Income vs expense"
+              legend={[
+                { color: "var(--ds-primary)", label: "Income" },
+                { color: "var(--ds-danger)", label: "Expense" },
+              ]}
               isLoading={isYearlyLoading}
             >
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={sixMonthData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
-                  <XAxis dataKey="label" tickLine={false} axisLine={false} />
+                <BarChart data={sixMonthData} barGap={3} barSize={20}>
+                  <XAxis
+                    dataKey="label"
+                    tickLine={false}
+                    axisLine={false}
+                    tick={{ fontSize: 11, fill: "var(--ds-chart-tick)" }}
+                  />
                   <YAxis
                     tickLine={false}
                     axisLine={false}
+                    tick={{ fontSize: 11, fill: "var(--ds-chart-tick)" }}
                     tickFormatter={(value) =>
                       formatCompactAmount(Number(value))
                     }
                   />
-                  <Tooltip formatter={(value) => formatAmount(Number(value))} />
-                  <Legend />
+                  <Tooltip content={<ChartTooltip />} cursor={{ fill: "var(--ds-canvas)", opacity: 0.5 }} />
                   <Bar
                     dataKey="income"
                     name="Income"
-                    fill="#0f62fe"
-                    radius={0}
+                    fill="var(--ds-primary)"
+                    radius={[4, 4, 0, 0]}
                   />
                   <Bar
                     dataKey="expense"
                     name="Expense"
-                    fill="#da1e28"
-                    radius={0}
+                    fill="var(--ds-danger)"
+                    radius={[4, 4, 0, 0]}
                   />
                 </BarChart>
               </ResponsiveContainer>
             </ChartPanel>
 
+            {/* Pie chart — expense categories */}
             <ChartPanel
-              title="Expense Category Breakdown"
+              title="Expense breakdown"
               isLoading={isCategoryLoading}
             >
               {expenseCategories.length === 0 ? (
                 <EmptyChartState message="No expenses this month" />
               ) : (
-                <div className="grid h-full gap-4 lg:grid-cols-[minmax(0,1fr)_220px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={expenseCategories}
-                        dataKey="total"
-                        nameKey="name"
-                        innerRadius="52%"
-                        outerRadius="78%"
-                        paddingAngle={2}
-                      >
-                        {expenseCategories.map((category) => (
-                          <Cell key={category.name} fill={category.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip
-                        formatter={(value) => formatAmount(Number(value))}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
+                <div className="flex h-full flex-col">
+                  <div className="flex flex-1 items-center justify-center">
+                    <ResponsiveContainer width="100%" height={200}>
+                      <PieChart>
+                        <Pie
+                          data={expenseCategories}
+                          dataKey="total"
+                          nameKey="name"
+                          innerRadius="58%"
+                          outerRadius="82%"
+                          paddingAngle={2}
+                          strokeWidth={0}
+                        >
+                          {expenseCategories.map((category) => (
+                            <Cell key={category.name} fill={category.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip content={<CategoryTooltip />} />
+                        {/* Center label */}
+                        <text
+                          x="50%"
+                          y="46%"
+                          textAnchor="middle"
+                          dominantBaseline="central"
+                          className="fill-muted text-[10px]"
+                        >
+                          Total
+                        </text>
+                        <text
+                          x="50%"
+                          y="56%"
+                          textAnchor="middle"
+                          dominantBaseline="central"
+                          className="fill-ink text-xs font-semibold"
+                        >
+                          {formatAmount(totalExpenseForPie)}
+                        </text>
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
 
-                  <div className="flex flex-col justify-center gap-3">
-                    {expenseCategories.map((category) => (
+                  <div className="mt-auto space-y-2 border-t border-line pt-3">
+                    {expenseCategories.slice(0, 5).map((category) => (
                       <div
                         key={category.name}
-                        className="flex items-center justify-between gap-3 text-sm"
+                        className="flex items-center justify-between gap-3 text-xs"
                       >
                         <div className="flex min-w-0 items-center gap-2">
                           <span
                             aria-hidden="true"
-                            className="h-2.5 w-2.5 shrink-0 rounded-full"
+                            className="h-2 w-2 shrink-0 rounded-full"
                             style={{ backgroundColor: category.color }}
                           />
                           <span className="truncate text-muted">
                             {category.name}
                           </span>
                         </div>
-                        <span className="font-semibold text-ink">
+                        <span className="font-medium text-ink">
                           {formatAmount(category.total)}
                         </span>
                       </div>
@@ -306,41 +407,54 @@ export default function DashboardPage() {
                 </div>
               )}
             </ChartPanel>
+          </section>
 
-            <ChartPanel title="Savings Rate Trend" isLoading={isYearlyLoading}>
+          {/* Savings rate trend — full width */}
+          <section>
+            <ChartPanel
+              title="Savings rate trend"
+              legend={[{ color: "var(--ds-primary)", label: "Savings rate" }]}
+              isLoading={isYearlyLoading}
+              height="h-64"
+            >
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={sixMonthData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
-                  <XAxis dataKey="label" tickLine={false} axisLine={false} />
+                <ComposedChart data={sixMonthData}>
+                  <defs>
+                    <linearGradient id="savingsGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="var(--ds-primary)" stopOpacity={0.15} />
+                      <stop offset="95%" stopColor="var(--ds-primary)" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <XAxis
+                    dataKey="label"
+                    tickLine={false}
+                    axisLine={false}
+                    tick={{ fontSize: 11, fill: "var(--ds-chart-tick)" }}
+                  />
                   <YAxis
                     domain={[0, 100]}
                     tickLine={false}
                     axisLine={false}
+                    tick={{ fontSize: 11, fill: "var(--ds-chart-tick)" }}
                     tickFormatter={(value) => `${value}%`}
                   />
-                  <Tooltip
-                    formatter={(value) => formatPercent(Number(value))}
-                  />
-                  <ReferenceLine
-                    y={20}
-                    stroke="#0f62fe"
-                    strokeDasharray="4 4"
-                    label={{
-                      value: "20%",
-                      position: "insideTopRight",
-                      fill: "#161616",
-                    }}
+                  <Tooltip content={<SavingsTooltip />} cursor={{ stroke: "var(--ds-line)" }} />
+                  <Area
+                    type="monotone"
+                    dataKey="savingsRate"
+                    fill="url(#savingsGradient)"
+                    stroke="none"
                   />
                   <Line
                     type="monotone"
                     dataKey="savingsRate"
                     name="Savings rate"
-                    stroke="#0f62fe"
-                    strokeWidth={3}
-                    dot={{ r: 4 }}
-                    activeDot={{ r: 6 }}
+                    stroke="var(--ds-primary)"
+                    strokeWidth={2.5}
+                    dot={{ r: 4, fill: "var(--ds-surface)", stroke: "var(--ds-primary)", strokeWidth: 2 }}
+                    activeDot={{ r: 6, fill: "var(--ds-primary)", stroke: "var(--ds-surface)", strokeWidth: 2 }}
                   />
-                </LineChart>
+                </ComposedChart>
               </ResponsiveContainer>
             </ChartPanel>
           </section>
@@ -354,19 +468,39 @@ export default function DashboardPage() {
   );
 }
 
+/* ─── Chart panel ─── */
 function ChartPanel({
   title,
+  legend,
   isLoading,
   children,
+  height = "h-72",
 }: {
   title: string;
+  legend?: Array<{ color: string; label: string }>;
   isLoading: boolean;
   children: React.ReactNode;
+  height?: string;
 }) {
   return (
-    <article className="rounded-card bg-surface">
-      <h2 className="text-base font-black text-ink">{title}</h2>
-      <div className="mt-4 p-6 h-80 border border-line">
+    <article className="surface-card rounded-card bg-surface p-5">
+      <div className="flex items-center justify-between">
+        <h2 className="text-sm font-semibold text-ink">{title}</h2>
+        {legend && (
+          <div className="flex items-center gap-4">
+            {legend.map((item) => (
+              <div key={item.label} className="flex items-center gap-1.5 text-xs text-muted">
+                <span
+                  className="inline-block h-2 w-2 rounded-full"
+                  style={{ backgroundColor: item.color }}
+                />
+                {item.label}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+      <div className={cn("mt-4", height)}>
         {isLoading ? <ChartSkeleton /> : children}
       </div>
     </article>
@@ -381,12 +515,13 @@ function ChartSkeleton() {
 
 function EmptyChartState({ message }: { message: string }) {
   return (
-    <div className="flex h-full items-center justify-center rounded-card border border-dashed border-muted bg-canvas px-6 text-center text-sm font-semibold text-muted">
+    <div className="flex h-full items-center justify-center rounded-card border border-dashed border-line bg-canvas px-6 text-center text-sm text-muted">
       {message}
     </div>
   );
 }
 
+/* ─── Helpers ─── */
 function buildSixMonthData(
   selectedDate: Date,
   currentYear?: YearlySummary,

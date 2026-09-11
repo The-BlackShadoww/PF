@@ -11,10 +11,10 @@ import { BreakdownTable } from "./BreakdownTable";
 import { PeriodSummaryCards } from "./PeriodSummaryCards";
 
 const QUARTERS = [
-  { q: 1, label: "Q1", months: "Jan - Mar" },
-  { q: 2, label: "Q2", months: "Apr - Jun" },
-  { q: 3, label: "Q3", months: "Jul - Sep" },
-  { q: 4, label: "Q4", months: "Oct - Dec" },
+  { q: 1, label: "Q1", months: "Jan – Mar" },
+  { q: 2, label: "Q2", months: "Apr – Jun" },
+  { q: 3, label: "Q3", months: "Jul – Sep" },
+  { q: 4, label: "Q4", months: "Oct – Dec" },
 ] as const;
 
 function getCurrentQuarter() {
@@ -58,7 +58,7 @@ export function QuarterlyView() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 rounded-card bg-surface p-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 surface-card rounded-card bg-surface p-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="inline-flex rounded-full bg-canvas p-1 border border-line">
           {QUARTERS.map(({ q, label, months }) => {
             const isFutureQuarter =
@@ -92,7 +92,7 @@ export function QuarterlyView() {
                     selectedQuarter === q ? "text-white/80" : "text-muted",
                   )}
                 >
-                  {months.replace(" - ", "-")}
+                  {months.replace(" – ", "–")}
                 </span>
               </button>
             );
@@ -103,13 +103,13 @@ export function QuarterlyView() {
           <button
             type="button"
             onClick={goToPreviousQuarter}
-            className="rounded-full p-1.5 text-muted"
+            className="rounded-full p-1.5 text-muted hover:text-ink"
             title="Previous quarter"
           >
             <ChevronLeft aria-hidden="true" size={16} />
           </button>
 
-          <div className="min-w-16 text-center text-sm font-semibold text-ink">
+          <div className="min-w-16 text-center text-sm font-medium text-ink">
             {selectedYear}
           </div>
 
@@ -118,10 +118,10 @@ export function QuarterlyView() {
             onClick={goToNextQuarter}
             disabled={isCurrentQuarter}
             className={cn(
-              "rounded-control p-1.5",
+              "rounded-full p-1.5",
               isCurrentQuarter
                 ? "cursor-not-allowed text-muted opacity-40"
-                : "text-muted",
+                : "text-muted hover:text-ink",
             )}
             title={
               isCurrentQuarter
@@ -135,7 +135,7 @@ export function QuarterlyView() {
       </div>
 
       <div>
-        <h3 className="text-base font-black text-ink">
+        <h3 className="text-base font-semibold text-ink">
           {selectedQuarterMeta.label} {selectedYear}
         </h3>
         <p className="mt-0.5 text-xs text-muted">
@@ -144,7 +144,7 @@ export function QuarterlyView() {
       </div>
 
       {error && (
-        <div className="rounded-card bg-danger-surface p-4 text-sm font-semibold text-white">
+        <div className="rounded-card bg-danger-surface p-4 text-sm font-medium text-white">
           Failed to load quarterly data. Please try again.
         </div>
       )}
@@ -158,8 +158,8 @@ export function QuarterlyView() {
       />
 
       <div>
-        <h4 className="mb-3 text-sm font-semibold text-muted">
-          Monthly Breakdown
+        <h4 className="mb-3 text-sm font-medium text-muted">
+          Monthly breakdown
         </h4>
         <BreakdownTable
           rows={summary?.monthlyBreakdown ?? []}
