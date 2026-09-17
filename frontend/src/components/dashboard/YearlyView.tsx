@@ -1,5 +1,7 @@
 "use client";
 
+export function YearlyView() { return null; }
+/*
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import {
@@ -276,3 +278,4 @@ function ComparisonPill({
     </div>
   );
 }
+*/

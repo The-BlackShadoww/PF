@@ -12,7 +12,7 @@ export function Table({
   ...props
 }: TableHTMLAttributes<HTMLTableElement>) {
   return (
-    <div className="w-full overflow-x-auto rounded-card bg-surface">
+    <div className="app-panel w-full overflow-x-auto">
       <table
         className={cn("w-full min-w-[760px] border-collapse text-sm", className)}
         {...props}
@@ -25,7 +25,7 @@ export function TableHeader({
   className,
   ...props
 }: HTMLAttributes<HTMLTableSectionElement>) {
-  return <thead className={cn("bg-canvas", className)} {...props} />;
+  return <thead className={cn("bg-subtle", className)} {...props} />;
 }
 
 export function TableBody({
@@ -46,7 +46,7 @@ export function TableRow({
 }: HTMLAttributes<HTMLTableRowElement>) {
   return (
     <tr
-      className={cn("transition hover:bg-accent/45", className)}
+      className={cn("transition-colors hover:bg-accent/45", className)}
       {...props}
     />
   );
@@ -59,7 +59,7 @@ export function TableHead({
   return (
     <th
       className={cn(
-        "h-12 whitespace-nowrap px-4 text-left text-xs font-semibold text-muted",
+        "h-12 whitespace-nowrap px-5 text-left text-xs font-semibold text-muted",
         className,
       )}
       {...props}
@@ -74,7 +74,7 @@ export function TableCell({
   return (
     <td
       className={cn(
-        "whitespace-nowrap px-4 py-3 align-middle text-muted",
+        "whitespace-nowrap px-5 py-4 align-middle text-muted",
         className,
       )}
       {...props}

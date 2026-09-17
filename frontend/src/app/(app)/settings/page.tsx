@@ -40,11 +40,15 @@ export default function SettingsPage() {
   const { data: categoriesResponse, isLoading } = useCategories(
     activeTab === "categories",
   );
-  const categories = Array.isArray(categoriesResponse) ? categoriesResponse : [];
+  const categories = Array.isArray(categoriesResponse)
+    ? categoriesResponse
+    : [];
   const createMutation = useCreateCategory();
   const updateMutation = useUpdateCategory();
   const deleteMutation = useDeleteCategory();
-  const incomeCategories = categories.filter((category) => category.type === "income");
+  const incomeCategories = categories.filter(
+    (category) => category.type === "income",
+  );
   const expenseCategories = categories.filter(
     (category) => category.type === "expense",
   );
@@ -75,7 +79,9 @@ export default function SettingsPage() {
       }
     } catch (err: unknown) {
       setError(
-        err instanceof Error ? err.message : "Something went wrong. Please try again.",
+        err instanceof Error
+          ? err.message
+          : "Something went wrong. Please try again.",
       );
     }
   }
@@ -85,7 +91,9 @@ export default function SettingsPage() {
       try {
         await deleteMutation.mutateAsync(category.id);
       } catch (err: unknown) {
-        setError(err instanceof Error ? err.message : "Failed to delete category");
+        setError(
+          err instanceof Error ? err.message : "Failed to delete category",
+        );
       } finally {
         setDeleteConfirmId(null);
       }
@@ -101,23 +109,25 @@ export default function SettingsPage() {
         description="Manage your account, security, preferences, and categories."
       />
 
-      <div className="flex gap-1 overflow-x-auto rounded-full bg-surface p-1 border border-line">
-        {TABS.map((tab) => (
-          <button
-            key={tab.id}
-            type="button"
-            data-slot="button"
-            onClick={() => setActiveTab(tab.id)}
-            className={cn(
-              "inline-flex cursor-pointer font-display items-center justify-center whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 active:scale-[0.98] outline-none",
-              activeTab === tab.id
-                ? acebuilderActiveClasses
-                : "text-muted hover:bg-canvas hover:text-ink",
-            )}
-          >
-            {tab.label}
-          </button>
-        ))}
+      <div className="flex justify-center items-center">
+        <div className="inline-flex gap-1 overflow-x-auto rounded-full bg-surface py-1 px-1.5 border border-line">
+          {TABS.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              data-slot="button"
+              onClick={() => setActiveTab(tab.id)}
+              className={cn(
+                "inline-flex cursor-pointer font-display items-center justify-center whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 active:scale-[0.98] outline-none",
+                activeTab === tab.id
+                  ? acebuilderActiveClasses
+                  : "text-muted hover:bg-canvas hover:text-ink",
+              )}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {error ? (
@@ -155,13 +165,13 @@ export default function SettingsPage() {
                     setEditingCategory(null);
                     setError(null);
                   }}
-                  isLoading={createMutation.isPending || updateMutation.isPending}
+                  isLoading={
+                    createMutation.isPending || updateMutation.isPending
+                  }
                 />
               </div>
             ) : (
-              <Button
-                onClick={() => setShowCreateForm(true)}
-              >
+              <Button onClick={() => setShowCreateForm(true)}>
                 <Plus size={16} />
                 New category
               </Button>

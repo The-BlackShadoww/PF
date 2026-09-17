@@ -80,7 +80,7 @@ export function Sidebar() {
             className={cn(
               "flex min-h-11 items-center gap-3 rounded-control px-3 text-sm font-medium",
               active
-                ? "bg-sidebar-accent text-primary"
+                ? "bg-sidebar-accent text-primary shadow-[inset_0_0_0_1px_rgb(33_66_231_/_12%)]"
                 : "text-muted hover:bg-sidebar-accent hover:text-sidebar-foreground",
             )}
           >
@@ -165,18 +165,18 @@ export function Sidebar() {
           </div>
         </div>
       )}
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-sidebar-line bg-sidebar p-4 text-sidebar-foreground lg:flex">
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-72 flex-col border-r border-sidebar-line bg-sidebar p-5 text-sidebar-foreground lg:flex">
         <Link
           href="/dashboard"
-          className="mb-8 flex items-center gap-3 px-2 text-sm font-semibold"
+          className="mb-10 flex items-center gap-3 px-2 text-sm font-semibold tracking-[-0.02em]"
         >
-          <span className="grid h-9 w-9 place-items-center rounded-control bg-primary text-white">
+          <span className="grid h-9 w-9 place-items-center rounded-control bg-primary text-white shadow-[0_8px_18px_rgb(33_66_231_/_22%)]">
             <LayoutDashboard className="h-4 w-4" />
           </span>
           <span>Personal Finance</span>
         </Link>
         <p className="mb-3 px-3 text-xs font-medium text-muted">
-          Workspace
+          Your money
         </p>
         {navigation()}
         <div className="mt-4 border-t border-sidebar-line pt-4">
