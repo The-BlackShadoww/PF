@@ -15,6 +15,55 @@ import {
 } from "@/components/ui/Button";
 import { cn } from "@/lib/utils/cn";
 
+export default function HomePage() {
+  return (
+    <main className="min-h-screen overflow-hidden bg-surface text-ink">
+      <header className="sticky top-0 z-30 border-b border-line bg-surface/85 backdrop-blur-xl">
+        <nav className="mx-auto flex max-w-[1440px] items-center justify-between px-5 py-4 md:px-10" aria-label="Primary navigation">
+          <Link href="/" className="flex items-center gap-3 font-semibold tracking-[-0.03em]">
+            <span className="grid h-9 w-9 place-items-center rounded-control bg-primary text-white shadow-[0_8px_20px_rgb(33_66_231_/_25%)]"><WalletCards className="h-4 w-4" /></span>
+            Personal Finance
+          </Link>
+          <div className="hidden items-center gap-7 text-sm text-muted md:flex">
+            <a href="#overview" className="hover:text-ink">Overview</a><a href="#built-for-life" className="hover:text-ink">How it works</a><a href="#security" className="hover:text-ink">Security</a>
+          </div>
+          <Link href="/dashboard" data-slot="button" className={acebuilderButtonClass}>Open your dashboard <ArrowRight className="h-4 w-4" /></Link>
+        </nav>
+      </header>
+
+      <section className="marketing-grid relative border-b border-line px-5 py-16 md:px-10 md:py-24">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_66%_10%,rgb(33_66_231_/_13%),transparent_26rem)]" />
+        <div className="relative mx-auto grid max-w-[1280px] gap-12 lg:grid-cols-[.9fr_1.1fr] lg:items-center">
+          <div className="max-w-xl">
+            <p className="mb-5 text-sm font-medium text-primary">A clearer relationship with money.</p>
+            <h1 className="text-[clamp(3.5rem,7vw,6.7rem)] font-semibold leading-[.91] tracking-[-.075em] text-ink">Make room for what matters.</h1>
+            <p className="mt-7 max-w-md text-lg leading-relaxed text-muted">Personal Finance brings every expense, goal, and decision into one quiet, useful view—so your money can support your life instead of competing for your attention.</p>
+            <div className="mt-8 flex flex-wrap gap-3"><Link href="/dashboard" data-slot="button" className={acebuilderButtonClass}>Start with your dashboard <ArrowRight className="h-4 w-4" /></Link><a href="#overview" className="inline-flex h-8 items-center rounded-full px-3.5 text-sm font-medium text-muted hover:bg-canvas hover:text-ink">See how it works</a></div>
+            <p className="mt-8 text-xs text-muted">Private by default. Built for everyday decisions.</p>
+          </div>
+          <div className="app-panel relative overflow-hidden bg-ink p-3 shadow-[0_30px_80px_rgb(17_24_39_/_20%)] md:p-5">
+            <div className="rounded-[12px] bg-white p-5 md:p-7">
+              <div className="flex items-center justify-between"><div><p className="text-xs text-muted">This month</p><p className="mt-1 text-2xl font-semibold tracking-[-.05em]">September 2026</p></div><span className="rounded-full bg-[#eef1ff] px-3 py-1 text-xs font-medium text-primary">On track</span></div>
+              <div className="mt-8 grid gap-3 sm:grid-cols-3"><Metric label="Income" value="$8,420" tone="text-success" /><Metric label="Spent" value="$4,180" tone="text-ink" /><Metric label="Saved" value="$4,240" tone="text-primary" /></div>
+              <div className="mt-7 rounded-card bg-[#f8f9fb] p-5"><div className="flex items-end justify-between"><div><p className="text-sm font-medium">Cash flow</p><p className="mt-1 text-xs text-muted">Income and spending, six months</p></div><p className="text-xs font-medium text-success">+12.4%</p></div><div className="mt-5 flex h-28 items-end gap-2">{[38,52,46,70,55,82,68,94,58,72,65,88].map((h,i)=><span key={i} className={cn("flex-1 rounded-t-full", i % 2 === 0 ? "bg-primary" : "bg-[#cbd5ff]")} style={{height:`${h}%`}} />)}</div></div>
+              <div className="mt-5 flex items-center justify-between border-t border-line pt-5 text-sm"><span className="text-muted">Savings rate</span><span className="font-semibold">50.4%</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="overview" className="mx-auto max-w-[1280px] px-5 py-20 md:px-10 md:py-28"><div className="grid gap-10 lg:grid-cols-[.8fr_1.2fr]"><div><h2 className="max-w-sm text-4xl font-semibold leading-[.98] tracking-[-.055em] md:text-5xl">A home base for your financial life.</h2></div><div className="grid gap-px overflow-hidden rounded-panel border border-line bg-line sm:grid-cols-2">{features.map(({title,description,icon:Icon})=><article key={title} className="bg-surface p-7"><Icon className="h-5 w-5 text-primary"/><h3 className="mt-8 text-xl font-semibold tracking-[-.035em]">{title}</h3><p className="mt-3 max-w-xs text-sm leading-relaxed text-muted">{description}</p></article>)}<article className="bg-ink p-7 text-white"><ShieldCheck className="h-5 w-5 text-[#aab8ff]"/><h3 className="mt-8 text-xl font-semibold tracking-[-.035em]">A private place to plan</h3><p className="mt-3 max-w-xs text-sm leading-relaxed text-white/65">Your financial picture stays focused, secure, and understandable.</p></article></div></div></section>
+
+      <section id="built-for-life" className="border-y border-line bg-subtle"><div className="mx-auto grid max-w-[1280px] gap-10 px-5 py-20 md:px-10 md:py-28 lg:grid-cols-2"><div className="rounded-panel bg-primary p-8 text-white md:p-11"><p className="text-sm text-white/65">From first entry to future plans</p><h2 className="mt-6 max-w-md text-4xl font-semibold leading-[.98] tracking-[-.055em]">See the choices behind every number.</h2><div className="mt-12 space-y-5">{workflowItems.map((item,index)=><div className="flex gap-4" key={item}><span className="grid h-7 w-7 shrink-0 place-items-center rounded-full border border-white/30 text-xs">{index+1}</span><p className="pt-1 text-sm text-white/80">{item}</p></div>)}</div></div><div className="flex flex-col justify-center"><p className="text-sm font-medium text-primary">Designed for the rhythm of real life</p><h2 className="mt-5 max-w-md text-4xl font-semibold leading-[.98] tracking-[-.055em]">Spend less time sorting. Keep more context.</h2><p className="mt-6 max-w-md text-base leading-relaxed text-muted">Know exactly where your money went, how your choices are adding up, and what you can do next—all without turning personal finance into a full-time job.</p><a href="#security" className="mt-8 inline-flex w-fit items-center gap-2 text-sm font-semibold text-ink hover:text-primary">Explore the details <ArrowRight className="h-4 w-4" /></a></div></div></section>
+
+      <section id="security" className="mx-auto max-w-[1280px] px-5 py-20 md:px-10 md:py-28"><div className="app-panel grid overflow-hidden lg:grid-cols-[1.1fr_.9fr]"><div className="p-8 md:p-12"><LockKeyhole className="h-5 w-5 text-primary"/><h2 className="mt-8 max-w-lg text-4xl font-semibold leading-[.98] tracking-[-.055em]">Your financial details deserve a calm, secure home.</h2><p className="mt-6 max-w-md text-base leading-relaxed text-muted">The interface is intentionally quiet. Important information is obvious, actions are clear, and your privacy is never treated as an afterthought.</p></div><div className="border-t border-line bg-subtle p-8 lg:border-l lg:border-t-0 md:p-12"><p className="text-sm font-medium">Built in safeguards</p><div className="mt-7 space-y-6">{["Clear, explainable financial summaries", "Accessible controls and keyboard support", "Thoughtful warnings before important actions"].map(item=><div key={item} className="flex gap-3 text-sm text-muted"><span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-primary" />{item}</div>)}</div></div></div></section>
+      <footer className="border-t border-line px-5 py-7 md:px-10"><div className="mx-auto flex max-w-[1280px] flex-col gap-3 text-sm text-muted sm:flex-row sm:items-center sm:justify-between"><span>Personal Finance</span><span>Make room for what matters.</span></div></footer>
+    </main>
+  );
+}
+
+function Metric({ label, value, tone }: { label: string; value: string; tone: string }) { return <div className="rounded-control border border-line p-3"><p className="text-xs text-muted">{label}</p><p className={cn("mt-1 text-lg font-semibold tracking-[-.04em]", tone)}>{value}</p></div>; }
+
 const features = [
   {
     title: "Track every transaction",
@@ -48,7 +97,7 @@ const stats = [
   { label: "Savings rate", value: "50.4%", tone: "text-primary" },
 ];
 
-export default function HomePage() {
+function LegacyHomePage() {
   return (
     <main className="min-h-screen bg-surface text-ink">
       {/* ─── Navigation ─── */}

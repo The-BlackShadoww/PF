@@ -1,305 +1,35 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
-/* Semantic design tokens generate Tailwind utilities such as bg-surface,
-   text-ink, border-line, bg-primary, and text-success. */
 :root {
   color-scheme: light;
-  --ds-background: #fafaf9;
-  --ds-foreground: #0a0a0a;
-  --ds-surface: #fff;
-  --ds-canvas: #f0f0f0;
-  --ds-subtle: #f5f5f5;
-  --ds-accent: #eff6ff;
-  --ds-primary: #2667ff;
-  --ds-primary-hover: #0466c8;
-  --ds-ink: #0a0a0a;
-  --ds-muted: #717171;
-  --ds-success: #00875a;
-  --ds-success-bright: #2ead4b;
-  --ds-danger: #d70015;
-  --ds-danger-surface: #e7000b;
-  --ds-warning: #b86700;
-  --ds-warning-ink: #4a3b1c;
-  --ds-info: #edf5ff;
-  --ds-chart-blue: #38c8ff;
-  --ds-chart-peach: #ffc091;
-  --ds-chart-yellow: #ffd11a;
-  --ds-line: #e5e5e5;
-  --ds-ring: #a1a1a1;
-  --ds-sidebar: #fafafa;
-  --ds-sidebar-foreground: #0a0a0a;
-  --ds-sidebar-accent: #f5f5f5;
-  --ds-sidebar-line: #e5e5e5;
-  --ds-radius: 0.5rem;
-  --primary-color: #2667ff;
-  --tertiary-color: #2176ff;
-  --tertiary: #2176ff;
-  --ring: #a1a1a1;
-  --destructive: #e7000b;
-  /* Chart tokens */
-  --ds-chart-grid: #f0f0f0;
-  --ds-chart-tick: #a1a1a1;
-  --ds-chart-tooltip-bg: #fff;
-  --ds-chart-tooltip-border: #e5e5e5;
+  --ds-background: #ffffff; --ds-foreground: #111827; --ds-surface: #ffffff; --ds-canvas: #f3f4f6; --ds-subtle: #f8f9fb; --ds-accent: #eef1ff;
+  --ds-primary: #2142e7; --ds-primary-hover: #1837c4; --ds-ink: #111827; --ds-muted: #6b7280; --ds-success: #14804a; --ds-success-bright: #1d9b5f;
+  --ds-danger: #d14343; --ds-danger-surface: #d14343; --ds-warning: #b7791f; --ds-warning-ink: #734d16; --ds-info: #eef1ff;
+  --ds-chart-blue: #6c8cff; --ds-chart-peach: #efb366; --ds-chart-yellow: #e9d15b; --ds-line: #e5e7eb; --ds-ring: #2142e7;
+  --ds-sidebar: #ffffff; --ds-sidebar-foreground: #111827; --ds-sidebar-accent: #f3f4f6; --ds-sidebar-line: #e5e7eb;
+  --ds-chart-grid: #edf0f4; --ds-chart-tick: #9ca3af; --ds-chart-tooltip-bg: #111827; --ds-chart-tooltip-border: #111827;
+  --primary-color: #2142e7; --tertiary-color: #2142e7; --tertiary: #2142e7;
 }
-
 .dark {
-  color-scheme: dark;
-  --ds-background: #0a0a0a;
-  --ds-foreground: #fafafa;
-  --ds-surface: #191919;
-  --ds-canvas: #262626;
-  --ds-subtle: #404040;
-  --ds-accent: #262626;
-  --ds-ink: #fafafa;
-  --ds-muted: #a1a1a1;
-  --ds-line: #383838;
-  --ds-ring: #737373;
-  --ds-sidebar: #171717;
-  --ds-sidebar-foreground: #fafafa;
-  --ds-sidebar-accent: #262626;
-  --ds-sidebar-line: #383838;
-  --primary-color: #2667ff;
-  --tertiary-color: #2176ff;
-  --tertiary: #2176ff;
-  --ring: #737373;
-  --destructive: #ff6467;
-  /* Chart tokens dark */
-  --ds-chart-grid: #2a2a2a;
-  --ds-chart-tick: #737373;
-  --ds-chart-tooltip-bg: #191919;
-  --ds-chart-tooltip-border: #383838;
+  color-scheme: dark; --ds-background: #101114; --ds-foreground: #f9fafb; --ds-surface: #18191d; --ds-canvas: #24262c; --ds-subtle: #1d1f24; --ds-accent: #252b4c;
+  --ds-ink: #f9fafb; --ds-muted: #a3a8b3; --ds-line: #303239; --ds-ring: #8da0ff; --ds-sidebar: #141519; --ds-sidebar-foreground: #f9fafb;
+  --ds-sidebar-accent: #24262c; --ds-sidebar-line: #303239; --ds-chart-grid: #303239; --ds-chart-tick: #818794; --ds-chart-tooltip-bg: #f9fafb; --ds-chart-tooltip-border: #f9fafb;
 }
-
 @theme inline {
-  --font-sans: Inter, sans-serif;
-  --font-display: Inter, sans-serif;
-  --color-background: var(--ds-background);
-  --color-foreground: var(--ds-foreground);
-  --color-surface: var(--ds-surface);
-  --color-canvas: var(--ds-canvas);
-  --color-subtle: var(--ds-subtle);
-  --color-accent: var(--ds-accent);
-  --color-primary: var(--ds-primary);
-  --color-primary-hover: var(--ds-primary-hover);
-  --color-tertiary: var(--tertiary-color);
-  --color-ink: var(--ds-ink);
-  --color-muted: var(--ds-muted);
-  --color-success: var(--ds-success);
-  --color-success-bright: var(--ds-success-bright);
-  --color-danger: var(--ds-danger);
-  --color-danger-surface: var(--ds-danger-surface);
-  --color-destructive: var(--destructive);
-  --color-warning: var(--ds-warning);
-  --color-warning-ink: var(--ds-warning-ink);
-  --color-info: var(--ds-info);
-  --color-chart-blue: var(--ds-chart-blue);
-  --color-chart-peach: var(--ds-chart-peach);
-  --color-chart-yellow: var(--ds-chart-yellow);
-  --color-line: var(--ds-line);
-  --color-ring: var(--ds-ring);
-  --color-sidebar: var(--ds-sidebar);
-  --color-sidebar-foreground: var(--ds-sidebar-foreground);
-  --color-sidebar-accent: var(--ds-sidebar-accent);
-  --color-sidebar-line: var(--ds-sidebar-line);
-  --color-chart-grid: var(--ds-chart-grid);
-  --color-chart-tick: var(--ds-chart-tick);
-  /* Keep the interface crisp: controls are subtly rounded and cards only
-     slightly softer than their contents. */
-  --radius-control: 6px;
-  --radius-card: 8px;
-  --radius-panel: var(--ds-radius);
-  --text-metric: 27px;
-  --text-display: 34px;
-  --text-hero: 46px;
-  --ease-standard: cubic-bezier(0, 0, 0.2, 1);
+  --font-sans: Inter, Arial, sans-serif; --font-display: Inter, Arial, sans-serif;
+  --color-background: var(--ds-background); --color-foreground: var(--ds-foreground); --color-surface: var(--ds-surface); --color-canvas: var(--ds-canvas); --color-subtle: var(--ds-subtle); --color-accent: var(--ds-accent); --color-primary: var(--ds-primary); --color-primary-hover: var(--ds-primary-hover); --color-tertiary: var(--tertiary-color); --color-ink: var(--ds-ink); --color-muted: var(--ds-muted); --color-success: var(--ds-success); --color-success-bright: var(--ds-success-bright); --color-danger: var(--ds-danger); --color-danger-surface: var(--ds-danger-surface); --color-destructive: var(--ds-danger); --color-warning: var(--ds-warning); --color-warning-ink: var(--ds-warning-ink); --color-info: var(--ds-info); --color-chart-blue: var(--ds-chart-blue); --color-chart-peach: var(--ds-chart-peach); --color-chart-yellow: var(--ds-chart-yellow); --color-line: var(--ds-line); --color-ring: var(--ds-ring); --color-sidebar: var(--ds-sidebar); --color-sidebar-foreground: var(--ds-sidebar-foreground); --color-sidebar-accent: var(--ds-sidebar-accent); --color-sidebar-line: var(--ds-sidebar-line); --color-chart-grid: var(--ds-chart-grid); --color-chart-tick: var(--ds-chart-tick);
+  --radius-control: 12px; --radius-card: 16px; --radius-panel: 24px; --text-metric: 30px; --text-display: 46px; --text-hero: 64px; --ease-standard: cubic-bezier(.2,.8,.2,1);
 }
-
 @layer base {
-  * {
-    box-sizing: border-box;
-  }
-  html {
-    font-size: 14px;
-  }
-  html,
-  body {
-    min-height: 100%;
-  }
-  body {
-    margin: 0;
-    background: var(--ds-background);
-    color: var(--ds-foreground);
-    font-family: Inter, sans-serif;
-    font-size: 1rem;
-    font-weight: 400;
-    line-height: 24px;
-    -webkit-font-smoothing: antialiased;
-  }
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
-  button,
-  input,
-  select,
-  textarea {
-    font: inherit;
-    -webkit-tap-highlight-color: transparent;
-  }
-  button,
-  a {
-    transition:
-      color 150ms var(--ease-standard),
-      background-color 150ms var(--ease-standard),
-      border-color 150ms var(--ease-standard),
-      box-shadow 150ms var(--ease-standard),
-      transform 150ms var(--ease-standard);
-  }
-  ::selection {
-    color: #fff;
-    background: var(--ds-primary);
-  }
-  :focus-visible {
-    outline: 2px solid var(--ds-ring);
-    outline-offset: 2px;
-  }
-  button:disabled {
-    cursor: not-allowed;
-  }
-  input,
-  select,
-  textarea {
-    min-height: 42px;
-    border: 1px solid var(--ds-line);
-    border-radius: 6px;
-    background: var(--ds-background);
-    color: var(--ds-foreground);
-    transition:
-      border-color 150ms var(--ease-standard),
-      box-shadow 150ms var(--ease-standard);
-  }
-  input::placeholder,
-  textarea::placeholder {
-    color: var(--ds-muted);
-    opacity: 1;
-  }
-  input:hover,
-  select:hover,
-  textarea:hover {
-    border-color: var(--ds-ring);
-  }
-  input:focus,
-  select:focus,
-  textarea:focus {
-    border-color: var(--ds-ring);
-    box-shadow: 0 0 0 3px rgb(38 103 255 / 14%);
-    outline: 0;
-  }
-  table {
-    color: var(--ds-muted);
-  }
-  thead {
-    color: var(--ds-foreground);
-  }
+  * { box-sizing: border-box; } html { font-size: 14px; scroll-behavior: smooth; } html, body { min-height: 100%; }
+  body { margin: 0; background: var(--ds-background); color: var(--ds-foreground); font-family: Inter, Arial, sans-serif; font-size: 1rem; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; } button, input, select, textarea { font: inherit; -webkit-tap-highlight-color: transparent; }
+  button, a { transition: color 167ms var(--ease-standard), background-color 167ms var(--ease-standard), border-color 167ms var(--ease-standard), box-shadow 167ms var(--ease-standard), transform 167ms var(--ease-standard); }
+  ::selection { color: #fff; background: var(--ds-primary); } :focus-visible { outline: 2px solid var(--ds-ring); outline-offset: 3px; } button:disabled { cursor: not-allowed; }
+  input, select, textarea { min-height: 44px; border: 1px solid var(--ds-line); border-radius: 12px; background: var(--ds-surface); color: var(--ds-foreground); transition: border-color 167ms var(--ease-standard), box-shadow 167ms var(--ease-standard); }
+  input::placeholder, textarea::placeholder { color: var(--ds-muted); opacity: 1; } input:hover, select:hover, textarea:hover { border-color: color-mix(in srgb, var(--ds-primary) 40%, var(--ds-line)); } input:focus, select:focus, textarea:focus { border-color: var(--ds-primary); box-shadow: 0 0 0 3px rgb(33 66 231 / 14%); outline: 0; }
 }
-
-@layer components {
-  /* Recharts custom tooltip */
-  .recharts-custom-tooltip {
-    background: var(--ds-chart-tooltip-bg);
-    border: 1px solid var(--ds-chart-tooltip-border);
-    border-radius: 8px;
-    padding: 10px 14px;
-    box-shadow: 0 4px 12px rgb(0 0 0 / 8%);
-    font-size: 12px;
-    line-height: 1.5;
-  }
-  .recharts-custom-tooltip .tooltip-label {
-    font-weight: 600;
-    color: var(--ds-muted);
-    margin-bottom: 6px;
-  }
-  .recharts-custom-tooltip .tooltip-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 2px 0;
-  }
-  .recharts-custom-tooltip .tooltip-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-  .recharts-custom-tooltip .tooltip-name {
-    color: var(--ds-muted);
-  }
-  .recharts-custom-tooltip .tooltip-value {
-    font-weight: 600;
-    color: var(--ds-ink);
-    margin-left: auto;
-  }
-
-  /* Suppress hover transforms on dashboard interactive elements */
-  .dashboard-page button:not([data-slot="button"]):hover,
-  .dashboard-page a:not([data-slot="button"]):hover {
-    transform: none;
-    box-shadow: none;
-  }
-}
-
-@utility dashboard-tabs {
-  background-color: var(--ds-canvas);
-}
-@utility dashboard-tab-active {
-  background: linear-gradient(to bottom, var(--tertiary-color), var(--primary-color));
-  color: #fff;
-  box-shadow: 0px 0px 10px 0px rgba(255, 255, 255, 0.2) inset;
-}
-@utility dashboard-tab-inactive {
-  color: var(--ds-muted);
-}
-@utility surface-card {
-  border: 1px solid var(--ds-line);
-  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
-}
-@utility chart-distribution {
-  background: conic-gradient(
-    var(--ds-primary) 0 31%,
-    var(--ds-chart-blue) 31% 58%,
-    var(--ds-chart-peach) 58% 78%,
-    var(--ds-danger) 78% 100%
-  );
-}
-@utility hide-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-  &::-webkit-scrollbar {
-    display: none;
-  }
-}
-@utility animate-ace-marquee {
-  animation: ace-marquee linear infinite;
-}
-@utility animate-ace-marquee-reverse {
-  animation: ace-marquee-reverse linear infinite;
-}
-
-@keyframes ace-marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-@keyframes ace-marquee-reverse {
-  from {
-    transform: translateX(-50%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
+@layer components { .app-panel { border: 1px solid var(--ds-line); border-radius: 16px; background: var(--ds-surface); box-shadow: rgba(17,24,39,.04) 0 2px 2px -1px, rgba(17,24,39,.04) 0 8px 8px 0, rgba(17,24,39,.08) 0 0 0 1px; } .app-panel--quiet { border: 1px solid var(--ds-line); border-radius: 16px; background: var(--ds-subtle); } .marketing-grid { background-image: linear-gradient(var(--ds-line) 1px, transparent 1px), linear-gradient(90deg, var(--ds-line) 1px, transparent 1px); background-size: 44px 44px; } }
+@utility dashboard-tabs { background-color: var(--ds-canvas); } @utility dashboard-tab-active { background: linear-gradient(to bottom, var(--tertiary-color), var(--primary-color)); color: #fff; box-shadow: 0 0 10px rgb(255 255 255 / 20%) inset; } @utility dashboard-tab-inactive { color: var(--ds-muted); } @utility surface-card { border: 1px solid var(--ds-line); box-shadow: rgba(17,24,39,.04) 0 2px 2px -1px, rgba(17,24,39,.04) 0 8px 8px 0, rgba(17,24,39,.08) 0 0 0 1px; } @utility hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; &::-webkit-scrollbar { display: none; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }

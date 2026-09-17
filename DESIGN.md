@@ -1,21 +1,21 @@
-# Acebuilder
+# Arcade
 
 ## Mission
-Create implementation-ready, token-driven UI guidance for Acebuilder that is optimized for consistency, accessibility, and fast delivery across marketing site.
+Create implementation-ready, token-driven UI guidance for Arcade that is optimized for consistency, accessibility, and fast delivery across marketing site.
 
 ## Brand
-- Product/brand: Acebuilder
-- URL: https://www.acebuilder.ai/
-- Audience: online shoppers and consumers
+- Product/brand: Arcade
+- URL: https://www.arcade.software/
+- Audience: buyers, teams, and decision-makers
 - Product surface: marketing site
 
 ## Style Foundations
 - Visual style: structured, tokenized, content-first
-- Main font style: `font.family.primary=Inter`, `font.family.stack=Inter, sans-serif`, `font.size.base=16px`, `font.weight.base=400`, `font.lineHeight.base=24px`
-- Typography scale: `font.size.xs=8px`, `font.size.sm=9px`, `font.size.md=10px`, `font.size.lg=11px`, `font.size.xl=12px`, `font.size.2xl=13px`, `font.size.3xl=14px`, `font.size.4xl=16px`
-- Color palette: `color.text.primary=#fafafa`, `color.text.secondary=lab(66.128 -0.0000298023 0.0000119209)`, `color.text.tertiary=#ffffff`, `color.text.inverse=lab(48.496 0 0)`, `color.surface.base=#000000`, `color.surface.muted=lab(15.204 0 -0.00000596046)`, `color.surface.raised=#0a0a0a`, `color.surface.strong=oklab(0.145 -0.00000143796 0.00000340492 / 0.3)`, `color.border.default=#383838`, `color.border.strong=oklab(0.268999 -0.00000260025 0.00000627339 / 0.3)`
-- Spacing scale: `space.1=3px`, `space.2=4px`, `space.3=8px`, `space.4=10px`, `space.5=12px`, `space.6=14px`, `space.7=16px`, `space.8=24px`
-- Radius/shadow/motion tokens: `radius.xs=6px`, `radius.sm=10px`, `radius.md=12px`, `radius.lg=16px`, `radius.xl=50px`, `radius.2xl=33554400px` | `shadow.1=rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgb(38, 103, 255) 0px 0px 0px 2px inset, oklab(0.999994 0.0000455678 0.0000200868 / 0.2) 0px 0px 0px 3px inset, rgba(255, 255, 255, 0.2) 0px 0px 10px 0px inset`, `shadow.2=rgba(0, 0, 0, 0.06) 0px 0px 0px 1px, rgba(0, 0, 0, 0.06) 0px 1px 2px -1px, rgba(0, 0, 0, 0.04) 0px 2px 4px 0px`, `shadow.3=rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgb(38, 103, 255) 0px 0px 0px 1px inset, oklab(0.999994 0.0000455678 0.0000200868 / 0.2) 0px 0px 0px 2px inset, rgba(255, 255, 255, 0.2) 0px 0px 10px 0px inset`, `shadow.4=rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.55) 0px 12px 48px -8px` | `motion.duration.instant=150ms`, `motion.duration.fast=167ms`, `motion.duration.normal=200ms`
+- Main font style: `font.family.primary=Inter Variable`, `font.family.stack=Inter Variable, Arial, sans-serif`, `font.size.base=14px`, `font.weight.base=400`, `font.lineHeight.base=17.5px`
+- Typography scale: `font.size.xs=14px`, `font.size.sm=16px`, `font.size.md=18px`, `font.size.lg=20px`, `font.size.xl=24px`, `font.size.2xl=32px`, `font.size.3xl=36px`, `font.size.4xl=48px`
+- Color palette: `color.text.primary=#4b5563`, `color.text.secondary=#111827`, `color.text.tertiary=#6b7280`, `color.text.inverse=#333333`, `color.surface.base=#000000`, `color.surface.muted=#ffffff`, `color.surface.raised=#2142e7`, `color.surface.strong=#f3f4f6`, `color.border.strong=#e5e7eb`
+- Spacing scale: `space.1=4px`, `space.2=6px`, `space.3=6.4px`, `space.4=8px`, `space.5=10px`, `space.6=16px`, `space.7=24px`, `space.8=32px`
+- Radius/shadow/motion tokens: `radius.xs=12px`, `radius.sm=16px`, `radius.md=50px`, `radius.lg=72px`, `radius.xl=80px` | `shadow.1=rgba(17, 24, 39, 0.12) 0px 0px 0px 1px`, `shadow.2=rgba(17, 24, 39, 0.04) 0px 32px 32px 0px, rgba(17, 24, 39, 0.04) 0px 16px 16px 0px, rgba(17, 24, 39, 0.04) 0px 8px 8px 0px, rgba(17, 24, 39, 0.04) 0px 4px 4px -2px, rgba(17, 24, 39, 0.04) 0px 2px 2px -1px, rgba(17, 24, 39, 0.16) 0px 0px 0px 1px`, `shadow.3=rgba(17, 24, 39, 0.04) 0px 32px 32px 0px, rgba(17, 24, 39, 0.04) 0px 16px 16px 0px, rgba(17, 24, 39, 0.04) 0px 8px 8px 0px, rgba(17, 24, 39, 0.04) 0px 4px 4px -2px, rgba(17, 24, 39, 0.04) 0px 2px 2px -1px, rgb(24, 47, 165) 0px 0px 0px 1px`, `shadow.4=rgb(24, 47, 165) 0px 0px 0px 1px, rgba(17, 24, 39, 0.04) 0px 2px 2px -2px, rgba(17, 24, 39, 0.04) 0px 4px 4px 0px, rgba(17, 24, 39, 0.04) 0px 8px 8px 0px, rgba(17, 24, 39, 0.04) 0px 16px 16px 0px, rgba(17, 24, 39, 0.04) 0px 32px 32px 0px` | `motion.duration.instant=150ms`, `motion.duration.fast=167ms`, `motion.duration.normal=200ms`, `motion.duration.slow=350ms`
 
 ## Accessibility
 - Target: WCAG 2.2 AA
@@ -60,7 +60,7 @@ Concise, confident, implementation-focused.
 - Include keyboard, pointer, and touch behavior.
 - Include spacing and typography token requirements.
 - Include long-content, overflow, and empty-state handling.
-- Include known page component density: buttons (24), links (22), lists (3), navigation (2), inputs (1).
+- Include known page component density: links (77), buttons (18), cards (5), inputs (3), navigation (2).
 
 
 ## Quality Gates

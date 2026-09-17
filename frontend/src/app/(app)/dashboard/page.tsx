@@ -1,5 +1,40 @@
 "use client";
 
+import { ChevronLeft, ChevronRight, WalletCards } from "lucide-react";
+import { useMemo, useState } from "react";
+import { ModernChart, chartBase } from "@/components/charts/ModernChart";
+import { AccountBalanceWidget } from "@/components/dashboard/AccountBalanceWidget";
+import { PageHeader } from "@/components/layouts/PageHeader";
+import { SummaryCard } from "@/components/shared/SummaryCard";
+import { useCategoryBreakdown } from "@/lib/hooks/useCategoryBreakdown";
+import { useMonthlySummary } from "@/lib/hooks/useMonthlySummary";
+import { useYearlySummary } from "@/lib/hooks/useYearlySummary";
+import { cn } from "@/lib/utils/cn";
+
+export default function DashboardPage() {
+  const now = new Date();
+  const [selectedDate, setSelectedDate] = useState(() => new Date(now.getFullYear(), now.getMonth(), 1));
+  const year = selectedDate.getFullYear(); const month = selectedDate.getMonth() + 1;
+  const monthly = useMonthlySummary(year, month); const yearly = useYearlySummary(year); const categories = useCategoryBreakdown(year, month);
+  const points = useMemo(() => Array.from({ length: 6 }, (_, index) => { const date = new Date(year, month - 6 + index, 1); const row = yearly.data?.monthlyBreakdown.find((item) => item.month === date.getMonth() + 1) ?? { totalIncome: 0, totalExpense: 0 }; const income = row.totalIncome; const expense = row.totalExpense; return { label: date.toLocaleString("en-US", { month: "short" }), income, expense, rate: income ? Number((((income - expense) / income) * 100).toFixed(1)) : 0 }; }), [month, year, yearly.data]);
+  const categoryItems = useMemo(() => (categories.data ?? []).filter((item) => item.type === "expense" && item.total > 0).slice(0, 6), [categories.data]);
+  const loading = monthly.isLoading || yearly.isLoading;
+  const money = (value: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(value);
+  const base = chartBase();
+  const flowOptions = { ...base, colors: ["#2142e7", "#efb366"], plotOptions: { bar: { borderRadius: 7, columnWidth: "48%" } }, xaxis: { categories: points.map((point) => point.label), axisBorder: { show: false }, axisTicks: { show: false }, labels: { style: { colors: "var(--ds-chart-tick)" } } }, yaxis: { labels: { formatter: (value: number) => `$${Math.round(value / 1000)}k`, style: { colors: "var(--ds-chart-tick)" } } }, tooltip: { ...base.tooltip, y: { formatter: money } } };
+  const rateOptions = { ...base, colors: ["#2142e7"], stroke: { curve: "smooth" as const, width: 3 }, fill: { type: "gradient" as const, gradient: { shadeIntensity: .2, opacityFrom: .38, opacityTo: .02 } }, xaxis: { categories: points.map((point) => point.label), axisBorder: { show: false }, axisTicks: { show: false }, labels: { style: { colors: "var(--ds-chart-tick)" } } }, yaxis: { min: 0, max: 100, labels: { formatter: (value: number) => `${value}%`, style: { colors: "var(--ds-chart-tick)" } } }, tooltip: { ...base.tooltip, y: { formatter: (value: number) => `${value.toFixed(1)}%` } } };
+  const donutOptions = { ...base, labels: categoryItems.map((item) => item.name), colors: categoryItems.map((item, index) => item.color ?? ["#2142e7", "#6c8cff", "#efb366", "#e9d15b", "#1d9b5f", "#d14343"][index]), stroke: { colors: ["var(--ds-surface)"], width: 4 }, plotOptions: { pie: { donut: { size: "72%", labels: { show: true, total: { show: true, label: "Spent", formatter: () => money(categoryItems.reduce((total, item) => total + item.total, 0)) } } } } }, tooltip: { ...base.tooltip, y: { formatter: money } } };
+  return <div className="space-y-7"><div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end"><PageHeader title="Your money, in focus." description="A calm view of what came in, what went out, and what you can keep moving toward." /><div className="inline-flex items-center rounded-full border border-line bg-surface p-1"><button onClick={() => setSelectedDate(new Date(year, month - 2, 1))} aria-label="Previous month" className="grid h-8 w-8 place-items-center rounded-full text-muted hover:bg-canvas hover:text-ink"><ChevronLeft size={16}/></button><span className="min-w-32 px-3 text-center text-sm font-medium">{selectedDate.toLocaleString("en-US", { month: "long", year: "numeric" })}</span><button onClick={() => setSelectedDate(new Date(year, month, 1))} aria-label="Next month" className="grid h-8 w-8 place-items-center rounded-full text-muted hover:bg-canvas hover:text-ink"><ChevronRight size={16}/></button></div></div>
+    <section className="grid gap-4 xl:grid-cols-[1.1fr_1.9fr]"><AccountBalanceWidget /><div className="grid gap-3 sm:grid-cols-3"><SummaryCard title="Income" value={monthly.data?.totalIncome ?? 0} subtitle="This month" tone="income" isLoading={loading}/><SummaryCard title="Spent" value={monthly.data?.totalExpense ?? 0} subtitle="This month" tone="expense" isLoading={loading}/><SummaryCard title="Kept" value={monthly.data?.savings ?? 0} subtitle={`${Number(monthly.data?.savingsRate ?? 0).toFixed(1)}% savings rate`} tone="savings" isLoading={loading}/></div></section>
+    <section className="grid gap-4 xl:grid-cols-[1.55fr_.85fr]"><ChartPanel title="Cash flow" subtitle="Income and spending over the last six months" loading={yearly.isLoading}><ModernChart type="bar" height={292} options={flowOptions} series={[{ name: "Income", data: points.map((point) => point.income) }, { name: "Spent", data: points.map((point) => point.expense) }]}/></ChartPanel><ChartPanel title="Where it went" subtitle="Your top expense categories" loading={categories.isLoading}>{categoryItems.length ? <ModernChart type="donut" height={292} options={donutOptions} series={categoryItems.map((item) => item.total)}/> : <EmptyChart />}</ChartPanel></section>
+    <section><ChartPanel title="Savings momentum" subtitle="Your monthly savings rate" loading={yearly.isLoading}><ModernChart type="area" height={252} options={rateOptions} series={[{ name: "Savings rate", data: points.map((point) => point.rate) }]}/></ChartPanel></section>
+  </div>;
+}
+
+function ChartPanel({ title, subtitle, loading, children }: { title: string; subtitle: string; loading: boolean; children: React.ReactNode }) { return <article className="app-panel p-5 md:p-6"><div className="flex items-start justify-between gap-4"><div><h2 className="text-lg font-semibold tracking-[-.03em]">{title}</h2><p className="mt-1 text-sm text-muted">{subtitle}</p></div><WalletCards className="h-4 w-4 text-primary" /></div><div className="mt-5">{loading ? <div className="h-[292px] animate-pulse rounded-card bg-canvas" /> : children}</div></article>; }
+function EmptyChart() { return <div className="flex h-[292px] items-center justify-center rounded-card border border-dashed border-line bg-subtle px-8 text-center text-sm text-muted">Add an expense transaction to see your spending breakdown.</div>; }
+
+/*
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
@@ -56,7 +91,7 @@ const DASHBOARD_TABS: Array<{ id: DashboardTab; label: string }> = [
   { id: "yearly", label: "Yearly" },
 ];
 
-/* ─── Custom tooltip ─── */
+/* ─── Custom tooltip ─── * /
 function ChartTooltip({
   active,
   payload,
@@ -134,7 +169,7 @@ function CategoryTooltip({
   );
 }
 
-/* ─── Main page ─── */
+/* ─── Main page ─── * /
 export default function DashboardPage() {
   const today = new Date();
   const [activeTab, setActiveTab] = useState<DashboardTab>("monthly");
@@ -264,7 +299,7 @@ export default function DashboardPage() {
 
       {activeTab === "monthly" && (
         <>
-          {/* Summary cards */}
+          {/* Summary cards * /}
           <section className="grid gap-3 md:grid-cols-3">
             <SummaryCard
               title="Total income"
@@ -289,9 +324,9 @@ export default function DashboardPage() {
             />
           </section>
 
-          {/* Charts — bento layout: bar+pie row, then savings full-width */}
+          {/* Charts — bento layout: bar+pie row, then savings full-width * /}
           <section className="grid gap-4 xl:grid-cols-[2fr_1fr]">
-            {/* Bar chart — income vs expense */}
+            {/* Bar chart — income vs expense * /}
             <ChartPanel
               title="Income vs expense"
               legend={[
@@ -333,7 +368,7 @@ export default function DashboardPage() {
               </ResponsiveContainer>
             </ChartPanel>
 
-            {/* Pie chart — expense categories */}
+            {/* Pie chart — expense categories * /}
             <ChartPanel
               title="Expense breakdown"
               isLoading={isCategoryLoading}
@@ -359,7 +394,7 @@ export default function DashboardPage() {
                           ))}
                         </Pie>
                         <Tooltip content={<CategoryTooltip />} />
-                        {/* Center label */}
+                        {/* Center label * /}
                         <text
                           x="50%"
                           y="46%"
@@ -409,7 +444,7 @@ export default function DashboardPage() {
             </ChartPanel>
           </section>
 
-          {/* Savings rate trend — full width */}
+          {/* Savings rate trend — full width * /}
           <section>
             <ChartPanel
               title="Savings rate trend"
@@ -468,7 +503,7 @@ export default function DashboardPage() {
   );
 }
 
-/* ─── Chart panel ─── */
+/* ─── Chart panel ─── * /
 function ChartPanel({
   title,
   legend,
@@ -521,7 +556,7 @@ function EmptyChartState({ message }: { message: string }) {
   );
 }
 
-/* ─── Helpers ─── */
+/* ─── Helpers ─── * /
 function buildSixMonthData(
   selectedDate: Date,
   currentYear?: YearlySummary,
@@ -585,3 +620,4 @@ function formatPercent(value: number) {
 function toNumber(value: number | string | undefined) {
   return Number(value ?? 0);
 }
+*/
