@@ -1,6 +1,7 @@
 "use client";
 
 import { X } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   useEffect,
   useRef,
@@ -27,6 +28,7 @@ const FOCUSABLE_SELECTOR = [
 
 export function Modal({ open, title, children, onClose }: ModalProps) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     if (!open) {
@@ -44,10 +46,6 @@ export function Modal({ open, title, children, onClose }: ModalProps) {
       }
     };
   }, [open]);
-
-  if (!open) {
-    return null;
-  }
 
   function handleBackdropClick(event: MouseEvent<HTMLDivElement>) {
     if (event.target === event.currentTarget) {
@@ -85,35 +83,47 @@ export function Modal({ open, title, children, onClose }: ModalProps) {
   }
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-4"
-      onClick={handleBackdropClick}
-      onKeyDown={handleKeyDown}
-      role="presentation"
-    >
-      <div
-        ref={panelRef}
-        className="max-h-[calc(100vh-2rem)] w-full max-w-lg overflow-y-auto rounded-card bg-surface shadow-xl"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="modal-title"
-      >
-        <div className="flex items-center justify-between gap-4 border-b border-line px-6 py-4">
-          <h2 id="modal-title" className="text-xl font-black text-ink">
-            {title}
-          </h2>
-          <button
-            type="button"
-            aria-label="Close modal"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted transition hover:bg-canvas hover:text-ink"
-            onClick={onClose}
+    <AnimatePresence>
+      {open ? (
+        <motion.div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-ink/45 p-4 backdrop-blur-sm"
+          onClick={handleBackdropClick}
+          onKeyDown={handleKeyDown}
+          role="presentation"
+          initial={reduceMotion ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={reduceMotion ? undefined : { opacity: 0 }}
+          transition={{ duration: 0.18, ease: "easeOut" }}
+        >
+          <motion.div
+            ref={panelRef}
+            className="max-h-[calc(100vh-2rem)] w-full max-w-lg overflow-y-auto rounded-panel bg-surface shadow-[0_24px_70px_rgb(17_24_39_/_22%)]"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modal-title"
+            initial={reduceMotion ? false : { opacity: 0, y: 16, scale: 0.985 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={reduceMotion ? undefined : { opacity: 0, y: 10, scale: 0.99 }}
+            transition={reduceMotion ? { duration: 0 } : { type: "spring", stiffness: 360, damping: 30, mass: 0.7 }}
           >
-            <X aria-hidden="true" className="h-4 w-4" />
-          </button>
-        </div>
-        <div className="px-6 py-5">{children}</div>
-      </div>
-    </div>
+            <div className="flex items-center justify-between gap-4 border-b border-line px-6 py-4">
+              <h2 id="modal-title" className="text-xl font-semibold tracking-[-0.03em] text-ink">
+                {title}
+              </h2>
+              <button
+                type="button"
+                aria-label="Close modal"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-control text-muted transition hover:bg-canvas hover:text-ink"
+                onClick={onClose}
+              >
+                <X aria-hidden="true" className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="px-6 py-5">{children}</div>
+          </motion.div>
+        </motion.div>
+      ) : null}
+    </AnimatePresence>
   );
 }
 
