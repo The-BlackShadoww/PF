@@ -1,6 +1,17 @@
 "use client";
 
-export function YearlyView() { return null; }
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useState } from "react";
+import { useYearlySummary } from "@/lib/hooks/useYearlySummary";
+import { BreakdownTable } from "./BreakdownTable";
+import { PeriodSummaryCards } from "./PeriodSummaryCards";
+
+export function YearlyView() {
+  const currentYear = new Date().getFullYear();
+  const [year, setYear] = useState(currentYear);
+  const { data, isLoading, isFetching, error } = useYearlySummary(year);
+  return <div className="space-y-6"><div className="app-panel flex items-center justify-between p-4"><div><p className="text-sm font-semibold">Year at a glance</p><p className="mt-1 text-sm text-muted">Review the full picture before planning what comes next.</p></div><div className="inline-flex items-center rounded-control border border-line bg-subtle p-1"><button aria-label="Previous year" onClick={() => setYear((value) => value - 1)} className="grid h-8 w-8 place-items-center rounded-control text-muted hover:bg-surface hover:text-ink"><ChevronLeft size={16}/></button><span className="min-w-16 text-center text-sm font-semibold">{year}</span><button aria-label="Next year" disabled={year === currentYear} onClick={() => setYear((value) => value + 1)} className="grid h-8 w-8 place-items-center rounded-control text-muted hover:bg-surface hover:text-ink disabled:opacity-40"><ChevronRight size={16}/></button></div></div>{error ? <div className="rounded-card border border-danger/30 bg-danger/10 p-4 text-sm text-danger">Your yearly summary could not load. Try again in a moment.</div> : null}<PeriodSummaryCards totalIncome={data?.totalIncome ?? 0} totalExpense={data?.totalExpense ?? 0} savings={data?.savings ?? 0} savingsRate={String(data?.savingsRate ?? "0.0")} isLoading={isLoading || isFetching}/><section><div className="mb-3"><h2 className="text-lg font-semibold tracking-[-.03em]">Monthly detail</h2><p className="mt-1 text-sm text-muted">Compare each month to understand the year’s rhythm.</p></div><BreakdownTable rows={data?.monthlyBreakdown ?? []} year={year} isLoading={isLoading || isFetching}/></section></div>;
+}
 /*
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";

@@ -8,6 +8,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
 import { TransactionForm } from "@/components/forms/TransactionForm";
 import { PageHeader } from "@/components/layouts/PageHeader";
@@ -46,6 +47,7 @@ export default function TransactionsPage() {
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [transactionToDelete, setTransactionToDelete] =
     useState<Transaction | null>(null);
+  const reduceMotion = useReducedMotion();
 
   const filters = useMemo<TransactionFilters>(
     () => ({
@@ -119,7 +121,7 @@ export default function TransactionsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-7">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <PageHeader
           title="Transactions"
@@ -134,8 +136,9 @@ export default function TransactionsPage() {
         </Button>
       </div>
 
-      <section className="rounded-card bg-surface p-5">
-        <div className="grid gap-4 md:grid-cols-4">
+      <motion.section initial={reduceMotion ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .2 }} className="app-panel p-5 md:p-6">
+        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between"><div><h2 className="text-lg font-semibold tracking-[-.03em]">Find a transaction</h2><p className="mt-1 text-sm text-muted">Narrow your activity by time, type, or category.</p></div><button type="button" onClick={() => { setStartDate(""); setEndDate(""); setFilterMonth(undefined); setFilterYear(undefined); setType("all"); setCategoryId(""); setPage(1); }} className="w-fit text-sm font-medium text-primary hover:text-primary-hover">Reset filters</button></div>
+        <div className="grid gap-4 md:grid-cols-3 xl:grid-cols-6">
           <label className="space-y-1.5">
             <span className="text-sm font-semibold text-muted">Show period</span>
             <select value={filterMonth ?? ""} className="h-11 w-full rounded-panel border border-ink bg-surface px-4 text-sm" onChange={(event) => resetPage(setFilterMonth, event.target.value ? Number(event.target.value) : undefined)}>
@@ -206,14 +209,14 @@ export default function TransactionsPage() {
             </select>
           </label>
         </div>
-      </section>
+      </motion.section>
 
-      {isLoading ? (
+      <AnimatePresence mode="wait">{isLoading ? (
         <TransactionTableSkeleton />
       ) : transactions.length === 0 ? (
         <EmptyState />
       ) : (
-        <Table aria-busy={isFetching}>
+        <motion.div key="transactions-table" initial={reduceMotion ? false : { opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={reduceMotion ? undefined : { opacity: 0 }} transition={{ duration: .18 }}><Table aria-busy={isFetching}>
           <TableHeader>
             <TableRow>
               <TableHead title="The month and year this transaction is attributed to">Period</TableHead>
@@ -285,10 +288,10 @@ export default function TransactionsPage() {
               </TableRow>
             ))}
           </TableBody>
-        </Table>
-      )}
+        </Table></motion.div>
+      )}</AnimatePresence>
 
-      <div className="flex flex-col gap-3 rounded-card bg-surface px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="app-panel flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-muted">
           Page {page} of {totalPages} · {total} total transactions
         </p>
@@ -402,12 +405,4 @@ function EmptyState() {
       </p>
     </div>
   );
-}
-
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(value));
 }

@@ -2,12 +2,13 @@
 
 import { Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { AccountSettingsTab } from "@/components/settings/AccountSettingsTab";
 
 import { CategoryForm } from "@/components/categories/CategoryForm";
 import { CategoryRow } from "@/components/categories/CategoryRow";
 import { PageHeader } from "@/components/layouts/PageHeader";
-import { Button, acebuilderActiveClasses } from "@/components/ui/Button";
+import { Button } from "@/components/ui/Button";
 import { PreferencesTab } from "@/components/settings/PreferencesTab";
 import { ProfileTab } from "@/components/settings/ProfileTab";
 import { SecurityTab } from "@/components/settings/SecurityTab";
@@ -18,7 +19,6 @@ import {
   useDeleteCategory,
   useUpdateCategory,
 } from "@/lib/hooks/useCategories";
-import { cn } from "@/lib/utils/cn";
 
 type Tab = "profile" | "security" | "preferences" | "categories" | "account";
 
@@ -36,6 +36,7 @@ export default function SettingsPage() {
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const reduceMotion = useReducedMotion();
 
   const { data: categoriesResponse, isLoading } = useCategories(
     activeTab === "categories",
@@ -109,25 +110,34 @@ export default function SettingsPage() {
         description="Manage your account, security, preferences, and categories."
       />
 
-      <div className="flex justify-center items-center">
-        <div className="inline-flex gap-1 overflow-x-auto rounded-full bg-surface py-1 px-1.5 border border-line">
-          {TABS.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              data-slot="button"
-              onClick={() => setActiveTab(tab.id)}
-              className={cn(
-                "inline-flex cursor-pointer font-display items-center justify-center whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 active:scale-[0.98] outline-none",
-                activeTab === tab.id
-                  ? acebuilderActiveClasses
-                  : "text-muted hover:bg-canvas hover:text-ink",
-              )}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      <div
+        className="hide-scrollbar inline-flex max-w-full gap-1 overflow-x-auto rounded-control border border-line bg-subtle p-1"
+        role="tablist"
+        aria-label="Settings sections"
+      >
+        {TABS.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            onClick={() => setActiveTab(tab.id)}
+            role="tab"
+            aria-selected={activeTab === tab.id}
+            className={`relative min-h-9 shrink-0 rounded-[12px] px-4 text-sm font-medium transition-colors ${activeTab === tab.id ? "text-ink" : "text-muted hover:text-ink"}`}
+          >
+            {activeTab === tab.id ? (
+              <motion.span
+                layoutId="settings-tab"
+                className="absolute inset-0 rounded-[12px] bg-surface shadow-sm"
+                transition={
+                  reduceMotion
+                    ? { duration: 0 }
+                    : { type: "spring", stiffness: 380, damping: 30 }
+                }
+              />
+            ) : null}
+            <span className="relative">{tab.label}</span>
+          </button>
+        ))}
       </div>
 
       {error ? (
@@ -143,90 +153,100 @@ export default function SettingsPage() {
         </div>
       ) : null}
 
-      <section className="rounded-card bg-surface p-6">
-        {activeTab === "profile" && <ProfileTab />}
-        {activeTab === "security" && <SecurityTab />}
-        {activeTab === "preferences" && <PreferencesTab />}
-        {activeTab === "account" && <AccountSettingsTab />}
-        {activeTab === "categories" && (
-          <div className="space-y-8">
-            {showCreateForm || editingCategory ? (
-              <div className="rounded-card bg-canvas p-5">
-                <h3 className="mb-4 text-sm font-black text-ink">
-                  {editingCategory
-                    ? `Edit "${editingCategory.name}"`
-                    : "New category"}
-                </h3>
-                <CategoryForm
-                  initialData={editingCategory ?? undefined}
-                  onSubmit={handleFormSubmit}
-                  onCancel={() => {
+      <section className="app-panel overflow-hidden p-6 md:p-7">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={activeTab}
+            initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduceMotion ? undefined : { opacity: 0, y: -5 }}
+            transition={{ duration: 0.18 }}
+          >
+            {activeTab === "profile" && <ProfileTab />}
+            {activeTab === "security" && <SecurityTab />}
+            {activeTab === "preferences" && <PreferencesTab />}
+            {activeTab === "account" && <AccountSettingsTab />}
+            {activeTab === "categories" && (
+              <div className="space-y-8">
+                {showCreateForm || editingCategory ? (
+                  <div className="rounded-card bg-canvas p-5">
+                    <h3 className="mb-4 text-sm font-black text-ink">
+                      {editingCategory
+                        ? `Edit "${editingCategory.name}"`
+                        : "New category"}
+                    </h3>
+                    <CategoryForm
+                      initialData={editingCategory ?? undefined}
+                      onSubmit={handleFormSubmit}
+                      onCancel={() => {
+                        setShowCreateForm(false);
+                        setEditingCategory(null);
+                        setError(null);
+                      }}
+                      isLoading={
+                        createMutation.isPending || updateMutation.isPending
+                      }
+                    />
+                  </div>
+                ) : (
+                  <Button onClick={() => setShowCreateForm(true)}>
+                    <Plus size={16} />
+                    New category
+                  </Button>
+                )}
+
+                {isLoading ? (
+                  <div className="space-y-2">
+                    {Array.from({ length: 5 }).map((_, index) => (
+                      <div
+                        key={index}
+                        className="h-14 animate-pulse rounded-panel bg-canvas"
+                      />
+                    ))}
+                  </div>
+                ) : null}
+
+                <CategoryGroup
+                  title="Income"
+                  categories={incomeCategories}
+                  deleteConfirmId={deleteConfirmId}
+                  isDeleting={deleteMutation.isPending}
+                  onEdit={(category) => {
+                    setEditingCategory(category);
                     setShowCreateForm(false);
-                    setEditingCategory(null);
-                    setError(null);
+                    setDeleteConfirmId(null);
                   }}
-                  isLoading={
-                    createMutation.isPending || updateMutation.isPending
-                  }
+                  onDelete={handleDeleteClick}
+                  onCancelDelete={() => setDeleteConfirmId(null)}
                 />
+                <CategoryGroup
+                  title="Expenses"
+                  categories={expenseCategories}
+                  deleteConfirmId={deleteConfirmId}
+                  isDeleting={deleteMutation.isPending}
+                  onEdit={(category) => {
+                    setEditingCategory(category);
+                    setShowCreateForm(false);
+                    setDeleteConfirmId(null);
+                  }}
+                  onDelete={handleDeleteClick}
+                  onCancelDelete={() => setDeleteConfirmId(null)}
+                />
+
+                {!isLoading && categories.length === 0 ? (
+                  <div className="rounded-card border border-dashed border-muted bg-canvas px-6 py-12 text-center">
+                    <p className="text-sm font-semibold text-muted">
+                      No categories yet.
+                    </p>
+                    <p className="mt-1 text-xs text-muted">
+                      Create your first one above.
+                    </p>
+                  </div>
+                ) : null}
               </div>
-            ) : (
-              <Button onClick={() => setShowCreateForm(true)}>
-                <Plus size={16} />
-                New category
-              </Button>
             )}
-
-            {isLoading ? (
-              <div className="space-y-2">
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <div
-                    key={index}
-                    className="h-14 animate-pulse rounded-panel bg-canvas"
-                  />
-                ))}
-              </div>
-            ) : null}
-
-            <CategoryGroup
-              title="Income"
-              categories={incomeCategories}
-              deleteConfirmId={deleteConfirmId}
-              isDeleting={deleteMutation.isPending}
-              onEdit={(category) => {
-                setEditingCategory(category);
-                setShowCreateForm(false);
-                setDeleteConfirmId(null);
-              }}
-              onDelete={handleDeleteClick}
-              onCancelDelete={() => setDeleteConfirmId(null)}
-            />
-            <CategoryGroup
-              title="Expenses"
-              categories={expenseCategories}
-              deleteConfirmId={deleteConfirmId}
-              isDeleting={deleteMutation.isPending}
-              onEdit={(category) => {
-                setEditingCategory(category);
-                setShowCreateForm(false);
-                setDeleteConfirmId(null);
-              }}
-              onDelete={handleDeleteClick}
-              onCancelDelete={() => setDeleteConfirmId(null)}
-            />
-
-            {!isLoading && categories.length === 0 ? (
-              <div className="rounded-card border border-dashed border-muted bg-canvas px-6 py-12 text-center">
-                <p className="text-sm font-semibold text-muted">
-                  No categories yet.
-                </p>
-                <p className="mt-1 text-xs text-muted">
-                  Create your first one above.
-                </p>
-              </div>
-            ) : null}
-          </div>
-        )}
+          </motion.div>
+        </AnimatePresence>
       </section>
     </div>
   );
