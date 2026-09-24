@@ -37,96 +37,98 @@ export function ReportPreviewCard({
   endYear,
   endMonth,
 }: ReportPreviewCardProps) {
+  // Empty state — no date range selected
   if (!startYear || !startMonth || !endYear || !endMonth) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-card border border-dashed border-muted bg-canvas p-8 text-center">
-        <FileText size={32} className="mb-3 text-muted" />
-        <p className="text-sm font-semibold text-muted">
-          Select a date range to preview your report
-        </p>
-        <p className="mt-1 text-xs text-muted">
-          You will see a summary of what the report includes before downloading.
+      <div className="flex flex-col items-center justify-center rounded-card border border-dashed border-line bg-canvas px-8 py-12 text-center">
+        <div className="mb-3 grid h-10 w-10 place-items-center rounded-full bg-surface shadow-sm">
+          <FileText size={18} className="text-muted" />
+        </div>
+        <p className="text-sm font-semibold text-ink">Preview will appear here</p>
+        <p className="mt-1 max-w-[200px] text-xs text-muted leading-relaxed">
+          Pick a date range to see a summary before downloading.
         </p>
       </div>
     );
   }
 
+  // Loading skeleton
   if (isLoading) {
     return (
-      <div className="space-y-3 rounded-card bg-surface p-5">
-        <div className="h-4 w-1/3 animate-pulse rounded bg-canvas" />
+      <div className="rounded-card bg-surface p-5">
+        <div className="mb-4 flex items-center justify-between">
+          <div className="space-y-2">
+            <div className="h-4 w-28 animate-pulse rounded bg-canvas" />
+            <div className="h-3 w-20 animate-pulse rounded bg-canvas" />
+          </div>
+          <div className="h-6 w-20 animate-pulse rounded-full bg-canvas" />
+        </div>
         <div className="grid grid-cols-2 gap-3">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <div
-              key={index}
-              className="h-16 animate-pulse rounded-panel bg-canvas"
-            />
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="h-20 animate-pulse rounded-panel bg-canvas" />
           ))}
         </div>
-        <div className="h-3 w-1/2 animate-pulse rounded bg-canvas" />
+        <div className="mt-4 h-3 w-3/4 animate-pulse rounded bg-canvas" />
       </div>
     );
   }
 
+  // Populated preview
   if (preview) {
     const startLabel = format(new Date(startYear, startMonth - 1, 1), "MMM yyyy");
     const endLabel = format(new Date(endYear, endMonth - 1, 1), "MMM yyyy");
     const periodLabel =
-      startLabel === endLabel ? startLabel : `${startLabel} to ${endLabel}`;
+      startLabel === endLabel ? startLabel : `${startLabel} – ${endLabel}`;
+
+    const netPositive = preview.savings >= 0;
 
     return (
-      <div className="rounded-card bg-surface p-6">
-        <div className="mb-4 flex items-center justify-between">
+      <div className="rounded-card bg-surface p-5">
+        {/* Header */}
+        <div className="mb-5 flex items-start justify-between gap-3">
           <div>
-            <p className="text-base font-black text-ink">
-              Report preview
-            </p>
+            <p className="text-sm font-semibold text-ink">Report preview</p>
             <p className="mt-0.5 text-xs text-muted">{periodLabel}</p>
           </div>
-          <div className="flex items-center gap-1.5 rounded-full bg-canvas px-3 py-1 text-xs font-semibold text-muted">
-            <Calendar size={13} />
+          <div className="flex items-center gap-1.5 rounded-full bg-canvas px-3 py-1 text-xs font-medium text-muted">
+            <Calendar size={12} />
             <span>
-              {preview.monthsIncluded} month
-              {preview.monthsIncluded !== 1 ? "s" : ""}
+              {preview.monthsIncluded} mo{preview.monthsIncluded !== 1 ? "s" : ""}
             </span>
           </div>
         </div>
 
-        <div className="mb-4 grid grid-cols-2 gap-3">
+        {/* Metric grid */}
+        <div className="grid grid-cols-2 gap-3">
           <MetricCard
             icon={TrendingUp}
-            label="Total Income"
+            label="Income"
             value={formatDollar(preview.totalIncome)}
-            className="bg-accent text-success"
+            colorClass="bg-accent text-success"
           />
           <MetricCard
             icon={TrendingDown}
-            label="Total Expenses"
+            label="Expenses"
             value={formatDollar(preview.totalExpense)}
-            className="bg-canvas text-danger"
+            colorClass="bg-canvas text-danger"
           />
           <MetricCard
             icon={Wallet}
-            label="Net Savings"
-            value={`${preview.savings < 0 ? "-" : ""}${formatDollar(
-              preview.savings,
-            )}`}
-            className={
-              preview.savings >= 0
-                ? "bg-chart-peach text-ink"
-                : "bg-chart-yellow text-warning-ink"
-            }
+            label="Net savings"
+            value={`${preview.savings < 0 ? "−" : ""}${formatDollar(preview.savings)}`}
+            colorClass={netPositive ? "bg-chart-peach/20 text-ink" : "bg-chart-yellow/30 text-warning-ink"}
           />
           <MetricCard
             icon={Hash}
             label="Transactions"
             value={preview.transactionCount.toLocaleString()}
-            className="bg-ink text-primary"
+            colorClass="bg-ink text-primary"
           />
         </div>
 
-        <p className="text-xs text-muted">
-          Your downloaded report will contain all{" "}
+        {/* Footer note */}
+        <p className="mt-4 text-xs leading-relaxed text-muted">
+          Your download will include all{" "}
           {preview.transactionCount.toLocaleString()} transaction
           {preview.transactionCount !== 1 ? "s" : ""} from this period.
         </p>
@@ -134,12 +136,11 @@ export function ReportPreviewCard({
     );
   }
 
+  // No data for period
   return (
-    <div className="rounded-card bg-surface p-6 text-center">
-      <p className="text-sm font-semibold text-muted">
-        No data found for the selected period.
-      </p>
-      <p className="mt-1 text-xs text-muted">Try a wider date range.</p>
+    <div className="rounded-card bg-surface p-5 text-center">
+      <p className="text-sm font-semibold text-muted">No data for this period.</p>
+      <p className="mt-1 text-xs text-muted">Try widening your date range.</p>
     </div>
   );
 }
@@ -148,20 +149,20 @@ function MetricCard({
   icon: Icon,
   label,
   value,
-  className,
+  colorClass,
 }: {
   icon: typeof FileText;
   label: string;
   value: string;
-  className: string;
+  colorClass: string;
 }) {
   return (
-    <div className={`rounded-panel p-4 ${className}`}>
-      <div className="mb-1 flex items-center gap-1.5">
-        <Icon size={13} />
-        <span className="text-xs font-semibold">{label}</span>
+    <div className={`rounded-panel p-4 ${colorClass}`}>
+      <div className="mb-2 flex items-center gap-1.5">
+        <Icon size={12} />
+        <span className="text-xs font-medium">{label}</span>
       </div>
-      <p className="text-lg font-black">{value}</p>
+      <p className="text-base font-black leading-none">{value}</p>
     </div>
   );
 }
