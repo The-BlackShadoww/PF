@@ -164,10 +164,10 @@ export function TransactionForm({
         </label>
         <p className="text-xs text-muted">Choose the month and year this income or expense belongs to, not necessarily when money changed hands.</p>
         <div className="flex gap-2">
-          <select value={watch("transactionMonth")} onChange={(event) => setValue("transactionMonth", parseInt(event.target.value, 10), { shouldValidate: true })} className="h-11 flex-1 rounded-panel border border-ink bg-surface px-4 text-sm">
+          <select value={watch("transactionMonth")} onChange={(event) => setValue("transactionMonth", parseInt(event.target.value, 10), { shouldValidate: true })} className="h-10 flex-1 rounded-control border border-line bg-surface px-3 text-sm text-ink outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20">
             {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].map((name, index) => <option key={name} value={index + 1}>{name}</option>)}
           </select>
-          <select value={watch("transactionYear")} onChange={(event) => setValue("transactionYear", parseInt(event.target.value, 10), { shouldValidate: true })} className="h-11 w-28 rounded-panel border border-ink bg-surface px-3 text-sm">
+          <select value={watch("transactionYear")} onChange={(event) => setValue("transactionYear", parseInt(event.target.value, 10), { shouldValidate: true })} className="h-10 w-28 rounded-control border border-line bg-surface px-3 text-sm text-ink outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20">
             {Array.from({ length: 6 }, (_, index) => new Date().getFullYear() - index).map((year) => <option key={year} value={year}>{year}</option>)}
           </select>
         </div>
@@ -186,7 +186,7 @@ export function TransactionForm({
                 "h-10 rounded-full text-sm font-medium capitalize cursor-pointer font-display transition-all duration-200 active:scale-[0.98] outline-none",
                 selectedType === transactionType
                   ? acebuilderActiveClasses
-                  : "border border-ink bg-surface text-ink hover:bg-canvas",
+                  : "border border-line bg-surface text-ink hover:bg-canvas",
               )}
               onClick={() => handleTypeChange(transactionType)}
             >
@@ -201,7 +201,7 @@ export function TransactionForm({
       <label className="block space-y-1.5">
         <span className="text-sm font-semibold text-muted">Category</span>
         <select
-          className="h-11 w-full rounded-panel border border-ink bg-surface px-4 text-sm text-ink outline-none transition focus:ring-2 focus:ring-primary"
+          className="h-10 w-full rounded-control border border-line bg-surface px-3.5 text-sm text-ink outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
           disabled={categoriesLoading}
           {...register("categoryId")}
         >
@@ -220,7 +220,7 @@ export function TransactionForm({
       </label>
 
       {selectedType === "expense" && projectedBalance !== null && isProjectedLow ? (
-        <div className="flex items-start gap-2 rounded-panel bg-amber-50 p-3 text-xs text-amber-800">
+        <div className="flex items-start gap-2 rounded-control border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
           <AlertTriangle aria-hidden="true" className="mt-0.5 h-3.5 w-3.5 shrink-0" />
           <p>This expense will bring your balance to <strong>{projectedBalance < 0 ? "-" : ""}${(Math.abs(projectedBalance) / 100).toFixed(2)}</strong>{projectedBalance < 0 ? " (negative)" : ""} — below your low-balance threshold.</p>
         </div>
@@ -232,7 +232,7 @@ export function TransactionForm({
           type="text"
           inputMode="decimal"
           value={amountDisplay}
-          className="h-11 w-full rounded-panel border border-ink px-4 text-sm text-ink outline-none transition focus:ring-2 focus:ring-primary"
+          className="h-10 w-full rounded-control border border-line bg-surface px-3.5 text-sm text-ink outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
           placeholder="$0.00"
           onChange={(event) => handleAmountChange(event.target.value)}
         />
@@ -245,7 +245,7 @@ export function TransactionForm({
         <p className="text-xs text-muted">When did the money actually change hands? This is for your records only — it does not affect which month this transaction appears in.</p>
         <input
           type="date"
-          className="h-11 w-full rounded-panel border border-ink px-4 text-sm text-ink outline-none transition focus:ring-2 focus:ring-primary"
+          className="h-10 w-full rounded-control border border-line bg-surface px-3.5 text-sm text-ink outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
           {...register("date")}
         />
         {futureDateWarning ? (
@@ -260,9 +260,9 @@ export function TransactionForm({
       <label className="block space-y-1.5">
         <span className="text-sm font-semibold text-muted">Note</span>
         <textarea
-          rows={4}
+          rows={3}
           maxLength={500}
-          className="w-full resize-none rounded-panel border border-ink px-4 py-3 text-sm text-ink outline-none transition focus:ring-2 focus:ring-primary"
+          className="w-full resize-none rounded-control border border-line bg-surface px-3.5 py-2.5 text-sm text-ink outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
           placeholder="Optional"
           {...register("note")}
         />
@@ -272,10 +272,10 @@ export function TransactionForm({
         </div>
       </label>
 
-      <div className="flex justify-end gap-2 border-t border-line pt-5">
+      <div className="flex justify-end gap-2.5 border-t border-line pt-4">
         <button
           type="button"
-          className="inline-flex h-8 items-center justify-center rounded-full border border-ink px-3.5 text-sm font-semibold text-ink transition hover:bg-canvas"
+          className="inline-flex h-9 items-center justify-center rounded-control border border-line bg-surface px-4 text-xs font-semibold text-foreground transition hover:bg-canvas"
           onClick={onCancel}
           disabled={submitting}
         >

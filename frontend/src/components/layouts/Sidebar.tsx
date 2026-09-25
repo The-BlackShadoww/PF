@@ -69,7 +69,7 @@ export function Sidebar() {
   }
 
   const navigation = (mobile = false) => (
-    <nav aria-label="Main navigation" className="flex flex-1 flex-col gap-1">
+    <nav aria-label="Main navigation" className="flex flex-1 flex-col gap-1.5">
       {navigationItems.map(({ href, label, icon: Icon }) => {
         const active = pathname === href;
         return (
@@ -78,13 +78,25 @@ export function Sidebar() {
             href={href}
             onClick={() => mobile && setIsOpen(false)}
             className={cn(
-              "flex min-h-11 items-center gap-3 rounded-control px-3 text-sm font-medium",
+              "group relative flex min-h-11 items-center gap-3 rounded-control px-3.5 text-sm transition-all duration-150",
               active
-                ? "bg-sidebar-accent text-primary shadow-[inset_0_0_0_1px_rgb(33_66_231_/_12%)]"
-                : "text-muted hover:bg-sidebar-accent hover:text-sidebar-foreground",
+                ? "bg-primary/10 font-semibold text-primary"
+                : "font-medium text-muted hover:bg-sidebar-accent hover:text-sidebar-foreground",
             )}
           >
-            <Icon aria-hidden="true" className="h-4 w-4" />
+            {active && (
+              <span
+                aria-hidden="true"
+                className="absolute left-0 top-2.5 bottom-2.5 w-1 rounded-r-full bg-primary"
+              />
+            )}
+            <Icon
+              aria-hidden="true"
+              className={cn(
+                "h-4 w-4 transition-transform group-hover:scale-110",
+                active ? "text-primary" : "text-muted group-hover:text-sidebar-foreground",
+              )}
+            />
             {label}
           </Link>
         );
@@ -97,7 +109,7 @@ export function Sidebar() {
       type="button"
       disabled={isLoggingOut}
       onClick={handleLogout}
-      className="flex min-h-11 w-full items-center gap-3 rounded-control px-3 text-sm font-medium text-muted hover:bg-red-50 hover:text-danger disabled:opacity-60"
+      className="flex min-h-11 w-full items-center gap-3 rounded-control px-3.5 text-sm font-medium text-muted transition-colors hover:bg-danger/10 hover:text-danger disabled:opacity-60"
     >
       <LogOut aria-hidden="true" className="h-4 w-4" />
       {isLoggingOut ? "Logging out…" : "Log out"}
@@ -110,7 +122,7 @@ export function Sidebar() {
       aria-checked={theme === "dark"}
       aria-label={`Switch to ${theme === "light" ? "dark" : "light"} theme`}
       onClick={toggleTheme}
-      className="flex min-h-11 w-full items-center gap-3 rounded-control px-3 text-sm font-medium text-muted hover:bg-sidebar-accent hover:text-sidebar-foreground"
+      className="flex min-h-11 w-full items-center gap-3 rounded-control px-3.5 text-sm font-medium text-muted transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
     >
       <span className="grid h-5 w-5 place-items-center">
         {theme === "light" ? (
@@ -122,7 +134,7 @@ export function Sidebar() {
       <span>{theme === "light" ? "Dark theme" : "Light theme"}</span>
       <span
         aria-hidden="true"
-        className="ml-auto h-5 w-9 rounded-full bg-canvas p-0.5"
+        className="ml-auto h-5 w-9 rounded-full border border-line bg-canvas p-0.5"
       >
         <span
           className={cn(
@@ -141,7 +153,7 @@ export function Sidebar() {
           href="/dashboard"
           className="flex items-center gap-2 text-sm font-semibold"
         >
-          <span className="grid h-8 w-8 place-items-center rounded-control bg-primary text-white">
+          <span className="grid h-8 w-8 place-items-center rounded-control bg-primary text-white shadow-sm">
             <LayoutDashboard className="h-4 w-4" />
           </span>
           Personal Finance
@@ -168,16 +180,13 @@ export function Sidebar() {
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-72 flex-col border-r border-sidebar-line bg-sidebar p-5 text-sidebar-foreground lg:flex">
         <Link
           href="/dashboard"
-          className="mb-10 flex items-center gap-3 px-2 text-sm font-semibold tracking-[-0.02em]"
+          className="mb-8 flex items-center gap-3 px-2 text-sm font-semibold tracking-[-0.02em]"
         >
-          <span className="grid h-9 w-9 place-items-center rounded-control bg-primary text-white shadow-[0_8px_18px_rgb(33_66_231_/_22%)]">
+          <span className="grid h-9 w-9 place-items-center rounded-control bg-primary text-white shadow-[0_4px_14px_rgb(33_66_231_/_28%)]">
             <LayoutDashboard className="h-4 w-4" />
           </span>
           <span>Personal Finance</span>
         </Link>
-        <p className="mb-3 px-3 text-xs font-medium text-muted">
-          Your money
-        </p>
         {navigation()}
         <div className="mt-4 border-t border-sidebar-line pt-4">
           {themeSwitcher}

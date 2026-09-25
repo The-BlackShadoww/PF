@@ -65,8 +65,8 @@ export default function RegisterPage() {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-2 text-center">
-        <h1 className="text-4xl font-black leading-none text-ink">
+      <div className="space-y-1.5 text-center">
+        <h1 className="text-2xl font-bold tracking-tight text-ink md:text-3xl">
           Create account
         </h1>
         <p className="text-sm text-muted">
@@ -86,7 +86,7 @@ export default function RegisterPage() {
 
         <div className="space-y-1.5">
           <label
-            className="block text-sm font-semibold text-muted"
+            className="block text-xs font-semibold uppercase tracking-wider text-muted"
             htmlFor="name"
           >
             Full Name
@@ -95,13 +95,14 @@ export default function RegisterPage() {
             id="name"
             type="text"
             autoComplete="name"
+            placeholder="Jane Doe"
             aria-invalid={errors.name ? "true" : "false"}
             aria-describedby={errors.name ? "name-error" : undefined}
-            className="w-full rounded-panel border border-ink px-4 py-3 text-sm text-ink outline-none transition focus:ring-2 focus:ring-primary"
+            className="w-full rounded-control border border-line bg-surface px-3.5 py-2.5 text-sm text-ink outline-none transition-all placeholder:text-muted focus:border-primary focus:ring-2 focus:ring-primary/20"
             {...register("name")}
           />
           {errors.name ? (
-            <p className="text-sm text-danger" id="name-error" role="alert">
+            <p className="text-xs font-medium text-danger" id="name-error" role="alert">
               {errors.name.message}
             </p>
           ) : null}
@@ -109,7 +110,7 @@ export default function RegisterPage() {
 
         <div className="space-y-1.5">
           <label
-            className="block text-sm font-semibold text-muted"
+            className="block text-xs font-semibold uppercase tracking-wider text-muted"
             htmlFor="email"
           >
             Email
@@ -118,13 +119,14 @@ export default function RegisterPage() {
             id="email"
             type="email"
             autoComplete="email"
+            placeholder="you@example.com"
             aria-invalid={errors.email ? "true" : "false"}
             aria-describedby={errors.email ? "email-error" : undefined}
-            className="w-full rounded-panel border border-ink px-4 py-3 text-sm text-ink outline-none transition focus:ring-2 focus:ring-primary"
+            className="w-full rounded-control border border-line bg-surface px-3.5 py-2.5 text-sm text-ink outline-none transition-all placeholder:text-muted focus:border-primary focus:ring-2 focus:ring-primary/20"
             {...register("email")}
           />
           {errors.email ? (
-            <p className="text-sm text-danger" id="email-error" role="alert">
+            <p className="text-xs font-medium text-danger" id="email-error" role="alert">
               {errors.email.message}
             </p>
           ) : null}
@@ -132,7 +134,7 @@ export default function RegisterPage() {
 
         <div className="space-y-1.5">
           <label
-            className="block text-sm font-semibold text-muted"
+            className="block text-xs font-semibold uppercase tracking-wider text-muted"
             htmlFor="password"
           >
             Password
@@ -141,14 +143,15 @@ export default function RegisterPage() {
             id="password"
             type="password"
             autoComplete="new-password"
+            placeholder="At least 8 characters"
             aria-invalid={errors.password ? "true" : "false"}
             aria-describedby={errors.password ? "password-error" : undefined}
-            className="w-full rounded-panel border border-ink px-4 py-3 text-sm text-ink outline-none transition focus:ring-2 focus:ring-primary"
+            className="w-full rounded-control border border-line bg-surface px-3.5 py-2.5 text-sm text-ink outline-none transition-all placeholder:text-muted focus:border-primary focus:ring-2 focus:ring-primary/20"
             {...register("password")}
           />
           {errors.password ? (
             <p
-              className="text-sm text-danger"
+              className="text-xs font-medium text-danger"
               id="password-error"
               role="alert"
             >
@@ -159,7 +162,7 @@ export default function RegisterPage() {
 
         <div className="space-y-1.5">
           <label
-            className="block text-sm font-semibold text-muted"
+            className="block text-xs font-semibold uppercase tracking-wider text-muted"
             htmlFor="confirmPassword"
           >
             Confirm Password
@@ -168,16 +171,17 @@ export default function RegisterPage() {
             id="confirmPassword"
             type="password"
             autoComplete="new-password"
+            placeholder="••••••••"
             aria-invalid={errors.confirmPassword ? "true" : "false"}
             aria-describedby={
               errors.confirmPassword ? "confirm-password-error" : undefined
             }
-            className="w-full rounded-panel border border-ink px-4 py-3 text-sm text-ink outline-none transition focus:ring-2 focus:ring-primary"
+            className="w-full rounded-control border border-line bg-surface px-3.5 py-2.5 text-sm text-ink outline-none transition-all placeholder:text-muted focus:border-primary focus:ring-2 focus:ring-primary/20"
             {...register("confirmPassword")}
           />
           {errors.confirmPassword ? (
             <p
-              className="text-sm text-danger"
+              className="text-xs font-medium text-danger"
               id="confirm-password-error"
               role="alert"
             >
@@ -198,7 +202,7 @@ export default function RegisterPage() {
 
       <p className="text-center text-sm text-muted">
         Already have an account?{" "}
-        <Link className="font-semibold text-ink underline" href="/login">
+        <Link className="font-semibold text-primary transition-colors hover:text-primary-hover" href="/login">
           Log in
         </Link>
       </p>

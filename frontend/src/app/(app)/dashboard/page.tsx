@@ -1,6 +1,7 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, WalletCards } from "lucide-react";
+import { BarChart3, ChevronLeft, ChevronRight, PieChart, Plus, TrendingUp } from "lucide-react";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ModernChart, chartBase } from "@/components/charts/ModernChart";
@@ -201,6 +202,7 @@ export default function DashboardPage() {
           title="Cash flow"
           subtitle="Income and spending over the last six months"
           loading={yearly.isLoading}
+          icon={BarChart3}
         >
           <ModernChart
             type="bar"
@@ -216,6 +218,7 @@ export default function DashboardPage() {
           title="Where it went"
           subtitle="Your top expense categories"
           loading={categories.isLoading}
+          icon={PieChart}
         >
           {categoryItems.length ? (
             <ModernChart
@@ -234,6 +237,7 @@ export default function DashboardPage() {
           title="Savings momentum"
           subtitle="Your monthly savings rate"
           loading={yearly.isLoading}
+          icon={TrendingUp}
         >
           <ModernChart
             type="area"
@@ -254,11 +258,13 @@ function ChartPanel({
   title,
   subtitle,
   loading,
+  icon: Icon,
   children,
 }: {
   title: string;
   subtitle: string;
   loading: boolean;
+  icon?: React.ComponentType<{ className?: string }>;
   children: React.ReactNode;
 }) {
   return (
@@ -268,7 +274,11 @@ function ChartPanel({
           <h2 className="text-lg font-semibold tracking-[-.03em]">{title}</h2>
           <p className="mt-1 text-sm text-muted">{subtitle}</p>
         </div>
-        <WalletCards className="h-4 w-4 text-primary" />
+        {Icon ? (
+          <span className="grid h-8 w-8 place-items-center rounded-control bg-accent text-primary">
+            <Icon className="h-4 w-4" />
+          </span>
+        ) : null}
       </div>
       <div className="mt-5">
         {loading ? (
@@ -282,8 +292,21 @@ function ChartPanel({
 }
 function EmptyChart() {
   return (
-    <div className="flex h-[292px] items-center justify-center rounded-card border border-dashed border-line bg-subtle px-8 text-center text-sm text-muted">
-      Add an expense transaction to see your spending breakdown.
+    <div className="flex h-[292px] flex-col items-center justify-center rounded-card border border-dashed border-line bg-subtle px-6 text-center">
+      <div className="grid h-10 w-10 place-items-center rounded-control bg-accent text-primary">
+        <PieChart className="h-5 w-5" />
+      </div>
+      <p className="mt-3 text-sm font-semibold text-foreground">No spending recorded</p>
+      <p className="mt-1 max-w-[200px] text-xs leading-relaxed text-muted">
+        Add an expense to see your category breakdown.
+      </p>
+      <Link
+        href="/transactions"
+        className="mt-4 inline-flex items-center gap-1.5 rounded-control bg-primary px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-primary-hover"
+      >
+        <Plus className="h-3.5 w-3.5" />
+        Add transaction
+      </Link>
     </div>
   );
 }
