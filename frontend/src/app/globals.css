@@ -6,13 +6,13 @@
   --ds-background: #ffffff;
   --ds-foreground: #111827;
   --ds-surface: #ffffff;
-  --ds-canvas: #f3f4f6;
-  --ds-subtle: #f8f9fb;
+  --ds-canvas: #f0f1f5;
+  --ds-subtle: #f7f8fa;
   --ds-accent: #eef1ff;
   --ds-primary: #2142e7;
   --ds-primary-hover: #1837c4;
   --ds-ink: #111827;
-  --ds-strong: #111827;
+  --ds-strong: #0f1117;
   --ds-strong-foreground: #ffffff;
   --ds-muted: #6b7280;
   --ds-success: #14804a;
@@ -29,7 +29,7 @@
   --ds-ring: #2142e7;
   --ds-sidebar: #ffffff;
   --ds-sidebar-foreground: #111827;
-  --ds-sidebar-accent: #f3f4f6;
+  --ds-sidebar-accent: #f0f1f5;
   --ds-sidebar-line: #e5e7eb;
   --ds-chart-grid: #edf0f4;
   --ds-chart-tick: #9ca3af;
@@ -48,10 +48,12 @@
   --ds-subtle: #1d1f24;
   --ds-accent: #252b4c;
   --ds-ink: #f9fafb;
-  --ds-strong: #111827;
+  --ds-strong: #0b0c10;
   --ds-strong-foreground: #ffffff;
   --ds-muted: #a3a8b3;
   --ds-line: #303239;
+  --ds-primary: #3a5af0;
+  --ds-primary-hover: #2f4edc;
   --ds-ring: #8da0ff;
   --ds-sidebar: #141519;
   --ds-sidebar-foreground: #f9fafb;
@@ -194,9 +196,9 @@
     border-radius: 16px;
     background: var(--ds-surface);
     box-shadow:
-      rgba(17, 24, 39, 0.04) 0 2px 2px -1px,
-      rgba(17, 24, 39, 0.04) 0 8px 8px 0,
-      rgba(17, 24, 39, 0.08) 0 0 0 1px;
+      0 1px 2px rgba(17, 24, 39, 0.05),
+      0 4px 12px rgba(17, 24, 39, 0.06),
+      0 0 0 1px rgba(17, 24, 39, 0.04);
   }
   .app-panel--quiet {
     border: 1px solid var(--ds-line);

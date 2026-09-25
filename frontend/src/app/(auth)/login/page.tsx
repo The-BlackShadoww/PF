@@ -77,9 +77,9 @@ function LoginForm({ registered }: LoginFormProps) {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-2 text-center">
-        <h1 className="text-4xl font-black leading-none text-ink">
-          Log in
+      <div className="space-y-1.5 text-center">
+        <h1 className="text-2xl font-bold tracking-tight text-ink md:text-3xl">
+          Welcome back
         </h1>
         <p className="text-sm text-muted">
           Access your personal finance dashboard.
@@ -107,7 +107,7 @@ function LoginForm({ registered }: LoginFormProps) {
 
         <div className="space-y-1.5">
           <label
-            className="block text-sm font-semibold text-muted"
+            className="block text-xs font-semibold uppercase tracking-wider text-muted"
             htmlFor="email"
           >
             Email
@@ -116,13 +116,14 @@ function LoginForm({ registered }: LoginFormProps) {
             id="email"
             type="email"
             autoComplete="email"
+            placeholder="you@example.com"
             aria-invalid={errors.email ? "true" : "false"}
             aria-describedby={errors.email ? "email-error" : undefined}
-            className="w-full rounded-panel border border-ink px-4 py-3 text-sm text-ink outline-none transition focus:ring-2 focus:ring-primary"
+            className="w-full rounded-control border border-line bg-surface px-3.5 py-2.5 text-sm text-ink outline-none transition-all placeholder:text-muted focus:border-primary focus:ring-2 focus:ring-primary/20"
             {...register("email")}
           />
           {errors.email ? (
-            <p className="text-sm text-danger" id="email-error" role="alert">
+            <p className="text-xs font-medium text-danger" id="email-error" role="alert">
               {errors.email.message}
             </p>
           ) : null}
@@ -130,7 +131,7 @@ function LoginForm({ registered }: LoginFormProps) {
 
         <div className="space-y-1.5">
           <label
-            className="block text-sm font-semibold text-muted"
+            className="block text-xs font-semibold uppercase tracking-wider text-muted"
             htmlFor="password"
           >
             Password
@@ -139,14 +140,15 @@ function LoginForm({ registered }: LoginFormProps) {
             id="password"
             type="password"
             autoComplete="current-password"
+            placeholder="••••••••"
             aria-invalid={errors.password ? "true" : "false"}
             aria-describedby={errors.password ? "password-error" : undefined}
-            className="w-full rounded-panel border border-ink px-4 py-3 text-sm text-ink outline-none transition focus:ring-2 focus:ring-primary"
+            className="w-full rounded-control border border-line bg-surface px-3.5 py-2.5 text-sm text-ink outline-none transition-all placeholder:text-muted focus:border-primary focus:ring-2 focus:ring-primary/20"
             {...register("password")}
           />
           {errors.password ? (
             <p
-              className="text-sm text-danger"
+              className="text-xs font-medium text-danger"
               id="password-error"
               role="alert"
             >
@@ -167,7 +169,7 @@ function LoginForm({ registered }: LoginFormProps) {
 
       <p className="text-center text-sm text-muted">
         New here?{" "}
-        <Link className="font-semibold text-ink underline" href="/register">
+        <Link className="font-semibold text-primary transition-colors hover:text-primary-hover" href="/register">
           Create an account
         </Link>
       </p>

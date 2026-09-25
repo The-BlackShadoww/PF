@@ -77,10 +77,10 @@ export function AccountBalanceWidget() {
         </div>
       )}
 
-      <div className="relative flex items-start justify-between">
+      <div className="relative flex items-start justify-between gap-4">
         <div>
-          <p className="text-xs font-medium text-white/65">Account balance</p>
-          <p className="mt-2 text-4xl font-semibold tracking-[-0.055em] text-white">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-white/70">Account balance</p>
+          <p className="mt-2 text-5xl font-bold tracking-[-0.06em] text-white md:text-6xl">
             {negative ? "-" : ""}
             {formatDollar(Math.abs(summary.currentBalanceCents) / 100)}
           </p>
@@ -88,20 +88,20 @@ export function AccountBalanceWidget() {
         <Link
           href="/settings?tab=account"
           aria-label="Account settings"
-          className="rounded-control border border-white/15 bg-white/10 p-2 text-white/80 hover:bg-white/15 hover:text-white"
+          className="rounded-control border border-white/15 bg-white/10 p-2.5 text-white/80 transition-colors hover:bg-white/20 hover:text-white"
         >
           <Settings size={18} />
         </Link>
       </div>
 
-      <div className="relative mt-5 flex flex-wrap gap-x-5 gap-y-2 text-xs text-white/70">
-        <span className="flex items-center gap-1">
+      <div className="relative mt-6 flex flex-wrap items-center gap-2 text-xs">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/10 px-3 py-1 font-medium text-white/90">
           <TrendingUp size={14} className="text-success-bright" />
-          Total in: {formatDollar(summary.totalIncomeCents / 100)}
+          <span>In: {formatDollar(summary.totalIncomeCents / 100)}</span>
         </span>
-        <span className="flex items-center gap-1">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/10 px-3 py-1 font-medium text-white/90">
           <TrendingDown size={14} className="text-chart-peach" />
-          Total out: {formatDollar(summary.totalExpenseCents / 100)}
+          <span>Out: {formatDollar(summary.totalExpenseCents / 100)}</span>
         </span>
       </div>
 

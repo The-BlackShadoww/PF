@@ -10,10 +10,19 @@ type SummaryCardProps = {
   isLoading?: boolean;
 };
 
-const toneAccent: Record<SummaryCardTone, string> = {
-  income: "border-l-success-bright",
-  expense: "border-l-danger",
-  savings: "border-l-primary",
+const toneAccent: Record<SummaryCardTone, { border: string; tint: string }> = {
+  income: {
+    border: "border-l-success-bright",
+    tint: "hover:border-l-success",
+  },
+  expense: {
+    border: "border-l-danger",
+    tint: "hover:border-l-danger",
+  },
+  savings: {
+    border: "border-l-primary",
+    tint: "hover:border-l-primary-hover",
+  },
 };
 
 export function SummaryCard({
@@ -23,25 +32,28 @@ export function SummaryCard({
   tone,
   isLoading = false,
 }: SummaryCardProps) {
+  const currentTone = toneAccent[tone];
+
   return (
     <article
       className={cn(
-        "surface-card rounded-card border-l-[3px] bg-surface p-5",
-        toneAccent[tone],
+        "surface-card rounded-card border-l-4 bg-surface p-5 transition-shadow hover:shadow-md",
+        currentTone.border,
+        currentTone.tint,
       )}
     >
-      <p className="text-xs font-medium text-muted">{title}</p>
+      <p className="text-[11px] font-semibold uppercase tracking-wider text-muted">{title}</p>
       {isLoading ? (
         <div className="mt-3 h-8 w-32 animate-pulse rounded-control bg-canvas" />
       ) : (
-        <p className="mt-2 text-metric font-semibold leading-tight tracking-tight text-ink">
+        <p className="mt-2 text-2xl font-bold tracking-tight text-ink md:text-3xl">
           {formatAmount(value)}
         </p>
       )}
       {isLoading ? (
-        <div className="mt-3 h-4 w-24 animate-pulse rounded bg-canvas" />
+        <div className="mt-2.5 h-4 w-24 animate-pulse rounded bg-canvas" />
       ) : (
-        <p className="mt-3 text-xs text-muted">
+        <p className="mt-2.5 text-xs text-muted">
           {subtitle}
         </p>
       )}
